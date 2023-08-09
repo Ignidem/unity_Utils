@@ -14,9 +14,27 @@ namespace Assets.External.unity_utils.Transforms
 			};
 		}
 
+		public static bool operator !=(TransformInfo left, TransformInfo right) => !(left == right);
+		public static bool operator ==(TransformInfo left, TransformInfo right)
+		{
+			return left.position == right.position
+				&& left.rotation == right.rotation
+				&& left.scale == right.scale;
+		}
+
 		public Vector3Info position;
 		public Vector3Info rotation;
 		public Vector3Info scale;
+
+		public override bool Equals(object obj)
+		{
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		public void Apply(Transform transform)
 		{
