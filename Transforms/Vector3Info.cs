@@ -22,6 +22,24 @@ namespace Assets.External.unity_utils.Transforms
 
 		public static implicit operator Vector3(Vector3Info info) => info.vector;
 
+		public static Vector3Info operator +(Vector3Info v1, Vector3Info v2)
+		{
+			return new Vector3Info()
+			{
+				vector = v1.vector + v2.vector,
+				space = v1.space,
+			};
+		}
+
+		public static Vector3Info operator -(Vector3Info v1, Vector3Info v2)
+		{
+			return new Vector3Info()
+			{
+				vector = v1.vector - v2.vector,
+				space = v1.space,
+			};
+		}
+
 		public Vector3 vector;
 		public Space space;
 

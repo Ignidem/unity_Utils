@@ -22,6 +22,26 @@ namespace Assets.External.unity_utils.Transforms
 				&& left.scale == right.scale;
 		}
 
+		public static TransformInfo operator -(TransformInfo t1, TransformInfo t2)
+		{
+			return new TransformInfo()
+			{
+				position = t1.position - t2.position,
+				rotation = t1.rotation - t2.rotation,
+				scale = t1.scale - t2.scale,
+			};
+		}
+
+		public static TransformInfo operator +(TransformInfo t1, TransformInfo t2)
+		{
+			return new TransformInfo()
+			{
+				position = t1.position + t2.position,
+				rotation = t1.rotation + t2.rotation,
+				scale = t1.scale + t2.scale,
+			};
+		}
+
 		public Vector3Info position;
 		public Vector3Info rotation;
 		public Vector3Info scale;
