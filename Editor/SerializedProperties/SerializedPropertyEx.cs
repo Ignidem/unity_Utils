@@ -10,17 +10,33 @@ namespace UnityUtils.Editor.SerializedProperties
 		private const BindingFlags BindingAttr = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
 			BindingFlags.Static;
 
+		public static int GetIndex(this SerializedProperty property)
+		{
+			string path = property.propertyPath;
+			if (path[^1] != ']') return -1;
+
+			string num = string.Empty;
+			for (int i = path.Length - 2; i > -1; i--)
+			{
+				char c = path[i];
+				if (c == '[') break;
+				num += c;
+			}
+
+			return int.TryParse(num, out int index) ? index : -1;
+		}
+
 		public static object GetTarget(this SerializedProperty prop) => prop.serializedObject.targetObject;
 
 		public static object GetInstance(this SerializedProperty prop)
 		{
-			string[] path = prop.propertyPath.Split('.');
+			string[] path = prop.propertyPath.Replace(".Array.data[", "[").Split('.');
 			return GetInstance(prop, path, path.Length);
 		}
 
 		public static object GetParent(this SerializedProperty prop)
 		{
-			string[] path = prop.propertyPath.Split('.');
+			string[] path = prop.propertyPath.Replace(".Array.data[", "[").Split('.');
 			return GetInstance(prop, path, path.Length - 1);
 		}
 
@@ -53,8 +69,8 @@ namespace UnityUtils.Editor.SerializedProperties
 		private static object GetField(string name, object target)
 		{
 			Type type = target.GetType();
-			FieldInfo member = type.GetField(name,
-				BindingAttr);
+			FieldInfo member = type.GetField(name, BindingAttr);
+
 			return member.GetValue(target);
 		}
 
@@ -63,7 +79,6 @@ namespace UnityUtils.Editor.SerializedProperties
 			int start = name.IndexOf('[');
 			int.TryParse(name[start..^1], out int index);
 			object list = ReadPath(name[..start], target);
-
 			return list switch
 			{
 				IList ilist => ilist[index],

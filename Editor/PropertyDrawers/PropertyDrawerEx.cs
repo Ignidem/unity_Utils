@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityUtils.Editor.SerializedProperties;
 using UnityUtils.RectUtils;
 
 namespace UnityUtils.Editor
@@ -54,16 +55,22 @@ namespace UnityUtils.Editor
 		{
 			float height = 0;
 			SerializedProperty prop = property.Copy();
+			string path = property.propertyPath;
 			while (prop.Next(prop.propertyType != SerializedPropertyType.String))
 			{
+				//Makes sure we don't step out while drawing an element from a list;
+				if (!prop.propertyPath.StartsWith(path)) continue;
+
+				position = position.MoveY(Spacing);
+
 				float pHeight = EditorGUI.GetPropertyHeight(prop);
 				position = position.SetHeight(pHeight);
 				EditorGUI.PropertyField(position, prop, true);
 				height += pHeight;
-				position = position.MoveY(pHeight);
+				position = position.MoveY(pHeight + Spacing);
 			}
 
-			return height;
+			return Mathf.Max(0, height - SpacedLineHeight * 4);
 		}
 
 		protected float DefaultPropertyHeight(SerializedProperty property, GUIContent label)
