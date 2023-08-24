@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿#if ENABLE_INPUT_SYSTEM
+using System.Reflection;
 using UnityEngine.InputSystem;
 
 namespace Assets.External.unity_utils.CSharpInputListener
@@ -24,3 +25,4 @@ namespace Assets.External.unity_utils.CSharpInputListener
 		}
 	}
 }
+#endif

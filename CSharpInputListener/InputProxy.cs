@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if ENABLE_INPUT_SYSTEM
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine.InputSystem;
@@ -10,8 +11,11 @@ namespace Assets.External.unity_utils.CSharpInputListener
 
 	public class InputProxy
 	{
-		private static Type genericType = typeof(InputReceiverMethod<>);
-		private static Dictionary<Type, Type> definedTypes = new();
+		private const BindingFlags methodReceiversFlags = BindingFlags.Public | BindingFlags.Instance | 
+			BindingFlags.NonPublic | BindingFlags.InvokeMethod | BindingFlags.DeclaredOnly;
+
+		private static readonly Type genericType = typeof(InputReceiverMethod<>);
+		private static readonly Dictionary<Type, Type> definedTypes = new();
 
 		private static IInputReceiverMethod CreateReceiverMethod(MethodInfo method)
 		{
@@ -29,15 +33,26 @@ namespace Assets.External.unity_utils.CSharpInputListener
 			return Activator.CreateInstance(definedType, new object[] { method }) as IInputReceiverMethod;
 		}
 
+		public bool IsActive
+		{
+			get => inputs.isActiveAndEnabled && inputs.inputIsActive;
+			set
+			{
+				inputs.enabled = value;
+			}
+		}
+
+		private readonly PlayerInput inputs;
 		private readonly IInputReceiver receiver;
-		public Dictionary<string, IInputReceiverMethod> receivers;
+		private readonly Dictionary<string, IInputReceiverMethod> receivers;
 
 		public InputProxy(PlayerInput inputs, IInputReceiver receiver)
 		{
 			inputs.onActionTriggered += OnAction;
 			receivers = new();
+			this.inputs = inputs;
 			this.receiver = receiver;
-			receiver.ForeachMethodWithAttribute<InputReceiverAttribute>(ParseMethod);
+			receiver.ForeachMethodWithAttribute<InputReceiverAttribute>(ParseMethod, methodReceiversFlags);
 		}
 
 		private void ParseMethod(MethodInfo method, InputReceiverAttribute attribute)
@@ -50,6 +65,8 @@ namespace Assets.External.unity_utils.CSharpInputListener
 
 		private void OnAction(InputAction.CallbackContext obj)
 		{
+			if (!IsActive) return;
+
 			if (!receivers.TryGetValue(obj.action.name, out IInputReceiverMethod method))
 			{
 				return;
@@ -59,3 +76,4 @@ namespace Assets.External.unity_utils.CSharpInputListener
 		}
 	}
 }
+#endif
