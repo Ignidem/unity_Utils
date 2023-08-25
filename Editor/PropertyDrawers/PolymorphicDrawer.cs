@@ -13,6 +13,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 	[CustomPropertyDrawer(typeof(PolymorphicAttribute))]
 	public class PolymorphicDrawer : ExtendedPropertyDrawer
 	{
+
 		protected override void OnFirstGUI(SerializedProperty prop)
 		{
 			if (attribute is PolymorphicAttribute poly)
@@ -26,8 +27,15 @@ namespace UnityUtils.Editor.PropertyDrawers
 		{
 			int index = property.GetIndex();
 			PolyTypeDropdown(position, index);
-			position = position.MoveY(SpacedLineHeight);
-			return DefaultGUI(ref position, property);
+			EditorGUI.indentLevel++;
+
+			float x = IndentWidth * EditorGUI.indentLevel;
+			position = position.MoveY(SpacedLineHeight).SetX(x)
+				.SetWidth(ViewWidth - x);
+			float height = DefaultGUI(ref position, property);
+
+			EditorGUI.indentLevel--;
+			return height;
 		}
 
 		private Rect PolyTypeDropdown(Rect position, int listIndex)

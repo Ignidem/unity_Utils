@@ -10,10 +10,10 @@ namespace UnityUtils.PropertyAttributes
 	public class PolymorphicAttribute : PropertyAttribute
 	{
 		public readonly bool nullable;
-		public string[] options;
-		private readonly Type baseType;
-		private readonly Type[] types;
-		private readonly ConstructorInfo[] constructors;
+		public string[] options { get; private set; }
+		private Type baseType;
+		private Type[] types;
+		private ConstructorInfo[] constructors;
 		public int Index
 		{
 			get => nullable ? _index + 1 : _index;
@@ -25,10 +25,27 @@ namespace UnityUtils.PropertyAttributes
 		private object parent;
 		private FieldInfo field;
 
-		public PolymorphicAttribute(Type baseType, bool nullable = false)
+		/// <summary>
+		/// Uses the field's type as base type.
+		/// </summary>
+		/// <param name="nullable">Can the instance be null.</param>
+		public PolymorphicAttribute(bool nullable = false)
 		{
 			this.nullable = nullable;
-			this.baseType = baseType;
+		}
+
+		/// <summary>
+		/// Defined base type.
+		/// </summary>
+		/// <param name="baseType">The base type the polymorphic objects must extend.</param>
+		/// <param name="nullable">Can the instance be null.</param>
+		public PolymorphicAttribute(Type baseType, bool nullable = false) : this(nullable)
+		{
+			Init(baseType);
+		}
+
+		private void Init(Type baseType)
+		{
 			types = baseType.GetSubTypes();
 
 			int k = 0;
@@ -38,7 +55,7 @@ namespace UnityUtils.PropertyAttributes
 			for (int i = 0; i < types.Length; i++, k++)
 				options[k] = types[i].Name;
 
-			constructors = types.Select(t => 
+			constructors = types.Select(t =>
 				t.GetConstructor(new Type[] { baseType }) ?? t.GetConstructor(new Type[0])
 			).ToArray();
 		}
@@ -47,6 +64,23 @@ namespace UnityUtils.PropertyAttributes
 		{
 			this.parent = parent;
 			this.field = field;
+
+			if (types == null) //did not init;
+			{
+				Type baseType = field.FieldType;
+				
+				if (baseType.IsArray)
+				{
+					baseType = baseType.GetElementType();
+				}
+				else if (baseType.IsGenericType) //Generic collections
+				{
+					Type[] generics = baseType.GetGenericArguments();
+					baseType = generics[0];
+				}
+
+				Init(baseType);
+			}
 
 			object currentValue = GetFieldValue(listIndex);
 			Type currentType = currentValue?.GetType();

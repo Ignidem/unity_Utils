@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityUtils.Editor.SerializedProperties;
 using UnityUtils.RectUtils;
 
 namespace UnityUtils.Editor
@@ -56,12 +54,12 @@ namespace UnityUtils.Editor
 			float height = 0;
 			SerializedProperty prop = property.Copy();
 			string path = property.propertyPath;
-			while (prop.Next(prop.propertyType != SerializedPropertyType.String))
+			position = position.MoveY(Spacing);
+
+			while (prop.Next(prop.propertyType == SerializedPropertyType.ManagedReference))
 			{
 				//Makes sure we don't step out while drawing an element from a list;
 				if (!prop.propertyPath.StartsWith(path)) continue;
-
-				position = position.MoveY(Spacing);
 
 				float pHeight = EditorGUI.GetPropertyHeight(prop);
 				position = position.SetHeight(pHeight);
