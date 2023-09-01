@@ -4,27 +4,47 @@ using UnityEngine.AddressableAssets;
 
 namespace UnityUtils.AddressableUtils
 {
-	public class Addressable<T> : IDisposable
+	public class Addressable : IDisposable
 	{
-		public static implicit operator T(Addressable<T> adrs)
+		public static implicit operator bool(Addressable adrs)
 		{
-			return adrs.wasReleased ? default : adrs.target;
+			return adrs != null && adrs.gameObject && !adrs.WasReleased;
 		}
 
 		public readonly GameObject gameObject;
-		public readonly T target;
-		private bool wasReleased;
 
-		public Addressable(GameObject obj, T t)
+		public Addressable(GameObject obj)
 		{
 			this.gameObject = obj;
-			this.target = t;
 		}
+
+		protected bool WasReleased { get; private set; }
 
 		public void Dispose()
 		{
+			UnityEngine.Object.Destroy(gameObject);
 			Addressables.Release(gameObject);
-			wasReleased = true;
+			WasReleased = true;
+		}
+	}
+
+	public class Addressable<T> : Addressable
+	{
+		public static implicit operator bool(Addressable<T> adrs)
+		{
+			return adrs != null && adrs.gameObject && !adrs.WasReleased && adrs.target != null;
+		}
+
+		public static implicit operator T(Addressable<T> adrs)
+		{
+			return !adrs ? default : adrs.target;
+		}
+
+		public readonly T target;
+
+		public Addressable(GameObject obj, T t) : base(obj)
+		{
+			this.target = t;
 		}
 	}
 }

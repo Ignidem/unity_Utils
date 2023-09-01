@@ -1,10 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityUtils.Editor.SerializedProperties;
 using UnityUtils.RectUtils;
 
 namespace UnityUtils.Editor
 {
+	public enum LabelDrawType
+	{
+		None,
+		Label,
+		Foldout,
+		HeaderFoldout,
+	}
+
 	public abstract class ExtendedPropertyDrawer : PropertyDrawer
 	{
 		protected const float IndentWidth = 38;
@@ -15,43 +25,55 @@ namespace UnityUtils.Editor
 		protected static float FieldWidth => EditorGUIUtility.fieldWidth;
 		public static float ViewWidth => EditorGUIUtility.currentViewWidth;
 
-		protected virtual bool DrawPrefixLabel => true;
+		protected virtual LabelDrawType LabelType => LabelDrawType.HeaderFoldout;
+		private readonly List<bool> folded = new();
 
 		private readonly Dictionary<string, float> heights = new();
-
-		private bool didInit;
-		
-		protected virtual void OnFirstGUI(SerializedProperty property) { }
 
 		protected abstract float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label);
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
-			if (!didInit)
+			int index = Math.Max(0, property.GetIndex());
+			while (folded.Count <= index)
 			{
-				OnFirstGUI(property);
-				didInit = true;
+				folded.Add(false);
 			}
 
 			EditorGUI.BeginProperty(position, label, property);
 
 			Rect start = position;
+			position = position.SetHeight(LineHeight);
 
-			if (DrawPrefixLabel)
-				position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+			switch (LabelType)
+			{
+				case LabelDrawType.Label:
+					position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+					break;
+				case LabelDrawType.Foldout:
+					folded[index] = !EditorGUI.Foldout(position, !folded[index], label);
+					break;
+				case LabelDrawType.HeaderFoldout:
+					folded[index] = !EditorGUI.BeginFoldoutHeaderGroup(position, !folded[index], label);
+					break;
+			}
 
-			float extraHeight = DrawProperty(ref position, property, label);
+			float extraHeight = folded[index] ? 0 : DrawProperty(ref position, property, label);
 
 			EditorGUI.EndProperty();
+
+			if (LabelType == LabelDrawType.HeaderFoldout)
+			{
+				EditorGUI.EndFoldoutHeaderGroup();
+			}
 
 			float height = (position.y - start.y) + LineHeight + extraHeight;
 
 			heights[property.propertyPath] = height;
 		}
 
-		protected float DefaultGUI(ref Rect position, SerializedProperty property)
+		protected void DefaultGUI(ref Rect position, SerializedProperty property)
 		{
-			float height = 0;
 			SerializedProperty prop = property.Copy();
 			string path = property.propertyPath;
 			position = position.MoveY(Spacing);
@@ -64,11 +86,8 @@ namespace UnityUtils.Editor
 				float pHeight = EditorGUI.GetPropertyHeight(prop);
 				position = position.SetHeight(pHeight);
 				EditorGUI.PropertyField(position, prop, true);
-				height += pHeight;
 				position = position.MoveY(pHeight + Spacing);
 			}
-
-			return Mathf.Max(0, height - SpacedLineHeight * 4);
 		}
 
 		protected float DefaultPropertyHeight(SerializedProperty property, GUIContent label)

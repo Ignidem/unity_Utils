@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace UnityUtils.Arrays
@@ -53,20 +54,24 @@ namespace UnityUtils.Arrays
 
 			public bool MoveNext()
 			{
+				if (elements == null) return false;
+
+				while (elements[x].IsEmpty)
+				{
+					x++;
+					y = 0;
+					if (x > size.x) return false;
+				}
+
 				if (y < size.y)
 				{
 					y++;
 					return true;
 				}
 
-				if (x < size.x)
-				{
-					x++;
-					y = 0;
-					return true;
-				}
-
-				return false;
+				x++;
+				y = 0;
+				return x <= size.x;
 			}
 
 			public void Reset()
@@ -88,6 +93,7 @@ namespace UnityUtils.Arrays
 		[Serializable]
 		public class SubArray
 		{
+			public static implicit operator bool(SubArray array) => !array.IsEmpty;
 			public static implicit operator T[](SubArray array) => array?.elements;
 			public static implicit operator SubArray(T[] array) => new SubArray() { elements = array };
 
@@ -97,7 +103,8 @@ namespace UnityUtils.Arrays
 				set => elements[y] = value;
 			}
 
-			public int Length => elements.Length;
+			public int Length => elements?.Length ?? 0;
+			public bool IsEmpty => elements == null || Length == 0;
 
 			public T[] elements;
 		}
@@ -161,12 +168,23 @@ namespace UnityUtils.Arrays
 
 		[SerializeField] private SubArray[] elements;
 
-		public IEnumerator<T> GetEnumerator() => new GenericEnumerator(elements, Size);
+		public IEnumerator<T> GetEnumerator()
+		{
+			if (Size == Vector2Int.zero)
+				return Enumerable.Empty<T>().GetEnumerator();
+
+			return new GenericEnumerator(elements, Size);
+		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		IEnumerator<Array2DElement<T>> IEnumerable<Array2DElement<T>>.GetEnumerator()
-			=> new GenericEnumerator(elements, Size);
+		{
+			if (Size == Vector2Int.zero)
+				return Enumerable.Empty<Array2DElement<T>>().GetEnumerator();
+
+			return new GenericEnumerator(elements, Size);
+		}
 
 		private void Resize(Vector2Int size)
 		{

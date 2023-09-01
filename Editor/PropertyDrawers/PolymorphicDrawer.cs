@@ -13,37 +13,39 @@ namespace UnityUtils.Editor.PropertyDrawers
 	[CustomPropertyDrawer(typeof(PolymorphicAttribute))]
 	public class PolymorphicDrawer : ExtendedPropertyDrawer
 	{
+		protected override LabelDrawType LabelType => LabelDrawType.Foldout;
 
-		protected override void OnFirstGUI(SerializedProperty prop)
+		private void Init(SerializedProperty prop, PolymorphicAttribute polyAttr)
 		{
-			if (attribute is PolymorphicAttribute poly)
-			{
-				int index = prop.GetIndex();
-				poly.SetFieldInfo(prop.GetParent(), fieldInfo, index);
-			}
+			if (polyAttr.WasInitialized) return;
+
+			int listIndex = prop.GetIndex();
+			polyAttr.SetFieldInfo(prop.GetParent(), fieldInfo, listIndex);
 		}
 
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
 		{
+			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
+			Init(property, polyAttr);
+
 			int index = property.GetIndex();
-			PolyTypeDropdown(position, index);
+			position = position.MoveY(SpacedLineHeight);
+			PolyTypeDropdown(position, index, polyAttr);
 			EditorGUI.indentLevel++;
 
-			float x = IndentWidth * EditorGUI.indentLevel;
-			position = position.MoveY(SpacedLineHeight).SetX(x)
-				.SetWidth(ViewWidth - x);
-			float height = DefaultGUI(ref position, property);
+			position = position.MoveY(SpacedLineHeight);
+			DefaultGUI(ref position, property);
 
 			EditorGUI.indentLevel--;
-			return height;
+			EditorGUI.EndFoldoutHeaderGroup();
+			return 0;
 		}
 
-		private Rect PolyTypeDropdown(Rect position, int listIndex)
+		private Rect PolyTypeDropdown(Rect position, int listIndex, PolymorphicAttribute polyAttr)
 		{
-			if (attribute is not PolymorphicAttribute poly) return position;
-
-			int index = EditorGUI.Popup(position.SetHeight(LineHeight), poly.Index, poly.options);
-			poly.ChangeIndex(index, listIndex);
+			Rect popupPos = position.SetHeight(LineHeight).MoveX(Spacing * 3);
+			int index = EditorGUI.Popup(popupPos, "Type", polyAttr.Index, polyAttr.options);
+			polyAttr.ChangeIndex(index, listIndex);
 
 			return position;
 		}

@@ -12,6 +12,7 @@ namespace UnityUtils.PropertyAttributes
 		public readonly bool nullable;
 		public string[] options { get; private set; }
 		private Type baseType;
+		public bool WasInitialized => types != null;
 		private Type[] types;
 		private ConstructorInfo[] constructors;
 		public int Index
@@ -46,6 +47,7 @@ namespace UnityUtils.PropertyAttributes
 
 		private void Init(Type baseType)
 		{
+			this.baseType = baseType;
 			types = baseType.GetSubTypes();
 
 			int k = 0;
@@ -83,23 +85,24 @@ namespace UnityUtils.PropertyAttributes
 			}
 
 			object currentValue = GetFieldValue(listIndex);
-			Type currentType = currentValue?.GetType();
-			_index = Array.IndexOf(types, currentType);
+
+			_index = currentValue == null ? -1 : Array.IndexOf(types, currentValue.GetType());
 		}
 
-		public void ChangeIndex(int typeIndex, int listIndex)
+		public bool ChangeIndex(int typeIndex, int listIndex)
 		{
-			if (typeIndex == Index) return;
+			if (typeIndex == Index) return false;
 
 			Index = typeIndex;
 
 			if (_index == -1)
 			{
 				SetFieldValue(null, listIndex);
-				return;
+				return true;
 			}
 
 			ChangeType(types[_index], listIndex);
+			return true;
 		}
 
 		private void ChangeType(Type type, int listIndex)
@@ -137,6 +140,7 @@ namespace UnityUtils.PropertyAttributes
 			if (listIndex == -1)
 			{
 				field.SetValue(parent, value);
+				return;
 			}
 
 			if (field.GetValue(parent) is IList list)

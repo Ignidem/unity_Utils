@@ -28,6 +28,7 @@ namespace UnityUtils.Editor
 
 		private Rect DrawSize(Rect position, IArray2D array)
 		{
+			position = position.MoveY(SpacedLineHeight).SetHeight(LineHeight);
 			array.Size = EditorGUI.Vector2IntField(position, GUIContent.none, array.Size);
 			return position;
 		}
@@ -44,9 +45,12 @@ namespace UnityUtils.Editor
 			for (int x = 0; x < size.x; x++)
 			{
 				SerializedProperty subList = list.GetArrayElementAtIndex(x).FindPropertyRelative(ElementsField);
+				if (subList == null) continue;
+
 				for (int y = 0; y < size.y; y++)
 				{
 					SerializedProperty element = subList.GetArrayElementAtIndex(y);
+					if (element == null) continue;
 					pos = position.Move(new Vector2(x * width, y * LineHeight));
 					EditorGUI.PropertyField(pos, element, GUIContent.none);
 				}
