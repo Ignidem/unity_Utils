@@ -6,18 +6,19 @@ using Utils.Storage;
 
 namespace UnityUtils.Storages
 {
-	public class ScriptableObjectDatabase : MonoBehaviour, ISimpleDataStorage
+	[CreateAssetMenu(fileName = nameof(ScriptableObjectDatabase), menuName = "Storage/" + nameof(ScriptableObjectDatabase))]
+	public class ScriptableObjectDatabase : ScriptableObject, ISimpleDataStorage
 	{
-		[SerializeField] private List<IStorageObject> tables;
+		[SerializeField] private List<StorageObject> tables;
 
-		private Dictionary<Type, IStorageObject> HashedTables
+		private Dictionary<Type, StorageObject> HashedTables
 			=> _hashedTables ??= tables.ToDictionary(t => t.TableType, t => t);
-		private Dictionary<Type, IStorageObject> _hashedTables;
+		private Dictionary<Type, StorageObject> _hashedTables;
 
 		private bool TryGetTable<TKey, TEntry>(out StorageObject<TKey, TEntry> storage)
 		{
 			Type type = typeof(TEntry);
-			IStorageObject table = HashedTables[type];
+			StorageObject table = HashedTables[type];
 			if (table is not StorageObject<TKey, TEntry> _s)
 			{
 				storage = null;

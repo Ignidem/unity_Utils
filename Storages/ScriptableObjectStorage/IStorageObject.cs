@@ -5,16 +5,16 @@ using UnityEngine.Rendering;
 
 namespace UnityUtils.Storages
 {
-	public interface IStorageObject
+	public abstract class StorageObject : ScriptableObject
 	{
-		Type TableType { get; }
+		public abstract Type TableType { get; }
 	}
 
-	public class StorageObject<TKey, TValue> : ScriptableObject, IStorageObject
+	public class StorageObject<TKey, TValue> : StorageObject
 	{
 		private class ValueDictionary : SerializedDictionary<TKey, TValue> { }
 
-		public Type TableType => typeof(TValue);
+		public override Type TableType => typeof(TValue);
 
 		public TValue this[TKey key] 
 		{ 
