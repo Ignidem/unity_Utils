@@ -15,11 +15,11 @@ namespace UnityUtils.Storages
 			=> _hashedTables ??= tables.ToDictionary(t => t.TableType, t => t);
 		private Dictionary<Type, StorageObject> _hashedTables;
 
-		private bool TryGetTable<TKey, TEntry>(out StorageObject<TKey, TEntry> storage)
+		private bool TryGetTable<TKey, TEntry>(out IStorageObject<TKey, TEntry> storage)
 		{
 			Type type = typeof(TEntry);
 			StorageObject table = HashedTables[type];
-			if (table is not StorageObject<TKey, TEntry> _s)
+			if (table is not IStorageObject<TKey, TEntry> _s)
 			{
 				storage = null;
 				return false;
@@ -31,7 +31,7 @@ namespace UnityUtils.Storages
 
 		public void DeleteEntry<TKey, TEntry>(TKey key)
 		{
-			if (!TryGetTable(out StorageObject<TKey, TEntry> storage))
+			if (!TryGetTable(out IStorageObject<TKey, TEntry> storage))
 				return;
 
 			storage.Delete(key);
@@ -39,7 +39,7 @@ namespace UnityUtils.Storages
 
 		public TEntry GetEntry<TKey, TEntry>(TKey key)
 		{
-			if (!TryGetTable(out StorageObject<TKey, TEntry> storage))
+			if (!TryGetTable(out IStorageObject<TKey, TEntry> storage))
 				return default;
 
 			return storage[key];
@@ -47,7 +47,7 @@ namespace UnityUtils.Storages
 
 		public void PostEntry<TKey, TEntry>(TKey key, TEntry entry)
 		{
-			if (!TryGetTable(out StorageObject<TKey, TEntry> storage))
+			if (!TryGetTable(out IStorageObject<TKey, TEntry> storage))
 				return;
 
 			storage[key] = entry;

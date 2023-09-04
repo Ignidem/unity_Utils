@@ -10,10 +10,14 @@ namespace UnityUtils.Storages
 		public abstract Type TableType { get; }
 	}
 
-	public class StorageObject<TKey, TValue> : StorageObject
+	public interface IStorageObject<TKey, TValue>
 	{
-		private class ValueDictionary : SerializedDictionary<TKey, TValue> { }
+		TValue this[TKey key] { get; set; }
+		void Delete(TKey key);
+	}
 
+	public class StorageObject<TKey, TValue> : StorageObject, IStorageObject<TKey, TValue>
+	{
 		public override Type TableType => typeof(TValue);
 
 		public TValue this[TKey key] 
@@ -35,8 +39,8 @@ namespace UnityUtils.Storages
 			}
 		}
 
-		[SerializeReference]
-		private ValueDictionary values;
+		[SerializeField]
+		private Serialized.Dictionary<TKey, TValue> values;
 
 		public void Delete(TKey key) => values.Remove(key);
 	}
