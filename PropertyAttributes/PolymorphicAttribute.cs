@@ -15,6 +15,8 @@ namespace UnityUtils.PropertyAttributes
 		public bool WasInitialized => types != null;
 		private Type[] types;
 		private ConstructorInfo[] constructors;
+
+		public Type SelectedType => _index == -1 ? null : types[_index];
 		public int Index
 		{
 			get => nullable ? _index + 1 : _index;
@@ -113,6 +115,9 @@ namespace UnityUtils.PropertyAttributes
 
 			//Type was not truly changed;
 			if (currentValue?.GetType() == type) return;
+
+			//Will use reference
+			if (type.Inherits(typeof(UnityEngine.Object))) return;
 
 			ConstructorInfo constructorInfo = constructors[_index];
 			if (constructorInfo == null)
