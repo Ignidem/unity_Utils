@@ -17,8 +17,8 @@ namespace Assets.Systems.States
 		protected T[] states;
 
 		protected IStateMachine<Type> stateMachine;
-		public IState<Type> ActiveState => stateMachine.ActiveState;
-		IState IStateMachine.ActiveState => stateMachine.ActiveState;
+		public IState<Type> ActiveState => stateMachine?.ActiveState;
+		IState IStateMachine.ActiveState => stateMachine?.ActiveState;
 
 		public event StateChangeDelegate<Type> OnStateChange
 		{
