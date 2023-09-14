@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace UnityUutils.Animations
@@ -36,6 +37,14 @@ namespace UnityUutils.Animations
 
 			else if (anim.HasState(layer, Empty))
 				anim.TriggerClip(Empty, layer, blendTime);
+		}
+	
+		public static TaskAwaiter GetAwaiter(this AnimatorStateInfo animState)
+		{
+			float norm = Mathf.Min(1, animState.normalizedTime);
+			float time = animState.length * norm * animState.speed * animState.speedMultiplier;
+			int ml = (int)(time * 1000);
+			return Task.Delay(ml).GetAwaiter();
 		}
 	}
 }
