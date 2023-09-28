@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -8,6 +9,8 @@ namespace UnityUtils.Storages
 	public abstract class StorageObject : ScriptableObject
 	{
 		public abstract Type TableType { get; }
+
+		public abstract T[] GetAllAs<T>();
 	}
 
 	public interface IStorageObject<TKey, TValue>
@@ -43,5 +46,10 @@ namespace UnityUtils.Storages
 		private Serialized.Dictionary<TKey, TValue> values;
 
 		public void Delete(TKey key) => values.Remove(key);
+
+		public override T[] GetAllAs<T>()
+		{
+			return values.Values.Where(v => v is T).Cast<T>().ToArray();
+		}
 	}
 }

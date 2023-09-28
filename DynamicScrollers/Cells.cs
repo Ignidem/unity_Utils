@@ -28,10 +28,13 @@ namespace UnityUtils.DynamicScrollers
 
 			[SerializeField]
 			private GameObject[] cellPrefabs;
+			internal int prefabCount => cellPrefabs.Length;
 			private readonly Dictionary<Type, GameObject> mappedPrefabs = new();
 
 			private readonly List<IScrollerCell> activeCells = new();
 			private readonly Dictionary<Type, List<IScrollerCell>> cachedCells = new();
+
+			public int Count => activeCells.Count;
 
 			public bool TryGetPrefab(IScrollerCellData data, out GameObject prefab)
 			{

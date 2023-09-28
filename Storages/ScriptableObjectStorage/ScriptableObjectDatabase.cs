@@ -45,6 +45,13 @@ namespace UnityUtils.Storages
 			return storage[key];
 		}
 
+		public TEntry[] GetAll<TEntry>()
+		{
+			Type type = typeof(TEntry);
+			StorageObject table = HashedTables[type];
+			return table.GetAllAs<TEntry>();
+		}
+
 		public void PostEntry<TKey, TEntry>(TKey key, TEntry entry)
 		{
 			if (!TryGetTable(out IStorageObject<TKey, TEntry> storage))

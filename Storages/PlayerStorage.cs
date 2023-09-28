@@ -80,6 +80,11 @@ namespace UnityUtils.Storage.PlayerPreferences
 			return ReadValueOrDefault<TEntry>(strKey);
 		}
 
+		public TEntry[] GetAll<TEntry>()
+		{
+			throw new System.NotImplementedException("Player Prefs Storage doe snot support this feature.");
+		}
+
 		public void PostEntry<TKey, TEntry>(TKey key, TEntry entry)
 		{
 			if (!key.TryConvertTo(out string strKey))

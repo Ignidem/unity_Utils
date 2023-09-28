@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Axis = UnityEngine.RectTransform.Axis;
 
 namespace UnityUtils.DynamicScrollers
 {
@@ -13,9 +14,9 @@ namespace UnityUtils.DynamicScrollers
 		Type CellType { get; }
 		int CellIndex { get; set; }
 		int DataIndex { get; set; }
-		Transform Transform { get; }
+		RectTransform Transform { get; }
 
-		Vector2 GetSize(DynamicScroller scroller);
+		Vector2 GetSize(Rect container, Axis axis);
 
 		bool SetData(IScrollerCellData data);
 		void Refresh();
