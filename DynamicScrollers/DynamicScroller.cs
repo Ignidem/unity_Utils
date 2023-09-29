@@ -1,8 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using Axis = UnityEngine.RectTransform.Axis;
-
 
 namespace UnityUtils.DynamicScrollers
 {
@@ -37,47 +35,43 @@ namespace UnityUtils.DynamicScrollers
 			int cellIndex = 0;
 			int dataIndex = 0;
 
-			void SetCell(IScrollerCell cell)
-			{
-				cell.DataIndex = dataIndex;
-				cell.CellIndex = cellIndex;
-				cell.Transform.SetSiblingIndex(cellIndex);
-				cells[cellIndex] = cell;
-				cellIndex++;
-
-				Vector2 cellSize = cell.GetSize(content.rect, ScrollAxis);
-				AddContentSize(cellSize, cellIndex);
-			}
-
 			ResetContentSize();
 
 			for (; dataIndex < _data.Length; dataIndex++)
 			{
-				IScrollerCellData data = _data[dataIndex];
-				IScrollerCell currentCell = cells[cellIndex];
-				if (currentCell == null)
-				{
-					if (cells.TryRecycleOrCreate(data, content, out IScrollerCell cell))
-						SetCell(cell);
-				}
-				else if (currentCell.CellType != data.CellType)
-				{
-					cells.RecycleAt(dataIndex);
-					if (cells.TryRecycleOrCreate(data, content, out IScrollerCell cell))
-						SetCell(cell);
-				}
-				else
-				{
-					currentCell.Clear();
-					currentCell.SetData(data);
-					SetCell(currentCell);
-				}
+				cellIndex = ReloadAt(cellIndex, dataIndex);
 			}
 
 			for (; cellIndex < cells.Count; cellIndex++)
 			{
-				cells.RecycleAt(cellIndex);
+				if (!cells.RecycleCellAt(cellIndex, out IScrollerCell cell)) continue;
+				ClearCell(cell);
 			}
+		}
+
+		private int ReloadAt(int cellIndex, int dataIndex)
+		{
+			IScrollerCellData data = _data[dataIndex];
+			IScrollerCell currentCell = cells[cellIndex];
+
+			if (currentCell?.CellType == data.CellType)
+			{
+				ClearCell(currentCell);
+				currentCell.SetData(data);
+				InitializeCell(currentCell, cellIndex, dataIndex);
+				return cellIndex + 1;
+			}
+
+			if (currentCell != null && cells.RecycleCellAt(dataIndex, out IScrollerCell cell))
+				ClearCell(cell);
+
+			if (cells.TryRecycleOrCreate(data, content, out cell))
+			{
+				InitializeCell(cell, cellIndex, dataIndex);
+				cellIndex++;
+			}
+
+			return cellIndex;
 		}
 
 		private void ResetContentSize()

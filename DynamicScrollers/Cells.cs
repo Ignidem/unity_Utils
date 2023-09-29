@@ -49,33 +49,39 @@ namespace UnityUtils.DynamicScrollers
 				return true;
 			}
 
+			/// <summary>
+			/// Try to use a recicled cell or create a new one.
+			/// </summary>
 			public bool TryRecycleOrCreate(IScrollerCellData data, Transform parent, out IScrollerCell cell)
 			{
-				if (!TryRecycle(data, out cell) && !TryCreate(data, parent, out cell))
-					return false;
-
-				cell.SetData(data);
-				return true;
+				return TryRecycle(data, out cell) || TryCreate(data, parent, out cell);
 			}
 
-			public void RecycleAt(int index)
+			/// <summary>
+			/// Recycle an active cell.
+			/// </summary>
+			public bool RecycleCellAt(int index, out IScrollerCell cell)
 			{
-				if (index < 0 || index >= activeCells.Count) return;
+				if (index < 0 || index >= activeCells.Count)
+				{
+					cell = null;
+					return false;
+				}
 
-				IScrollerCell cell = activeCells[index];
+				cell = activeCells[index];
 				activeCells.RemoveAt(index);
 				Type type = cell.CellType;
 				if (!cachedCells.TryGetValue(type, out List<IScrollerCell> cells))
 					cells = cachedCells[type] = new List<IScrollerCell>();
 
-				cell.Clear();
 				cell.Transform.gameObject.SetActive(false);
 				cells.Add(cell);
+				return true;
 			}
 
 			private bool TryRecycle(IScrollerCellData data, out IScrollerCell cell)
 			{
-				if (!cachedCells.TryGetValue(data.CellType, out var cells) || cells.Count == 0)
+				if (!cachedCells.TryGetValue(data.CellType, out List<IScrollerCell> cells) || cells.Count == 0)
 				{
 					cell = null;
 					return false;
