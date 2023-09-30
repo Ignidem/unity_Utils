@@ -2,6 +2,7 @@
 
 namespace Assets.External.unity_utils.Transforms
 {
+	[System.Serializable]
 	public struct Vector3Info
 	{
 		public static implicit operator Vector3Info(Vector3 vect)
@@ -43,12 +44,12 @@ namespace Assets.External.unity_utils.Transforms
 		public Vector3 vector;
 		public Space space;
 
-		public override bool Equals(object obj)
+		public override readonly bool Equals(object obj)
 		{
 			return base.Equals(obj);
 		}
 
-		public override int GetHashCode()
+		public override readonly int GetHashCode()
 		{
 			return base.GetHashCode();
 		}

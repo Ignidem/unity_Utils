@@ -2,6 +2,7 @@
 
 namespace Assets.External.unity_utils.Transforms
 {
+	[System.Serializable]
 	public struct TransformInfo
 	{
 		public static implicit operator TransformInfo(Transform transform)
@@ -46,23 +47,24 @@ namespace Assets.External.unity_utils.Transforms
 		public Vector3Info rotation;
 		public Vector3Info scale;
 
-		public override bool Equals(object obj)
+		public override readonly bool Equals(object obj)
 		{
 			return base.Equals(obj);
 		}
 
-		public override int GetHashCode()
+		public override readonly int GetHashCode()
 		{
 			return base.GetHashCode();
 		}
 
-		public void Apply(Transform transform)
+		public readonly void Apply(Transform transform)
 		{
 			ApplyPosition(transform);
 			ApplyRotation(transform);
+			ApplyScale(transform);
 		}
 
-		public void ApplyPosition(Transform transform)
+		public readonly void ApplyPosition(Transform transform)
 		{
 			switch (position.space)
 			{
@@ -75,7 +77,7 @@ namespace Assets.External.unity_utils.Transforms
 			}
 		}
 
-		public void ApplyRotation(Transform transform)
+		public readonly void ApplyRotation(Transform transform)
 		{
 			Quaternion rot = Quaternion.Euler(rotation);
 			switch (rotation.space)
@@ -89,7 +91,7 @@ namespace Assets.External.unity_utils.Transforms
 			}
 		}
 
-		public void ApplyScale(Transform transform)
+		public readonly void ApplyScale(Transform transform)
 		{
 			switch (scale.space)
 			{
