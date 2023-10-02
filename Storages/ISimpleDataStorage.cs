@@ -1,4 +1,6 @@
-﻿namespace Utils.Storage
+﻿using Items;
+
+namespace Utils.Storage
 {
 	public interface ISimpleDataStorage
 	{

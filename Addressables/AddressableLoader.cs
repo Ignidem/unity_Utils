@@ -9,10 +9,16 @@ namespace UnityUtils.AddressableUtils
 {
 	[Serializable]
 	public class AddressableLoader
+#if UNITY_EDITOR
+		: ISerializationCallbackReceiver
+#endif
 	{
 		public const string FieldName = nameof(prefabReference);
 
 		[SerializeField] private AssetReference prefabReference;
+
+		[field: SerializeField, HideInInspector]
+		public string Name { get; private set; }
 
 		public async Task<GameObject> Load(Transform parent)
 		{
@@ -29,6 +35,14 @@ namespace UnityUtils.AddressableUtils
 			GameObject obj = await Load(parent);
 			return new Addressable<TComponent>(obj, obj.GetComponent<TComponent>());
 		}
+
+#if UNITY_EDITOR
+		public void OnBeforeSerialize()
+		{
+			Name = prefabReference.editorAsset.name;
+		}
+		public void OnAfterDeserialize() { }
+#endif
 	}
 
 	[Serializable]
