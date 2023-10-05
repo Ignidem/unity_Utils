@@ -1,5 +1,4 @@
 ﻿using UnityUtils.Editor.SerializedProperties;
-using System.Collections.Generic;
 using UnityUtils.RectUtils;
 using UnityEditor;
 using UnityEngine;
@@ -16,7 +15,6 @@ namespace UnityUtils.Editor
 
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
 		{
-			property.serializedObject.Update();
 			IArray2D target = property.GetInstance() as IArray2D;
 			if (DrawSize(ref position, target))
 				property.serializedObject.ApplyModifiedProperties();
