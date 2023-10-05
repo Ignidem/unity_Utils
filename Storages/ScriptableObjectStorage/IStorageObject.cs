@@ -52,4 +52,44 @@ namespace UnityUtils.Storages
 			return values.Values.Where(v => v is T).Cast<T>().ToArray();
 		}
 	}
+
+	public class StorageObject<TValue> : StorageObject, IStorageObject<int, TValue>
+	{
+		public override Type TableType => typeof(TValue);
+
+		public TValue this[int key]
+		{
+			get
+			{
+				if (key < 0 || key >= values.Count) return default;
+				return values[key];
+			}
+			set
+			{
+
+				if (value == null)
+				{
+					Delete(key);
+					return;
+				}
+				
+				if (key < 0 || key >= values.Count) return;
+				values[key] = value;
+			}
+		}
+
+		[SerializeField]
+		private List<TValue> values;
+
+		public void Delete(int key)
+		{
+			if (key < 0 || key >= values.Count) return;
+			values.RemoveAt(key);
+		}
+
+		public override T[] GetAllAs<T>()
+		{
+			return values.Where(v => v is T).Cast<T>().ToArray();
+		}
+	}
 }

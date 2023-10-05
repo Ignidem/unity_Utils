@@ -106,6 +106,7 @@ namespace UnityUtils.Arrays
 			public int Length => elements?.Length ?? 0;
 			public bool IsEmpty => elements == null || Length == 0;
 
+			[SerializeField]
 			public T[] elements;
 		}
 
@@ -162,7 +163,8 @@ namespace UnityUtils.Arrays
 
 		public Vector2Int Size
 		{
-			get => elements == null ? Vector2Int.zero : new Vector2Int(elements.Length, elements[0].Length);
+			get => elements == null || elements.Length == 0 ? Vector2Int.zero 
+				: new Vector2Int(elements.Length, elements[0].Length);
 			set => Resize(value);
 		}
 

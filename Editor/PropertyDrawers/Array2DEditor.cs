@@ -11,40 +11,46 @@ namespace UnityUtils.Editor
 	public class Array2DEditor : ExtendedPropertyDrawer
 	{
 		private const string ElementsField = Array2D<object>.ElementsFieldName;
-		private const string SizeField = nameof(Array2D<object>.Size);
 
-		private Vector2Int size;
+		protected override LabelDrawType LabelType => LabelDrawType.None;
 
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
 		{
+			property.serializedObject.Update();
 			IArray2D target = property.GetInstance() as IArray2D;
-			position = DrawSize(position, target);
-			property.serializedObject.ApplyModifiedProperties();
+			if (DrawSize(ref position, target))
+				property.serializedObject.ApplyModifiedProperties();
+
 			position = DrawGrid(position, property, target);
 			property.serializedObject.ApplyModifiedProperties();
 
 			return 0;
 		}
 
-		private Rect DrawSize(Rect position, IArray2D array)
+		private bool DrawSize(ref Rect position, IArray2D array)
 		{
-			position = position.MoveY(SpacedLineHeight).SetHeight(LineHeight);
-			array.Size = EditorGUI.Vector2IntField(position, GUIContent.none, array.Size);
-			return position;
+			position = position.SetHeight(LineHeight);
+			Vector2Int newSize = EditorGUI.Vector2IntField(position, GUIContent.none, array.Size);
+			bool shouldUpdate = newSize != array.Size;
+			array.Size = newSize;
+			return shouldUpdate;
 		}
 
 		private Rect DrawGrid(Rect position, SerializedProperty prop, IArray2D array)
 		{
 			Vector2Int size = array.Size;
+
+			if (size.x == 0 || size.y == 0) return position;
+
+			SerializedProperty list = prop.FindPropertyRelative(ElementsField);
 			float width = Mathf.Max(10, (ViewWidth - IndentWidth) / size.x);
 			position = position.MoveY(LineHeight).SetX(IndentWidth / 2)
 				.SetWidth(width).SetHeight(LineHeight);
-
-			SerializedProperty list = prop.FindPropertyRelative(ElementsField);
 			Rect pos = position;
 			for (int x = 0; x < size.x; x++)
 			{
-				SerializedProperty subList = list.GetArrayElementAtIndex(x).FindPropertyRelative(ElementsField);
+				SerializedProperty subArrayObj = list.GetArrayElementAtIndex(x);
+				SerializedProperty subList = subArrayObj.FindPropertyRelative(ElementsField);
 				if (subList == null) continue;
 
 				for (int y = 0; y < size.y; y++)

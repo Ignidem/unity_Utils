@@ -39,7 +39,11 @@ namespace UnityUtils.AddressableUtils
 #if UNITY_EDITOR
 		public void OnBeforeSerialize()
 		{
-			Name = prefabReference.editorAsset.name;
+			try
+			{
+				Name = prefabReference.editorAsset.name;
+			}
+			catch (Exception) { }
 		}
 		public void OnAfterDeserialize() { }
 #endif
