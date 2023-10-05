@@ -33,8 +33,6 @@ namespace Assets.GameAssets.Common.Layout
 		[Header("Events")]
 		public UnityEvent<Transform, Vector3, int, int> OnChildReloaded;
 
-		private bool HasEvents => OnChildReloaded.GetPersistentEventCount() != 0;
-
 		public int MaxElements => Math.Max(1, GridSize.x) * Math.Max(1, GridSize.y) * Math.Max(1, GridSize.z);
 
 		public bool HasOverflow => overflowX || overflowY || overflowZ;
@@ -75,10 +73,12 @@ namespace Assets.GameAssets.Common.Layout
 				Vector3 pos = GetLocalPositionOfChild(gridPos, spacing, grid);
 				child.localPosition = pos;
 
-				if (HasEvents)
-					OnChildReloaded.Invoke(child, pos, i, count);
+				OnChildReloaded?.Invoke(child, pos, i, count);
 				if (child.TryGetComponent(out IWorldGridLayoutElement element))
-					element.SetLayoutPosition(gridPos, pos, i, count);
+				{
+					LayoutElementInfo info = new LayoutElementInfo(i, gridPos, pos, spacing);
+					element.SetLayoutPosition(info);
+				}
 			}
 		}
 
