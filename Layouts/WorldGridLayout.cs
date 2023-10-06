@@ -45,6 +45,12 @@ namespace Assets.GameAssets.Common.Layout
 				Debug.LogWarning("Only one overflow axis is supported at the moment. " +
 					"Only the first active overflow axis will be applied.");
 			}
+
+			GridSize = new Vector3Int(
+				Math.Max(1, GridSize.x),
+				Math.Max(1, GridSize.y),
+				Math.Max(1, GridSize.z)
+				);
 		}
 
 		private void OnEnable()
