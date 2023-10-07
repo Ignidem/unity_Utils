@@ -47,12 +47,16 @@ namespace UnityUtils.Editor
 			Rect pos = position;
 			for (int x = 0; x < size.x; x++)
 			{
+				if (x >= list.arraySize) break;
+
 				SerializedProperty subArrayObj = list.GetArrayElementAtIndex(x);
 				SerializedProperty subList = subArrayObj.FindPropertyRelative(ElementsField);
 				if (subList == null) continue;
 
 				for (int y = 0; y < size.y; y++)
 				{
+					if (y >= subList.arraySize) break;
+
 					SerializedProperty element = subList.GetArrayElementAtIndex(y);
 					if (element == null) continue;
 					pos = position.Move(new Vector2(x * width, y * LineHeight));
