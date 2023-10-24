@@ -4,7 +4,7 @@ namespace UnityUtils.GameObjects
 {
 	public static class GameObjectEx
 	{
-		public static void DestroySelf(this GameObject go, float delay = 0)
+		public static void SelfDestruct(this Object go, float delay = 0)
 		{
 			if (!go) return;
 
@@ -14,10 +14,24 @@ namespace UnityUtils.GameObjects
 				Object.DestroyImmediate(go);
 		}
 
-		public static void DestroyGameObject(this Component component, float delay = 0)
+		public static void SelfDestructObject(this Object obj, float delay = 0)
 		{
-			if (component == null || !component.gameObject) return;
-			component.gameObject.DestroySelf(delay);
+			if (obj is Component comp && comp)
+			{
+				comp.gameObject.SelfDestruct(delay);
+			}
+			else
+			{
+				obj.SelfDestruct(delay);
+			}
+		}
+
+		public static bool TryGetInSelfOrChildren<T>(this GameObject obj, out T comp)
+		{
+			if (!obj.TryGetComponent(out comp))
+				comp = obj.GetComponentInChildren<T>();
+
+			return comp != null;
 		}
 	}
 }

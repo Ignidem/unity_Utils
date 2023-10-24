@@ -78,6 +78,8 @@ namespace UnityUtils.Storages
 			}
 		}
 
+		public int Count => values.Count;
+
 		[SerializeField]
 		private List<TValue> values;
 

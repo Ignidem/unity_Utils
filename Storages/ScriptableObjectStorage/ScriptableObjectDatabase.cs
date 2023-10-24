@@ -7,7 +7,7 @@ using Utils.Storage;
 namespace UnityUtils.Storages
 {
 	[CreateAssetMenu(fileName = nameof(ScriptableObjectDatabase), menuName = "Storage/" + nameof(ScriptableObjectDatabase))]
-	public class ScriptableObjectDatabase : ScriptableObject, ISimpleDataStorage
+	public class ScriptableObjectDatabase : ScriptableObject, ISimpleDataStorage, IDisposable
 	{
 		[SerializeField] private List<StorageObject> tables;
 
@@ -58,6 +58,16 @@ namespace UnityUtils.Storages
 				return;
 
 			storage[key] = entry;
+		}
+
+		public void Dispose()
+		{
+			for (int i = 0; i < tables.Count; i++)
+			{
+				StorageObject table = tables[i];
+				if (table is IDisposable _d)
+					_d.Dispose();
+			}
 		}
 	}
 }

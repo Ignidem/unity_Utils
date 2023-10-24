@@ -28,7 +28,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 			}
 
 			//Get GUID Property
-			SerializedProperty asset = property.FindPropertyRelative(AddressableReference<int>.FieldName);
+			SerializedProperty asset = property.FindPropertyRelative(AddressableReference<Component>.FieldName);
 			SerializedProperty guidProp = asset.FindPropertyRelative(AssetGUID);
 
 			//cache guid value;

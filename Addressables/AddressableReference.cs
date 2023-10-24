@@ -3,51 +3,103 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityUtils.GameObjects;
 
 namespace UnityUtils.AddressableUtils
 {
 	[System.Serializable]
-	public class AddressableReference<T>
+	public class AddressableReference<T> : System.IDisposable
 #if UNITY_EDITOR
-		: ISerializationCallbackReceiver
+		, ISerializationCallbackReceiver
 #endif
+		where T : Object
 	{
 		public const string FieldName = nameof(prefabReference);
 
 		[SerializeField] private AssetReference prefabReference;
 
-		[field: SerializeField]
+		[field: SerializeField, HideInInspector]
 		public string Name { get; private set; }
 
-		private bool IsComponent
-		{
-			get
-			{
-				System.Type t = typeof(T);
+		public bool IsLoaded => loadTask?.IsCompleted ?? false;
+		public bool IsLoading => !(loadTask?.IsCompleted ?? true);
 
-				return t.IsAssignableFrom(typeof(Component)) || !t.IsAssignableFrom(typeof(Object));
-			}
+		private Task loadTask;
+		private IAddressable<T> adrsLoad;
+
+		private bool IsComponent => typeof(T).IsComponentType();
+
+		public async Task<T> Instantiate()
+		{
+			IAddressable<T> adrs = await Load();
+			return Object.Instantiate(adrs.Target);
 		}
 
-		public async Task<IAddressable<T>> Load(Transform parent)
+		public async Task<K> Instantiate<K>()
 		{
+			IAddressable<T> adrs = await Load();
+			T instance = Object.Instantiate(adrs.Target);
+
+			K Destroy()
+			{
+				//Object should be destroyed as its reference will be lost if nothing is returned;
+				Object obj = instance;
+				obj.SelfDestructObject();
+				return default;
+			}
+
+			if (instance is K _k) return _k;
+
+			System.Type kType = typeof(K);
+			if (!kType.IsComponentType())
+				return Destroy();
+
+			if (instance is GameObject obj && obj.TryGetInSelfOrChildren(out K comp))
+				return comp;
+
+			return Destroy();
+		}
+
+		public async Task<IAddressable<T>> Load()
+		{
+			if (adrsLoad != null)
+				return adrsLoad;
+
 			if (!IsComponent)
 			{
 				T t = await LoadAs<T>();
-				return new ObjectAddressable<T>(t);
+				return adrsLoad = new ObjectAddressable<T>(t);
 			}
 
 			GameObject obj = await LoadAs<GameObject>();
 
-			if (!obj.TryGetComponent(out T comp))
-				comp = obj.GetComponentInChildren<T>();
+			obj.TryGetInSelfOrChildren(out T comp);
 
-			return new ComponentAddressable<T>(obj, comp);
+			return adrsLoad = new ComponentAddressable<T>(obj, comp);
+		}
+
+		public virtual void Dispose()
+		{
+			if (IsLoading)
+			{
+				//was not yet loaded
+				DisposeAsync();
+				return;
+			}
+
+			adrsLoad?.Dispose();
+		}
+
+		private async void DisposeAsync()
+		{
+			await loadTask;
+			Dispose();
 		}
 
 		private async Task<K> LoadAs<K>()
 		{
 			AsyncOperationHandle<K> result = Addressables.LoadAssetAsync<K>(prefabReference.RuntimeKey);
+			loadTask = result.Task;
 			return await result.Task;
 		}
 
@@ -70,47 +122,33 @@ namespace UnityUtils.AddressableUtils
 	}
 
 	[System.Serializable]
-	public class LazyAddressable<T> : AddressableReference<T>, System.IDisposable
+	public class LazyAddressable<T> : AddressableReference<T>
 		where T : Component
 	{
 		public static implicit operator bool(LazyAddressable<T> lazyAddressable)
 		{
-			return lazyAddressable.loaded != null && lazyAddressable.loaded.IsAlive;
+			return lazyAddressable.comp;
 		}
 
 		[SerializeField] private Transform parent;
 
-		private Task<IAddressable<T>> loadTask;
-		private IAddressable<T> loaded;
+		private T comp;
 
 		public async Task<T> GetComponent()
 		{
-			loadTask ??= Load(parent);
+			if (comp) return comp;
 
-			if (!loaded.IsAlive)
-				loaded = await loadTask;
-
-			return loaded.Target;
+			comp = await Instantiate();
+			comp.transform.SetParent(parent);
+			return comp;
 		}
 
 		public TaskAwaiter<T> GetAwaiter() => GetComponent().GetAwaiter();
 
-		public void Dispose()
+		public override void Dispose()
 		{
-			if (loaded == null && !loadTask.IsCompleted)
-			{
-				//was not yet loaded
-				DisposeAsync();
-				return;
-			}
-
-			loaded?.Dispose();
-		}
-
-		private async void DisposeAsync()
-		{
-			await loadTask;
-			Dispose();
+			if (comp) comp.SelfDestructObject();
+			base.Dispose();
 		}
 	}
 }

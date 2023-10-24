@@ -40,8 +40,6 @@ namespace UnityUtils.AddressableUtils
 
 		public void Dispose()
 		{
-			if (objectTarget is UObject obj)
-				UObject.Destroy(obj);
 			Addressables.Release(objectTarget);
 			WasReleased = true;
 		}

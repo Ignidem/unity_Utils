@@ -9,6 +9,7 @@ using Utils.StateMachines;
 namespace Assets.Systems.States
 {
 	public abstract class StateMachineControllerBehaviour<T> : MonoBehaviour, IStateMachine<Type>
+		where T : IState<Type>
 	{
 		[SerializeReference, Polymorphic(true)]
 		protected T activeState;
@@ -43,6 +44,11 @@ namespace Assets.Systems.States
 		{
 			Type key = activeState?.GetType();
 			if (key != null) SwitchState(key);
+		}
+
+		private void OnDestroy()
+		{
+			activeState?.Exit();
 		}
 
 		public Task SwitchState(IStateData<Type> data) => stateMachine.SwitchState(data);
