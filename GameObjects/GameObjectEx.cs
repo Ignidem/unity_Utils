@@ -4,7 +4,7 @@ namespace UnityUtils.GameObjects
 {
 	public static class GameObjectEx
 	{
-		public static void SelfDestruct(this Object go, float delay = 0)
+		public static void DestroySelf(this Object go, float delay = 0)
 		{
 			if (!go) return;
 
@@ -14,15 +14,15 @@ namespace UnityUtils.GameObjects
 				Object.DestroyImmediate(go);
 		}
 
-		public static void SelfDestructObject(this Object obj, float delay = 0)
+		public static void DestroySelfObject(this Object obj, float delay = 0)
 		{
 			if (obj is Component comp && comp)
 			{
-				comp.gameObject.SelfDestruct(delay);
+				comp.gameObject.DestroySelf(delay);
 			}
 			else
 			{
-				obj.SelfDestruct(delay);
+				obj.DestroySelf(delay);
 			}
 		}
 

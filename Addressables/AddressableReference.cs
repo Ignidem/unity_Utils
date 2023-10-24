@@ -44,7 +44,7 @@ namespace UnityUtils.AddressableUtils
 			{
 				//Object should be destroyed as its reference will be lost if nothing is returned;
 				Object obj = instance;
-				obj.SelfDestructObject();
+				obj.DestroySelfObject();
 				return default;
 			}
 
@@ -147,7 +147,7 @@ namespace UnityUtils.AddressableUtils
 
 		public override void Dispose()
 		{
-			if (comp) comp.SelfDestructObject();
+			if (comp) comp.DestroySelfObject();
 			base.Dispose();
 		}
 	}
