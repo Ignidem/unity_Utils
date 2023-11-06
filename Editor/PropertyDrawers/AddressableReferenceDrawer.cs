@@ -45,10 +45,10 @@ namespace UnityUtils.Editor.PropertyDrawers
 			if (current == result) return 0;
 
 			//Get new guid value;
-			guid = !current ? string.Empty : AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(result));
+			guid = !result ? string.Empty : AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(result));
 			guidProp.stringValue = guid;
 
-			if (!current) return 0;
+			if (!result) return 0;
 
 			AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
 			//Check is field value is already addressable;
