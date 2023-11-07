@@ -155,7 +155,7 @@ namespace UnityUtils.Arrays
 			}
 		}
 
-		public T this[int x, int y]
+		public virtual T this[int x, int y]
 		{
 			get => elements[x][y];
 			set => elements[x][y] = value;

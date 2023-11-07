@@ -9,9 +9,6 @@ namespace UnityUtils.AddressableUtils
 {
 	[System.Serializable]
 	public class AddressableReference<T> : System.IDisposable
-#if UNITY_EDITOR
-		, ISerializationCallbackReceiver
-#endif
 		where T : Object
 	{
 		public const string FieldName = nameof(prefabReference);
@@ -21,6 +18,11 @@ namespace UnityUtils.AddressableUtils
 		[field: SerializeField, HideInInspector]
 		public string Name { get; private set; }
 
+		[field: SerializeField, HideInInspector]
+		public string Path { get; private set; }
+
+		public object RuntimeKey => prefabReference.RuntimeKey;
+
 		public bool IsLoaded => loadTask?.IsCompleted ?? false;
 		public bool IsLoading => !(loadTask?.IsCompleted ?? true);
 
@@ -29,16 +31,16 @@ namespace UnityUtils.AddressableUtils
 
 		private bool IsComponent => typeof(T).IsComponentType();
 
-		public async Task<T> Instantiate()
+		public async Task<T> Instantiate(Transform parent = null)
 		{
 			IAddressable<T> adrs = await Load();
-			return Object.Instantiate(adrs.Target);
+			return Object.Instantiate(adrs.Target, parent);
 		}
 
-		public async Task<K> Instantiate<K>()
+		public async Task<K> Instantiate<K>(Transform parent = null)
 		{
 			IAddressable<T> adrs = await Load();
-			T instance = Object.Instantiate(adrs.Target);
+			T instance = Object.Instantiate(adrs.Target, parent);
 
 			K Destroy()
 			{
@@ -102,23 +104,6 @@ namespace UnityUtils.AddressableUtils
 			loadTask = result.Task;
 			return await result.Task;
 		}
-
-#if UNITY_EDITOR
-		public void OnBeforeSerialize()
-		{
-			try
-			{
-				Object asset = prefabReference.editorAsset;
-
-				if (!asset) return;
-
-				Name = asset.name;
-			}
-			catch (System.Exception) { }
-		}
-
-		public void OnAfterDeserialize() { }
-#endif
 	}
 
 	[System.Serializable]

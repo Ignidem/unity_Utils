@@ -16,6 +16,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 
 		protected override LabelDrawType LabelType => LabelDrawType.None;
 
+
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
 		{
 			System.Type fieldType = fieldInfo.FieldType;
@@ -28,8 +29,8 @@ namespace UnityUtils.Editor.PropertyDrawers
 			}
 
 			//Get GUID Property
-			SerializedProperty asset = property.FindPropertyRelative(AddressableReference<Component>.FieldName);
-			SerializedProperty guidProp = asset.FindPropertyRelative(AssetGUID);
+			SerializedProperty assetProp = property.FindPropertyRelative(AddressableReference<Component>.FieldName);
+			SerializedProperty guidProp = assetProp.FindPropertyRelative(AssetGUID);
 
 			//cache guid value;
 			string guid = guidProp.stringValue;
@@ -48,16 +49,27 @@ namespace UnityUtils.Editor.PropertyDrawers
 			guid = !result ? string.Empty : AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(result));
 			guidProp.stringValue = guid;
 
-			if (!result) return 0;
+			if (!result) return UpdateInfo(property, null);
 
 			AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
 			//Check is field value is already addressable;
 			AddressableAssetEntry entry = settings.FindAssetEntry(guid);
-			if (entry == null)
-			{
-				//Make object addressable;
-				settings.CreateAssetReference(guid);
-			}
+
+			AssetReference asset = entry == null ? settings.CreateAssetReference(guid) : new AssetReference(guid);
+			return UpdateInfo(property, asset);
+		}
+
+		private int UpdateInfo(SerializedProperty property, AssetReference asset)
+		{
+			const string backingFieldFormat = "<{0}>k__BackingField";
+
+			string name = string.Format(backingFieldFormat, nameof(AddressableReference<Component>.Name));
+			SerializedProperty nameProp = property.FindPropertyRelative(name);
+			string path = string.Format(backingFieldFormat, nameof(AddressableReference<Component>.Path));
+			SerializedProperty keyProp = property.FindPropertyRelative(path);
+
+			keyProp.stringValue = asset?.RuntimeKey?.ToString();
+			nameProp.stringValue = asset != null && asset.editorAsset ? asset.editorAsset.name : null;
 
 			return 0;
 		}
