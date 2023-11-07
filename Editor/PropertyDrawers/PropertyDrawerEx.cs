@@ -19,7 +19,8 @@ namespace UnityUtils.Editor
 	public abstract class ExtendedPropertyDrawer : PropertyDrawer
 	{
 		protected const float IndentWidth = 38;
-		protected static float IndentX => IndentWidth * EditorGUI.indentLevel;
+
+		protected static float IndentX => (IndentWidth * 0.5f) + (IndentWidth * EditorGUI.indentLevel);
 		protected static float Spacing => EditorGUIUtility.standardVerticalSpacing * 2;
 		protected static float LineHeight => EditorGUIUtility.singleLineHeight;
 		protected static float SpacedLineHeight => LineHeight + EditorGUIUtility.standardVerticalSpacing;
