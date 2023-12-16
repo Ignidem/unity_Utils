@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -23,14 +25,24 @@ namespace UnityUtils.Editor.PropertyDrawers
 			polyAttr.SetFieldInfo(prop.GetParent(), fieldInfo, listIndex);
 		}
 
+		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+		{
+			Event e = Event.current;
+
+			Rect ddRect = GetDropdownRect(position);
+			if (e.type == EventType.MouseDown && e.button == 1 && ddRect.Contains(e.mousePosition))
+				TypeContextMenu();
+
+			base.OnGUI(position, property, label);
+		}
+
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
 		{
 			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
 			Init(property, polyAttr);
 
 			int index = property.GetIndex();
-			position = position.MoveY(SpacedLineHeight);
-			PolyTypeDropdown(position, index, polyAttr);
+			position = PolyTypeDropdown(position, index, polyAttr);
 			EditorGUI.indentLevel++;
 
 			position = position.MoveY(SpacedLineHeight);
@@ -80,12 +92,51 @@ namespace UnityUtils.Editor.PropertyDrawers
 
 		private Rect PolyTypeDropdown(Rect position, int listIndex, PolymorphicAttribute polyAttr)
 		{
-			Rect popupPos = position.SetHeight(LineHeight).MoveX(Spacing * 3);
-			popupPos = popupPos.SetWidth(ViewWidth - popupPos.x);
+			Rect popupPos = GetDropdownRect(position);
 			int index = EditorGUI.Popup(popupPos, "Type", polyAttr.Index, polyAttr.options);
 			polyAttr.ChangeIndex(index, listIndex);
+			return popupPos;
+		}
 
-			return position;
+		private static Rect GetDropdownRect(Rect position)
+		{
+			Rect popupPos = position.MoveY(SpacedLineHeight).SetHeight(LineHeight).MoveX(Spacing * 3);
+			return popupPos.SetWidth(ViewWidth - popupPos.x);
+		}
+
+		private void TypeContextMenu()
+		{
+			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
+			Type type = polyAttr.SelectedType;
+			if (type == null || !TryGetScript(type, out _))
+				return;
+
+			GenericMenu context = new GenericMenu();
+			context.AddItem(new GUIContent("Edit Script"), false, OpenClass);
+			context.ShowAsContext();
+		}
+
+		private void OpenClass()
+		{
+			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
+			Type type = polyAttr.SelectedType;
+			if (type == null || !TryGetScript(type, out MonoScript script))
+				return;
+
+			AssetDatabase.OpenAsset(script);
+		}
+
+		private static bool TryGetScript(Type type, out MonoScript script)
+		{
+			string[] guids = AssetDatabase.FindAssets("t:script " + type.Name, new[] { "Assets" });
+
+			static MonoScript GuidToScript(string guid)
+			{
+				string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+				return AssetDatabase.LoadAssetAtPath<MonoScript>(assetPath);
+			}
+
+			return script = guids.Select(GuidToScript).FirstOrDefault(script => script.GetClass() == type);
 		}
 	}
 }
