@@ -14,6 +14,18 @@ namespace UnityUtils.Storage.PlayerPreferences
 			return (T)ReadValue<T>(key);
 		}
 
+		public static bool TryLoad<T>(string key, out T value)
+		{
+			if (!PlayerPrefs.HasKey(key))
+			{
+				value = default;
+				return false;
+			}
+
+			value = (T)ReadValue<T>(key);
+			return true;
+		}
+
 		public static void SetValue<T>(string key, T value)
 		{
 			void Default()
