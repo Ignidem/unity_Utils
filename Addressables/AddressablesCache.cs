@@ -35,7 +35,7 @@ namespace UnityUtils.AddressablesUtils
 			return UnityEngine.Object.Instantiate(value, parent);
 		}
 		
-		public void Dispose()
+		public virtual void Dispose()
 		{
 			foreach (AsyncOperationHandle<TValue> value in handlers.Values)
 			{
