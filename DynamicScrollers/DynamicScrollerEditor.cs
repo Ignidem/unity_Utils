@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEditor.UI;
 
 namespace UnityUtils.DynamicScrollers.Editor
@@ -22,3 +23,4 @@ namespace UnityUtils.DynamicScrollers.Editor
 		}
 	}
 }
+#endif

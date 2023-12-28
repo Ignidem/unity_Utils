@@ -35,9 +35,17 @@ namespace Assets.Systems.States
 
 		protected virtual void Awake()
 		{
-			stateMachine = new StateMachine<Type>(states.Cast<IState<Type>>());
-			OnStateChange += (_, state) => activeState = (T)state;
-			OnException += e => Debug.LogException(e);
+			try
+			{
+				stateMachine = new StateMachine<Type>(states.Cast<IState<Type>>());
+				OnStateChange += (_, state) => activeState = (T)state;
+				OnException += e => Debug.LogException(e);
+			}
+			catch (Exception e)
+			{
+				Debug.LogError($"Error in {GetType().Name} state machine");
+				Debug.LogException(e);
+			}
 		}
 
 		protected virtual void Start()

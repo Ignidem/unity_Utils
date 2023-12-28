@@ -1,6 +1,6 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
-using UnityUtils.RectUtils;
 
 namespace UnityUtils.Serialization.Editor
 {
@@ -22,3 +22,4 @@ namespace UnityUtils.Serialization.Editor
 		}
 	}
 }
+#endif
