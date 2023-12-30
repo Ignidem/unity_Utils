@@ -11,7 +11,7 @@ namespace UnityUtils.PropertyAttributes
 	{
 		public readonly bool nullable;
 		public string[] options { get; private set; }
-		private Type baseType;
+		public Type baseType { get; private set; }
 		public bool WasInitialized => types != null;
 		private Type[] types;
 		private ConstructorInfo[] constructors;
@@ -132,7 +132,7 @@ namespace UnityUtils.PropertyAttributes
 			SetFieldValue(value, listIndex);
 		}
 
-		private object GetFieldValue(int listIndex)
+		public object GetFieldValue(int listIndex)
 		{
 			object value = field.GetValue(parent);
 			if (listIndex != -1 && value is IList list)

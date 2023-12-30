@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityUtils.Editor.SerializedProperties;
 using UnityUtils.PropertyAttributes;
@@ -28,10 +25,16 @@ namespace UnityUtils.Editor.PropertyDrawers
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			Event e = Event.current;
-
 			Rect ddRect = GetDropdownRect(position);
-			if (e.type == EventType.MouseDown && e.button == 1 && ddRect.Contains(e.mousePosition))
-				TypeContextMenu();
+
+			if (ddRect.Contains(e.mousePosition)) 
+			{
+				if (e.type == EventType.ContextClick)
+					TypeContextMenu();
+				else if (e.type == EventType.KeyDown && e.keyCode == KeyCode.E)
+					OpenClass();
+			}
+
 
 			base.OnGUI(position, property, label);
 		}
@@ -41,19 +44,19 @@ namespace UnityUtils.Editor.PropertyDrawers
 			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
 			Init(property, polyAttr);
 
-			int index = property.GetIndex();
-			position = PolyTypeDropdown(position, index, polyAttr);
+			float width = CalcLabelSize(property.displayName).x;
+			PolyTypeDropdown(position.MoveX(width), polyAttr, property);
 			EditorGUI.indentLevel++;
 
 			position = position.MoveY(SpacedLineHeight);
 
 			Type selectedType = polyAttr.SelectedType;
 
-			position = DrawProperty(position, property, selectedType);
+			position = DrawProperty(position, property, selectedType); ;
 
 			EditorGUI.indentLevel--;
 			EditorGUI.EndFoldoutHeaderGroup();
-			return 0;
+			return -LineHeight;
 		}
 
 		private Rect DrawProperty(Rect position, SerializedProperty property, Type selectedType)
@@ -90,17 +93,24 @@ namespace UnityUtils.Editor.PropertyDrawers
 			return position;
 		}
 
-		private Rect PolyTypeDropdown(Rect position, int listIndex, PolymorphicAttribute polyAttr)
+		private Rect PolyTypeDropdown(Rect position, PolymorphicAttribute polyAttr, SerializedProperty property)
 		{
-			Rect popupPos = GetDropdownRect(position);
-			int index = EditorGUI.Popup(popupPos, "Type", polyAttr.Index, polyAttr.options);
+			int listIndex = property.GetIndex();
+			position = GetDropdownRect(position);
+			string option = polyAttr.Index == -1 ? "Null Reference" : polyAttr.options[polyAttr.Index];
+			float width = CalcLabelSize(option).x;
+			Rect popupPos = position.SetWidth(width + 25);
+			int index = EditorGUI.Popup(popupPos, polyAttr.Index, polyAttr.options);
+			if (index == polyAttr.Index) return position;
+			
+			polyAttr.SetFieldInfo(property.GetParent(), fieldInfo, listIndex);
 			polyAttr.ChangeIndex(index, listIndex);
-			return popupPos;
+			return position;
 		}
 
 		private static Rect GetDropdownRect(Rect position)
 		{
-			Rect popupPos = position.MoveY(SpacedLineHeight).SetHeight(LineHeight).MoveX(Spacing * 3);
+			Rect popupPos = position.MoveX(Spacing * 3);
 			return popupPos.SetWidth(ViewWidth - popupPos.x);
 		}
 
@@ -111,7 +121,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 			if (type == null || !TryGetScript(type, out _))
 				return;
 
-			GenericMenu context = new GenericMenu();
+            GenericMenu context = new GenericMenu();
 			context.AddItem(new GUIContent("Edit Script"), false, OpenClass);
 			context.ShowAsContext();
 		}

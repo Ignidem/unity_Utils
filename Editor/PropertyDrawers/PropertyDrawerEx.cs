@@ -18,14 +18,19 @@ namespace UnityUtils.Editor
 
 	public abstract class ExtendedPropertyDrawer : PropertyDrawer
 	{
-		protected const float IndentWidth = 38;
+		public const float IndentWidth = 38;
 
-		protected static float IndentX => (IndentWidth * 0.5f) + (IndentWidth * EditorGUI.indentLevel);
-		protected static float Spacing => EditorGUIUtility.standardVerticalSpacing * 2;
-		protected static float LineHeight => EditorGUIUtility.singleLineHeight;
-		protected static float SpacedLineHeight => LineHeight + EditorGUIUtility.standardVerticalSpacing;
-		protected static float FieldWidth => EditorGUIUtility.fieldWidth;
+		public static float IndentX => (IndentWidth * 0.5f) + (IndentWidth * EditorGUI.indentLevel);
+		public static float Spacing => EditorGUIUtility.standardVerticalSpacing * 2;
+		public static float LineHeight => EditorGUIUtility.singleLineHeight;
+		public static float SpacedLineHeight => LineHeight + EditorGUIUtility.standardVerticalSpacing;
+		public static float FieldWidth => EditorGUIUtility.fieldWidth;
 		public static float ViewWidth => EditorGUIUtility.currentViewWidth;
+
+		public static Vector2 CalcLabelSize(string content)
+		{
+			return GUI.skin.button.CalcSize(new GUIContent(content));
+		}
 
 		protected virtual LabelDrawType LabelType => LabelDrawType.HeaderFoldout;
 		private readonly List<bool> folded = new();
@@ -103,6 +108,24 @@ namespace UnityUtils.Editor
 				return height;
 
 			return DefaultPropertyHeight(property, label);
+		}
+
+		protected bool IsFolded(SerializedProperty property) => IsFolded(Math.Max(0, property.GetIndex()));
+		protected bool IsFolded(int index) => index < folded.Count && folded[index];
+		protected void SetFolded(SerializedProperty property, bool value)
+		{
+			SetFolded(Math.Max(0, property.GetIndex()), value);
+		}
+		protected void SetFolded(int index, bool value)
+		{
+			if (index < folded.Count)
+			{
+				if (!value) return;
+
+				while (index < folded.Count) folded.Add(false);
+			}
+
+			folded[index] = value;
 		}
 	}
 }

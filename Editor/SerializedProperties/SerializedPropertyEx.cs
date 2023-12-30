@@ -77,7 +77,11 @@ namespace UnityUtils.Editor.SerializedProperties
 		private static object GetIndexed(string name, object target)
 		{
 			int start = name.IndexOf('[');
-			int.TryParse(name[start..^1], out int index);
+			string sint = name[(start + 1)..^1];
+			if (!int.TryParse(sint, out int index))
+			{
+				throw new Exception("Failed to int parse " + sint + " from " + name);
+			}
 			object list = ReadPath(name[..start], target);
 			return list switch
 			{
