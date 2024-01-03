@@ -24,6 +24,9 @@ namespace UnityUtils.Editor.PropertyDrawers
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
+			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
+			Init(property, polyAttr);
+
 			Event e = Event.current;
 			Rect ddRect = GetDropdownRect(position);
 
@@ -42,7 +45,6 @@ namespace UnityUtils.Editor.PropertyDrawers
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
 		{
 			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
-			Init(property, polyAttr);
 
 			float width = CalcLabelSize(property.displayName).x;
 			PolyTypeDropdown(position.MoveX(width), polyAttr, property);
@@ -57,6 +59,22 @@ namespace UnityUtils.Editor.PropertyDrawers
 			EditorGUI.indentLevel--;
 			EditorGUI.EndFoldoutHeaderGroup();
 			return -LineHeight;
+		}
+
+		protected override bool DrawLabel(SerializedProperty property, GUIContent label, 
+			ref Rect position, int index, bool folded)
+		{
+			Rect pos = position;
+			if (property.IsArrayElement() && folded)
+			{
+				PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
+				label = new GUIContent(polyAttr.GetFieldValue(index).GetType().Name);
+				position = position.SetWidth(CalcLabelSize(label.text).x);
+			}
+
+			bool fold = base.DrawLabel(property, label, ref position, index, folded);
+			position = pos;
+			return fold;
 		}
 
 		private Rect DrawProperty(Rect position, SerializedProperty property, Type selectedType)

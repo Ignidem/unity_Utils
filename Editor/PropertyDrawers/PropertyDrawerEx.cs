@@ -52,18 +52,7 @@ namespace UnityUtils.Editor
 			Rect start = position;
 			position = position.SetHeight(LineHeight);
 
-			switch (LabelType)
-			{
-				case LabelDrawType.Label:
-					position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
-					break;
-				case LabelDrawType.Foldout:
-					folded[index] = !EditorGUI.Foldout(position, !folded[index], label);
-					break;
-				case LabelDrawType.HeaderFoldout:
-					folded[index] = !EditorGUI.BeginFoldoutHeaderGroup(position, !folded[index], label);
-					break;
-			}
+			folded[index] = DrawLabel(property, label, ref position, index, folded[index]);
 
 			float extraHeight = folded[index] ? 0 : DrawProperty(ref position, property, label);
 
@@ -77,6 +66,23 @@ namespace UnityUtils.Editor
 			float height = (position.y - start.y) + LineHeight + extraHeight;
 
 			heights[property.propertyPath] = height;
+		}
+
+		protected virtual bool DrawLabel(SerializedProperty property, GUIContent label,
+			ref Rect position, int index, bool folded)
+		{
+			switch (LabelType)
+			{
+				case LabelDrawType.Label:
+					position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+					return false;
+				case LabelDrawType.Foldout:
+					return !EditorGUI.Foldout(position, !folded, label);
+				case LabelDrawType.HeaderFoldout:
+					return !EditorGUI.BeginFoldoutHeaderGroup(position, !folded, label);
+			}
+
+			return false;
 		}
 
 		protected void DefaultGUI(ref Rect position, SerializedProperty property)

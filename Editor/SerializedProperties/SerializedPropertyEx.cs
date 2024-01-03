@@ -10,6 +10,11 @@ namespace UnityUtils.Editor.SerializedProperties
 		private const BindingFlags BindingAttr = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
 			BindingFlags.Static;
 
+		public static bool IsArrayElement(this SerializedProperty property)
+		{
+			return property.propertyPath[^1] == ']';
+		}
+
 		public static int GetIndex(this SerializedProperty property)
 		{
 			string path = property.propertyPath;
