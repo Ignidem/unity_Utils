@@ -14,7 +14,7 @@ namespace Assets.External.unity_utils.Editor.ContextMenus
 					return;
 
 				System.Type type = script.GetClass();
-				ProjectWindowUtil.CreateAsset(ScriptableObject.CreateInstance(type), type.Name);
+				ProjectWindowUtil.CreateAsset(ScriptableObject.CreateInstance(type), type.Name + ".asset");
 			}
 
 			for (int i = 0; i < Selection.objects.Length; i++)

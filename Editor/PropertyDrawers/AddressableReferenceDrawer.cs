@@ -1,6 +1,5 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using UnityUtils.RectUtils;
 using UnityUtils.AddressableUtils;
 using UnityEngine.AddressableAssets;
 using UnityEditor.AddressableAssets;
@@ -8,7 +7,7 @@ using UnityEditor.AddressableAssets.Settings;
 
 namespace UnityUtils.Editor.PropertyDrawers
 {
-	[CustomPropertyDrawer(typeof(AddressableReference<>))]
+	[CustomPropertyDrawer(typeof(AddressableReference<>), true)]
 	public class AddressableReferenceDrawer : ExtendedPropertyDrawer
 	{
 		private const string AssetGUID = "m_AssetGUID";
