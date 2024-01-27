@@ -16,7 +16,7 @@ namespace UnityUtils.PropertyAttributes
 		private Type[] types;
 		private ConstructorInfo[] constructors;
 
-		public Type SelectedType => _index == -1 ? null : types[_index];
+		public Type SelectedType => _index == -1 ? null : types?[_index];
 		public int Index
 		{
 			get => nullable ? _index + 1 : _index;

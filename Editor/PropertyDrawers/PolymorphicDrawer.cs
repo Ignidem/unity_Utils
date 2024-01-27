@@ -14,6 +14,16 @@ namespace UnityUtils.Editor.PropertyDrawers
 	{
 		protected override LabelDrawType LabelType => LabelDrawType.Foldout;
 
+		public PolymorphicDrawer() : base()
+		{
+			EditorApplication.contextualPropertyMenu += OnPropertyContextMenu;
+		}
+
+		~PolymorphicDrawer()
+		{
+			EditorApplication.contextualPropertyMenu -= OnPropertyContextMenu;
+		}
+
 		private void Init(SerializedProperty prop, PolymorphicAttribute polyAttr)
 		{
 			if (polyAttr.WasInitialized) return;
@@ -27,19 +37,22 @@ namespace UnityUtils.Editor.PropertyDrawers
 			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
 			Init(property, polyAttr);
 
-			Event e = Event.current;
 			Rect ddRect = GetDropdownRect(position);
 
-			if (ddRect.Contains(e.mousePosition)) 
-			{
-				if (e.type == EventType.ContextClick)
-					TypeContextMenu();
-				else if (e.type == EventType.KeyDown && e.keyCode == KeyCode.E)
-					OpenClass();
-			}
-
-
 			base.OnGUI(position, property, label);
+		}
+
+		private void OnPropertyContextMenu(GenericMenu menu, SerializedProperty property)
+		{
+			if (property.propertyType != SerializedPropertyType.ManagedReference || property.boxedValue == null)
+				return;
+
+			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
+			Type selectedType = polyAttr.SelectedType;
+			if (selectedType == null || property.boxedValue.GetType() != selectedType)
+				return;
+
+			TypeContextMenu(menu);
 		}
 
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
@@ -132,16 +145,14 @@ namespace UnityUtils.Editor.PropertyDrawers
 			return popupPos.SetWidth(ViewWidth - popupPos.x);
 		}
 
-		private void TypeContextMenu()
+		private void TypeContextMenu(GenericMenu context)
 		{
 			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
 			Type type = polyAttr.SelectedType;
-			if (type == null || !TryGetScript(type, out _))
+			if (type == null || !TryGetScript(type, out MonoScript script))
 				return;
 
-            GenericMenu context = new GenericMenu();
-			context.AddItem(new GUIContent("Edit Script"), false, OpenClass);
-			context.ShowAsContext();
+			context.AddItem(new GUIContent("Edit " + script.name), false, OpenClass);
 		}
 
 		private void OpenClass()
