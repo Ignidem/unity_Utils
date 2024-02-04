@@ -35,8 +35,11 @@ namespace UnityUtils.Editor.SerializedProperties
 
 		public static object GetInstance(this SerializedProperty prop)
 		{
+			return prop.boxedValue;
+			/*
 			string[] path = prop.propertyPath.Replace(".Array.data[", "[").Split('.');
 			return GetInstance(prop, path, path.Length);
+			*/
 		}
 
 		public static object GetParent(this SerializedProperty prop)
