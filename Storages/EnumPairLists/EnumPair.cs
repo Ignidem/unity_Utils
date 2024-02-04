@@ -35,7 +35,7 @@ namespace UnityUtils.Storages.EnumPairLists
 			get => values[indexer[key]];
 			set => values[indexer[key]] = value;
 		}
-		public (TEnum, TValue) this[int index] => (enumValues[index], values[index]);
+		public (TEnum key, TValue value) this[int index] => (enumValues[index], values[index]);
 
 		[SerializeField]
 		private TValue[] values;
