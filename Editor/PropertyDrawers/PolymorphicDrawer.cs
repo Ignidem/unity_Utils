@@ -36,9 +36,6 @@ namespace UnityUtils.Editor.PropertyDrawers
 		{
 			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
 			Init(property, polyAttr);
-
-			Rect ddRect = GetDropdownRect(position);
-
 			base.OnGUI(position, property, label);
 		}
 
@@ -135,7 +132,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 			if (index == polyAttr.Index) return position;
 			
 			polyAttr.SetFieldInfo(property.GetParent(), fieldInfo, listIndex);
-			polyAttr.ChangeIndex(index, listIndex);
+			property.boxedValue = polyAttr.ChangeIndex(index, listIndex, false);
 			return position;
 		}
 

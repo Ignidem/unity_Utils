@@ -87,6 +87,15 @@ namespace UnityUtils.Editor
 
 		protected void DefaultGUI(ref Rect position, SerializedProperty property)
 		{
+			PropertyHandler handler = new PropertyHandler(property, property.GetValueType());
+			if (handler.IsValid)
+			{
+				EditorGUI.indentLevel--;
+				position = handler.DrawProperty(position, property);
+				EditorGUI.indentLevel++;
+				return;
+			}
+
 			SerializedProperty prop = property.Copy();
 			string path = property.propertyPath;
 			position = position.MoveY(Spacing);

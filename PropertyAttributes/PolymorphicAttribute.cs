@@ -91,7 +91,7 @@ namespace UnityUtils.PropertyAttributes
 			_index = currentValue == null ? -1 : Array.IndexOf(types, currentValue.GetType());
 		}
 
-		public bool ChangeIndex(int typeIndex, int listIndex)
+		public object ChangeIndex(int typeIndex, int listIndex, bool setValue)
 		{
 			if (typeIndex == Index) return false;
 
@@ -99,37 +99,52 @@ namespace UnityUtils.PropertyAttributes
 
 			if (_index == -1)
 			{
-				SetFieldValue(null, listIndex);
-				return true;
+				if (setValue)
+					SetFieldValue(null, listIndex);
+				return null;
 			}
 
-			ChangeType(types[_index], listIndex);
-			return true;
+			return ChangeType(types[_index], listIndex, setValue);
 		}
 
-		private void ChangeType(Type type, int listIndex)
+		private object ChangeType(Type type, int listIndex, bool setValue)
 		{
-			if (field == null) return;
+			if (field == null) 
+				return null;
 
 			object currentValue = GetFieldValue(listIndex);
 
 			//Type was not truly changed;
-			if (currentValue?.GetType() == type) return;
+			if (currentValue?.GetType() == type) 
+				return currentValue;
 
 			//Will use reference
-			if (type.Inherits(typeof(UnityEngine.Object))) return;
+			if (type.Inherits(typeof(UnityEngine.Object))) 
+				return null;
+
+			object value = Create(type, currentValue);
+			if (setValue)
+				SetFieldValue(value, listIndex);
+			return value;
+		}
+
+		private object Create(Type type, object currentValue)
+		{
+			if (type.IsStruct())
+			{
+				return Activator.CreateInstance(type);
+			}
 
 			ConstructorInfo constructorInfo = constructors[_index];
 			if (constructorInfo == null)
 			{
-				Debug.LogWarning(string.Format("{0} does not have an empty constructor or a constructor with a {1} parameter.", 
+				Debug.LogWarning(string.Format("{0} does not have an empty constructor or a constructor with a {1} parameter.",
 					type.Name, baseType.Name));
 			}
 
-			object value = constructorInfo.GetParameters().Length == 0 
+			return constructorInfo.GetParameters().Length == 0
 				? constructorInfo.Invoke(new object[] { })
 				: constructorInfo.Invoke(new object[] { currentValue });
-			SetFieldValue(value, listIndex);
 		}
 
 		public object GetFieldValue(int listIndex)

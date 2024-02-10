@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Reflection;
 using UnityEditor;
+using UnityEngine;
 
 namespace UnityUtils.Editor.SerializedProperties
 {
@@ -9,6 +10,48 @@ namespace UnityUtils.Editor.SerializedProperties
 	{
 		private const BindingFlags BindingAttr = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
 			BindingFlags.Static;
+
+		public static SerializedProperty GetRelativeProperty(this SerializedProperty prop, string name)
+		{
+			const string backingField = "<{0}>k__BackingField";
+			return prop.FindPropertyRelative(name) ?? prop.FindPropertyRelative(string.Format(backingField, name));
+		}
+
+		public static Type GetValueType(this SerializedProperty prop)
+		{
+			return prop.propertyType switch
+			{
+				SerializedPropertyType.Integer => typeof(int),
+				SerializedPropertyType.ArraySize => typeof(int),
+				SerializedPropertyType.Boolean => typeof(bool),
+				SerializedPropertyType.Float => typeof(float),
+				SerializedPropertyType.String => typeof(string),
+				SerializedPropertyType.Color => typeof(Color),
+				SerializedPropertyType.LayerMask => typeof(LayerMask),
+				SerializedPropertyType.Vector2 => typeof(Vector2),
+				SerializedPropertyType.Vector3 => typeof(Vector3),
+				SerializedPropertyType.Vector4 => typeof(Vector4),
+				SerializedPropertyType.Rect => typeof(Rect),
+				SerializedPropertyType.Character => typeof(char),
+				SerializedPropertyType.AnimationCurve => typeof(AnimationCurve),
+				SerializedPropertyType.Bounds => typeof(Bounds),
+				SerializedPropertyType.Gradient => typeof(Gradient),
+				SerializedPropertyType.Quaternion => typeof(Quaternion),
+				SerializedPropertyType.Vector2Int => typeof(Vector2Int),
+				SerializedPropertyType.Vector3Int => typeof(Vector3Int),
+				SerializedPropertyType.RectInt => typeof(RectInt),
+				SerializedPropertyType.BoundsInt => typeof(BoundsInt),
+				SerializedPropertyType.Hash128 => typeof(Hash128),
+
+				SerializedPropertyType.ObjectReference => prop.objectReferenceValue.GetType(),
+				SerializedPropertyType.Generic => prop.boxedValue.GetType(),
+				SerializedPropertyType.ExposedReference => prop.exposedReferenceValue.GetType(),
+				SerializedPropertyType.ManagedReference => prop.managedReferenceValue.GetType(),
+				SerializedPropertyType.FixedBufferSize => throw new NotImplementedException(),
+				SerializedPropertyType.Enum => throw new NotImplementedException(),
+				_ => throw new NotImplementedException()
+			};
+		}
 
 		public static bool IsArrayElement(this SerializedProperty property)
 		{
