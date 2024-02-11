@@ -91,20 +91,29 @@ namespace UnityUtils.PropertyAttributes
 			_index = currentValue == null ? -1 : Array.IndexOf(types, currentValue.GetType());
 		}
 
-		public object ChangeIndex(int typeIndex, int listIndex, bool setValue)
+		public bool ChangeIndex(int typeIndex, int listIndex, bool setField, out object value)
 		{
-			if (typeIndex == Index) return false;
+			if (typeIndex == Index)
+			{
+				value = null;
+				return false;
+			}
 
 			Index = typeIndex;
 
 			if (_index == -1)
 			{
-				if (setValue)
-					SetFieldValue(null, listIndex);
-				return null;
+				value = null;
+				if (setField) 
+				{ 
+					SetFieldValue(value, listIndex);
+				}
+
+				return true;
 			}
 
-			return ChangeType(types[_index], listIndex, setValue);
+			value = ChangeType(types[_index], listIndex, setField);
+			return true;
 		}
 
 		private object ChangeType(Type type, int listIndex, bool setValue)

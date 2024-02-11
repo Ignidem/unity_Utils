@@ -11,6 +11,7 @@ namespace UnityUtils.RectUtils
 			return rect;
 		}
 		public static Rect SetWidth(this Rect rect, float width) => rect.SetSize(new Vector2(width, rect.size.y));
+		public static Rect SerRemainderWidth(this Rect rect, float maxWidth) => rect.SetWidth(maxWidth - rect.position.x);
 		public static Rect SetHeight(this Rect rect, float height) => rect.SetSize(new Vector2(rect.size.x, height));
 		public static Rect AddSize(this Rect rect, Vector2 size) => rect.SetSize(rect.size + size);
 		public static Rect AddWidth(this Rect rect, float width) => rect.AddSize(new Vector2(width, 0));
