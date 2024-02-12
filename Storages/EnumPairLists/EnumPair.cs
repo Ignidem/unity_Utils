@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace UnityUtils.Storages.EnumPairLists
 {
@@ -10,7 +11,7 @@ namespace UnityUtils.Storages.EnumPairLists
 		IEnumerable<KeyValuePair<TEnum, TValue>>, IEnumerable
 		where TEnum : Enum
 	{
-		private static readonly TEnum[] enumValues = (TEnum[])Enum.GetValues(typeof(TEnum));
+		private static readonly TEnum[] enumValues = ((TEnum[])Enum.GetValues(typeof(TEnum))).Distinct().ToArray();
 		private static readonly Dictionary<TEnum, int> indexer = CreateIndexer();
 		private static Dictionary<TEnum, int> CreateIndexer()
 		{
@@ -18,7 +19,10 @@ namespace UnityUtils.Storages.EnumPairLists
 			Dictionary<TEnum, int> indexes = new();
 			for (int i = 0; i < values.Length; i++)
 			{
-				indexes.Add(values[i], i);
+				if (indexes.ContainsKey(values[i]))
+					continue;
+
+				indexes[values[i]] = i;
 			}
 
 			return indexes;
