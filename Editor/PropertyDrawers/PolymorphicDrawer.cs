@@ -64,7 +64,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 
 			Type selectedType = polyAttr.SelectedType;
 
-			position = DrawProperty(position, property, selectedType); ;
+			position = DrawProperty(position, property, selectedType);
 
 			EditorGUI.indentLevel--;
 			EditorGUI.EndFoldoutHeaderGroup();

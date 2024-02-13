@@ -10,10 +10,15 @@ namespace UnityUtils.Editor.SerializedProperties
 	{
 		private const BindingFlags BindingAttr = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
 			BindingFlags.Static;
+		private const string backingField = "<{0}>k__BackingField";
+
+		public static SerializedProperty GetRelativeProperty(this SerializedObject obj, string name)
+		{
+			return obj.FindProperty(name) ?? obj.FindProperty(string.Format(backingField, name));
+		}
 
 		public static SerializedProperty GetRelativeProperty(this SerializedProperty prop, string name)
 		{
-			const string backingField = "<{0}>k__BackingField";
 			return prop.FindPropertyRelative(name) ?? prop.FindPropertyRelative(string.Format(backingField, name));
 		}
 
@@ -46,7 +51,7 @@ namespace UnityUtils.Editor.SerializedProperties
 				SerializedPropertyType.ObjectReference => prop.objectReferenceValue.GetType(),
 				SerializedPropertyType.Generic => prop.boxedValue.GetType(),
 				SerializedPropertyType.ExposedReference => prop.exposedReferenceValue.GetType(),
-				SerializedPropertyType.ManagedReference => prop.managedReferenceValue.GetType(),
+				SerializedPropertyType.ManagedReference => prop.managedReferenceValue?.GetType(),
 				SerializedPropertyType.FixedBufferSize => throw new NotImplementedException(),
 				SerializedPropertyType.Enum => throw new NotImplementedException(),
 				_ => throw new NotImplementedException()

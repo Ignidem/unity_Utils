@@ -160,7 +160,7 @@ namespace UnityUtils.PropertyAttributes
 		{
 			object value = field.GetValue(parent);
 			if (listIndex != -1 && value is IList list)
-				return list[listIndex];
+				return listIndex < list.Count ? list[listIndex] : null;
 			return value;
 		}
 

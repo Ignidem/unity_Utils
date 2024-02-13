@@ -15,7 +15,6 @@ namespace UnityUtils.Editor.PropertyDrawers
 
 		protected override LabelDrawType LabelType => LabelDrawType.None;
 
-
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
 		{
 			System.Type fieldType = fieldInfo.FieldType;

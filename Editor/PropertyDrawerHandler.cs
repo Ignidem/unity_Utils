@@ -33,6 +33,10 @@ namespace UnityUtils.Editor
 		public PropertyHandler(SerializedProperty property, Type type)
 		{
 			this.property = property;
+
+			if (type == null)
+				return;
+
 			Type drawerType = (Type)GetDrawerTypeForPropertyAndType.Invoke(null, new object[] { property, type });
 			if (drawerType != null)
 				drawer = (PropertyDrawer)Activator.CreateInstance(drawerType);
