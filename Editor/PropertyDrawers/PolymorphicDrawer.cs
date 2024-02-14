@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityUtils.Editor.SerializedProperties;
 using UnityUtils.PropertyAttributes;
@@ -128,7 +129,9 @@ namespace UnityUtils.Editor.PropertyDrawers
 			string option = polyAttr.Index == -1 ? "Null Reference" : polyAttr.options[polyAttr.Index];
 			float width = CalcLabelSize(option).x;
 			Rect popupPos = position.SetWidth(width + 25);
+
 			int index = EditorGUI.Popup(popupPos, polyAttr.Index, polyAttr.options);
+
 			if (index == polyAttr.Index) return position;
 			
 			polyAttr.SetFieldInfo(property.GetParent(), fieldInfo, listIndex);

@@ -9,6 +9,7 @@ namespace UnityUtils.UI.Selectable.Editor
 		public override void OnInspectorGUI()
 		{
 			EditorGUILayout.PropertyField(serializedObject.GetRelativeProperty(nameof(Button.Id)));
+			EditorGUILayout.PropertyField(serializedObject.GetRelativeProperty("group"));
 			EditorGUILayout.PropertyField(serializedObject.GetRelativeProperty(nameof(Button.IsToggle)));
 			EditorGUILayout.PropertyField(serializedObject.GetRelativeProperty("animations"));
 			serializedObject.ApplyModifiedProperties();

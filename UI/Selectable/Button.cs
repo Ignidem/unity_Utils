@@ -15,10 +15,19 @@ namespace UnityUtils.UI.Selectable
 		public event OnPointerDelegate PointerExitEvent;
 		public event OnPointerDelegate PointerPressEvent;
 
-		public ISelectableGroup group;
-
 		[field: SerializeField]
 		public int Id { get; set; }
+
+		public ISelectableGroup Group
+		{
+			get => _group ?? group;
+			set => _group = value;
+		}
+
+		[SerializeField]
+		private SingleButtonGroup group;
+		[SerializeReference]
+		private ISelectableGroup _group;
 
 		[field: SerializeField]
 		public bool IsToggle { get; private set; }
@@ -26,11 +35,6 @@ namespace UnityUtils.UI.Selectable
 		[SerializeReference, Polymorphic]
 		[InspectorName("Events")]
 		private IButtonAnimations[] animations;
-
-		protected override void Start()
-		{
-			group ??= transform.parent.GetComponent<ISelectableGroup>();
-		}
 
 		protected override void OnDestroy()
 		{
@@ -57,6 +61,8 @@ namespace UnityUtils.UI.Selectable
 		{
 			base.OnPointerEnter(eventData);
 			PointerEnterEvent?.Invoke(eventData);
+			//force highlight, when "selected" base ignores state change; smh
+			UpdateAnimations(ButtonState.Highlighted, true);
 		}
 		public override void OnPointerExit(PointerEventData eventData)
 		{
@@ -67,7 +73,7 @@ namespace UnityUtils.UI.Selectable
 		{
 			base.OnPointerClick(eventData);
 			PointerPressEvent?.Invoke(eventData);
-			group?.Toggle(this);
+			Group?.Toggle(this);
 		}
 		protected override void DoStateTransition(SelectionState state, bool instant)
 		{

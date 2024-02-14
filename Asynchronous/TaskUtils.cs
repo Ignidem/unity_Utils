@@ -6,7 +6,7 @@ namespace UnityUtils.Asynchronous
 {
 	public static class TaskUtils
 	{
-		public static async void TryCatch(this Task task)
+		public static async void LogException(this Task task)
 		{
 			try
 			{

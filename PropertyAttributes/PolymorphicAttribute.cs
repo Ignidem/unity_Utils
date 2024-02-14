@@ -128,8 +128,12 @@ namespace UnityUtils.PropertyAttributes
 				return currentValue;
 
 			//Will use reference
-			if (type.Inherits(typeof(UnityEngine.Object))) 
-				return null;
+			if (type.Inherits(typeof(UnityEngine.Object)))
+			{
+				var generic = typeof(PolymorphicUnityObjectReference<>);
+				var polyType = generic.BuildGeneric(type);
+				return Activator.CreateInstance(polyType);
+			}
 
 			object value = Create(type, currentValue);
 			if (setValue)
@@ -149,6 +153,7 @@ namespace UnityUtils.PropertyAttributes
 			{
 				Debug.LogWarning(string.Format("{0} does not have an empty constructor or a constructor with a {1} parameter.",
 					type.Name, baseType.Name));
+				return null;
 			}
 
 			return constructorInfo.GetParameters().Length == 0

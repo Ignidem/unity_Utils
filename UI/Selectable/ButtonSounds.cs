@@ -14,7 +14,7 @@ namespace UnityUtils.UI.Selectable
 			AudioClip clip = clips[state];
 			if (!clip) return;
 
-			AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position);
+			AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position, 0.25f);
 		}
 	}
 }
