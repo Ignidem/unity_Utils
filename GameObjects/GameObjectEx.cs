@@ -4,14 +4,14 @@ namespace UnityUtils.GameObjects
 {
 	public static class GameObjectEx
 	{
-		public static void DestroySelf(this Object go, float delay = 0)
+		public static void DestroySelf(this Object obj, float delay = 0)
 		{
-			if (!go) return;
+			if (!obj) return;
 
 			if (Application.isPlaying)
-				Object.Destroy(go, delay);
+				Object.Destroy(obj, delay);
 			else
-				Object.DestroyImmediate(go);
+				Object.DestroyImmediate(obj);
 		}
 
 		public static void DestroySelfObject(this Object obj, float delay = 0)

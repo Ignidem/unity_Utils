@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.External.unity_utils.Transforms
+namespace UnityUtils.Transforms
 {
 	[System.Serializable]
 	public struct Vector3Info

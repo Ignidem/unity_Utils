@@ -13,7 +13,8 @@ namespace UnityUtils.AddressableUtils
 	{
 		public const string FieldName = nameof(prefabReference);
 
-		[SerializeField] private AssetReference prefabReference;
+		[SerializeField] 
+		private AssetReference prefabReference;
 
 		[field: SerializeField, HideInInspector]
 		public string Name { get; private set; }
@@ -22,6 +23,7 @@ namespace UnityUtils.AddressableUtils
 		public string Path { get; private set; }
 
 		public object RuntimeKey => prefabReference.RuntimeKey;
+		public string AssetGUID => prefabReference.AssetGUID;
 
 		public bool IsLoaded => loadTask?.IsCompleted ?? false;
 		public bool IsLoading => !(loadTask?.IsCompleted ?? true);
@@ -30,6 +32,15 @@ namespace UnityUtils.AddressableUtils
 		private IAddressable<T> adrsLoad;
 
 		private bool IsComponent => typeof(T).IsComponentType();
+
+		public AddressableReference() { }
+
+		public AddressableReference(AssetReference asset, string name, string path)
+		{
+			prefabReference = asset;
+			Name = name;
+			Path = path;
+		}
 
 		public async Task<T> Instantiate(Transform parent = null)
 		{
