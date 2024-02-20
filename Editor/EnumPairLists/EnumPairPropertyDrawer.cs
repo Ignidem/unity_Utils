@@ -21,8 +21,11 @@ namespace UnityUtils.Storages.Editor.EnumPairLists
 			if (values.arraySize < count)
 				values.arraySize = count;
 
-			position = position.MoveY(LineHeight);
-			search = EditorGUI.TextField(position, search);
+			if (count > 10)
+			{
+				position = position.MoveY(LineHeight);
+				search = EditorGUI.TextField(position, search);
+			}
 
 			for (int i = 0; i < count; i++)
 			{
