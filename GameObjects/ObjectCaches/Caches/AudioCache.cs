@@ -43,7 +43,7 @@ namespace UnityUtils.GameObjects.ObjectCaches.Caches
 			this.audioCache = audioCache;
 		}
 
-		public void OnReleased(IObjectCache cache) 
+		public void OnPop(IObjectCache cache) 
 		{
 			audioCache = cache as AudioCache;
 			Transform.gameObject.SetActive(true);
@@ -95,6 +95,11 @@ namespace UnityUtils.GameObjects.ObjectCaches.Caches
 
 			return false;
 		}
+
+		public void Release()
+		{
+			Destroy();
+		}
 	}
 
 	public class AudioCache : BaseObjectCache<AudioClip, CachedAudio>
@@ -106,7 +111,9 @@ namespace UnityUtils.GameObjects.ObjectCaches.Caches
 			GameObject go = new GameObject(key.name);
 			AudioSource source = go.AddComponent<AudioSource>();
 			source.clip = key;
-			return new CachedAudio(source);
+			CachedAudio value = new CachedAudio(source);
+			value.OnPop(this);
+			return value;
 		}
 	}
 }

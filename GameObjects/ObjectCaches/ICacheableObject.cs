@@ -11,7 +11,8 @@ namespace UnityUtils.GameObjects.ObjectCaches
 		Transform Transform { get; }
 
 		void Destroy();
-		void OnReleased(IObjectCache cache);
+		void OnPop(IObjectCache cache);
 		void OnCached(IObjectCache cache);
+		void Release();
 	}
 }

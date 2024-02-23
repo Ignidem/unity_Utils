@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Utils.Collections;
 
 namespace UnityUtils.GameObjects.ObjectCaches
 {
@@ -8,10 +9,9 @@ namespace UnityUtils.GameObjects.ObjectCaches
 	{
 		public bool IsAlive => storedTransform && !isDisposed;
 		private bool isDisposed;
-		private readonly Dictionary<TKey, TValue> active = new();
-		private readonly Dictionary<TKey, TValue> stored = new();
+		private readonly Dictionary<TKey, List<TValue>> active = new();
+		private readonly Dictionary<TKey, List<TValue>> stored = new();
 		private readonly Transform storedTransform;
-
 
 		public TValue this[TKey key] 
 		{
@@ -44,37 +44,44 @@ namespace UnityUtils.GameObjects.ObjectCaches
 
 		public bool Peek(TKey key)
 		{
-			return stored.ContainsKey(key);
+			return stored.ContainsKey(key) && stored[key].Count > 0;
 		}
 		public TValue Pop(TKey key)
 		{
-			TValue value = stored[key];
-			stored.Remove(key);
+			TValue value = stored[key].Pop();
 			return value;
 		}
 		public virtual void Dispose()
 		{
-			foreach (TValue value in stored.Values)
-			{
-				value.Destroy();
-			}
-
+			DestroyAll(stored);
 			stored.Clear();
 
-			foreach (TValue value in active.Values)
-			{
-				if (!value.IsActive)
-					value.Destroy();
-			}
-
-			Debug.LogWarning($"Cache did not destroy {active.Count} active {typeof(TValue).Name}");
-
+			DestroyAll(active);
 			active.Clear();
 		}
+
+		private void DestroyAll(Dictionary<TKey, List<TValue>> dict)
+		{
+			foreach (List<TValue> list in dict.Values)
+			{
+				foreach (TValue value in list)
+				{
+					if (value.IsActive)
+					{
+						value.Release();
+					}
+					else
+					{
+						value.Destroy();
+					}
+				}
+			}
+		}
+
 		public virtual TValue Create(TKey key)
 		{
 			TValue value = default;
-			value?.OnReleased(this);
+			value?.OnPop(this);
 			return value;
 		}
 
@@ -83,7 +90,7 @@ namespace UnityUtils.GameObjects.ObjectCaches
 			if (value.IsActive)
 			{
 				Set(active, key, value);
-				value?.OnReleased(this);
+				value?.OnPop(this);
 				return;
 			}
 			
@@ -91,17 +98,12 @@ namespace UnityUtils.GameObjects.ObjectCaches
 			Set(stored, key, value);
 			value?.OnCached(this);
 		}
-		protected void Set(Dictionary<TKey, TValue> cache, TKey key, TValue value)
+		protected void Set(Dictionary<TKey, List<TValue>> cache, TKey key, TValue value)
 		{
-			if (cache.TryGetValue(key, out TValue prev))
-			{
-				if (prev.Equals(value))
-					return;
+			if (!cache.TryGetValue(key, out List<TValue> prev))
+				cache[key] = prev = new List<TValue>();
 
-				prev.Destroy();
-			}
-
-			cache[key] = value;
+			prev.Add(value);
 		}
 	}
 }
