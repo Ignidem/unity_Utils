@@ -27,6 +27,7 @@ namespace UnityUtils.Storages.Editor.EnumPairLists
 				search = EditorGUI.TextField(position, search);
 			}
 
+			position = position.MoveY(LineHeight);
 			for (int i = 0; i < count; i++)
 			{
 				string name = enumpair.GetNameAt(i);
@@ -34,8 +35,9 @@ namespace UnityUtils.Storages.Editor.EnumPairLists
 					continue;
 
 				SerializedProperty valueX = values.GetArrayElementAtIndex(i);
-				position = position.MoveY(LineHeight);
 				EditorGUI.PropertyField(position, valueX, new GUIContent(name), true);
+				float height = EditorGUI.GetPropertyHeight(valueX);
+				position = position.MoveY(height);
 			}
 
 			property.serializedObject.ApplyModifiedProperties();
