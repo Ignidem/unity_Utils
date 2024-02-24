@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityUtils.Editor.ContextMenus;
 using UnityUtils.Editor.SerializedProperties;
 using UnityUtils.PropertyAttributes;
 using UnityUtils.RectUtils;
@@ -14,16 +15,6 @@ namespace UnityUtils.Editor.PropertyDrawers
 	public class PolymorphicDrawer : ExtendedPropertyDrawer
 	{
 		protected override LabelDrawType LabelType => LabelDrawType.Foldout;
-
-		public PolymorphicDrawer() : base()
-		{
-			EditorApplication.contextualPropertyMenu += OnPropertyContextMenu;
-		}
-
-		~PolymorphicDrawer()
-		{
-			EditorApplication.contextualPropertyMenu -= OnPropertyContextMenu;
-		}
 
 		private void Init(SerializedProperty prop, PolymorphicAttribute polyAttr)
 		{
@@ -38,19 +29,6 @@ namespace UnityUtils.Editor.PropertyDrawers
 			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
 			Init(property, polyAttr);
 			base.OnGUI(position, property, label);
-		}
-
-		private void OnPropertyContextMenu(GenericMenu menu, SerializedProperty property)
-		{
-			if (property.propertyType != SerializedPropertyType.ManagedReference || property.boxedValue == null)
-				return;
-
-			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
-			Type selectedType = polyAttr.SelectedType;
-			if (selectedType == null || property.boxedValue.GetType() != selectedType)
-				return;
-
-			TypeContextMenu(menu);
 		}
 
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
@@ -147,39 +125,6 @@ namespace UnityUtils.Editor.PropertyDrawers
 		{
 			Rect popupPos = position.MoveX(Spacing * 3);
 			return popupPos.SetWidth(ViewWidth - popupPos.x);
-		}
-
-		private void TypeContextMenu(GenericMenu context)
-		{
-			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
-			Type type = polyAttr.SelectedType;
-			if (type == null || !TryGetScript(type, out MonoScript script))
-				return;
-
-			context.AddItem(new GUIContent("Edit " + script.name), false, OpenClass);
-		}
-
-		private void OpenClass()
-		{
-			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
-			Type type = polyAttr.SelectedType;
-			if (type == null || !TryGetScript(type, out MonoScript script))
-				return;
-
-			AssetDatabase.OpenAsset(script);
-		}
-
-		private static bool TryGetScript(Type type, out MonoScript script)
-		{
-			string[] guids = AssetDatabase.FindAssets("t:script " + type.Name, new[] { "Assets" });
-
-			static MonoScript GuidToScript(string guid)
-			{
-				string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-				return AssetDatabase.LoadAssetAtPath<MonoScript>(assetPath);
-			}
-
-			return script = guids.Select(GuidToScript).FirstOrDefault(script => script.GetClass() == type);
 		}
 	}
 }

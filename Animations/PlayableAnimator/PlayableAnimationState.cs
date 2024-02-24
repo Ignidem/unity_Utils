@@ -21,6 +21,8 @@ namespace UnityUtils.Animations.PlayableAnimator
 
 		public bool IsPlaying { get; private set; }
 
+		public int Layer => 0;
+
 		private AnimationClipPlayable clipPlayable;
 
 		public PlayableAnimationState() { }

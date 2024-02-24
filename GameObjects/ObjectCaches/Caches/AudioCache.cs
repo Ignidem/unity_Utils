@@ -104,6 +104,12 @@ namespace UnityUtils.GameObjects.ObjectCaches.Caches
 
 	public class AudioCache : BaseObjectCache<AudioClip, CachedAudio>
 	{
+		public static AudioCache GetOrCreate(Transform parent)
+		{
+			ObjectCacheController controller = ObjectCacheController.GetOrCreate(parent);
+			return (AudioCache)controller.GetOrCreateCache(() => new AudioCache(controller.transform, false));
+		}
+
 		public AudioCache(Transform parent, bool withController) : base(parent, withController) { }
 
 		public override CachedAudio Create(AudioClip key)

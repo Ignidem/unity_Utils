@@ -9,7 +9,6 @@ namespace UnityUtils.UI.Selectable
 	[System.Serializable]
 	public struct ButtonSounds : IButtonAnimations
 	{
-
 		private static AudioCache cache;
 		private static AudioCache Cache
 		{
@@ -18,8 +17,7 @@ namespace UnityUtils.UI.Selectable
 				if (cache != null && cache.IsAlive)
 					return cache;
 
-				ObjectCacheController controller = ObjectCacheController.GetOrCreate(null);
-				return cache = (AudioCache)controller.GetOrCreateCache(() => new AudioCache(controller.transform, false));
+				return cache = AudioCache.GetOrCreate(null);
 			}
 		}
 

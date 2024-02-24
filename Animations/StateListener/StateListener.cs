@@ -5,7 +5,6 @@ using UnityEngine.Animations;
 
 namespace UnityUtils.Animations.StateListener
 {
-#pragma warning disable UNT0006 // Incorrect message signature
 	public class StateListener : StateMachineBehaviour, IAnimationState
 	{
 		[field: SerializeField]
@@ -17,10 +16,10 @@ namespace UnityUtils.Animations.StateListener
 		public int Id => info.fullPathHash == 0 ? Animator.StringToHash(StateName) : info.fullPathHash;
 		public bool IsPlaying { get; private set; }
 		public float Length => info.length;
+		public int Layer { get; private set; }
 
 		private Animator animator;
 		private AnimatorStateInfo info;
-		private int layerIndex;
 
 		private void InitHandler(Animator animator)
 		{
@@ -65,6 +64,7 @@ namespace UnityUtils.Animations.StateListener
 			base.OnStateEnter(animator, stateInfo, layerIndex);
 			IsPlaying = true;
 			info = stateInfo;
+			this.Layer = layerIndex;
 			InitHandler(animator);
 			handler?.OnStateEnter(this);
 		}
@@ -79,6 +79,7 @@ namespace UnityUtils.Animations.StateListener
 			base.OnStateExit(animator, stateInfo, layerIndex);
 			IsPlaying = false;
 			info = stateInfo;
+			this.Layer = layerIndex;
 			handler?.OnStateExit(this);
 		}
 
@@ -87,7 +88,7 @@ namespace UnityUtils.Animations.StateListener
 			if (IsPlaying)
 				return;
 
-			handler.SwitchState(info.fullPathHash, layerIndex, blendTime);
+			handler.SwitchState(info.fullPathHash, Layer, blendTime);
 		}
 
 		public void Stop(float blendTime = 0.1f)
@@ -95,8 +96,8 @@ namespace UnityUtils.Animations.StateListener
 			if (!IsPlaying)
 				return;
 
-			AnimatorStateInfo info = animator.GetNextAnimatorStateInfo(layerIndex);
-			handler.SwitchState(info.fullPathHash, layerIndex, blendTime);
+			AnimatorStateInfo info = animator.GetNextAnimatorStateInfo(Layer);
+			handler.SwitchState(info.fullPathHash, Layer, blendTime);
 		}
 
 		public TaskAwaiter GetAwaiter()
@@ -118,5 +119,4 @@ namespace UnityUtils.Animations.StateListener
 				await Task.Yield();
 		}
 	}
-#pragma warning restore UNT0006 // Incorrect message signature
 }

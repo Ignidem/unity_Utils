@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityUtils.Storages.EnumPairLists;
 
 namespace UnityUtils.Storages
 {
@@ -17,6 +18,32 @@ namespace UnityUtils.Storages
 	{
 		TValue this[TKey key] { get; set; }
 		void Delete(TKey key);
+	}
+
+	public class EnumStorageObject<TKey, TValue> : StorageObject, IStorageObject<TKey, TValue>
+		where TKey : Enum
+	{
+		public override Type TableType => typeof(TValue);
+
+		[SerializeField]
+		private EnumPair<TKey, TValue> values;
+
+		public TValue this[TKey key] 
+		{
+			get => values[key]; 
+			set => values[key] = value; 
+		}
+
+
+		public void Delete(TKey key)
+		{
+			this[key] = default;
+		}
+
+		public override T[] GetAllAs<T>()
+		{
+			return values.Where(v => v is T).Cast<T>().ToArray();
+		}
 	}
 
 	public class StorageObject<TKey, TValue> : StorageObject, IStorageObject<TKey, TValue>
