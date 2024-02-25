@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityUtils.GameObjects.ObjectCaches.Caches;
+using UnityUtils.Sounds;
 
 namespace UnityUtils.Animations.AnimationEvents
 {
@@ -19,17 +20,26 @@ namespace UnityUtils.Animations.AnimationEvents
 		}
 
 		[SerializeField]
-		private AudioClip clip;
+		private AudioClipCollection clips;
 
 		public readonly void Invoke(Object target, IAnimationEventInfo info)
 		{
-			if (!clip)
+			if (!clips)
 				return;
-			
-			CachedAudio audio = Cache[clip];
-			audio.Volume = 0.5f;
-			audio.SpacialBlend = 1;
-			audio.Play(info.Target, true);
+
+			Transform transform = target switch
+			{
+				Transform tr => tr,
+				Component comp => comp.transform,
+				GameObject obj => obj.transform,
+				_ => null
+			};
+
+			_ = clips.PlayRandom(transform, clip =>
+			{
+				clip.Volume = 1;
+				clip.SpacialBlend = 1;
+			});
 		}
 	}
 }
