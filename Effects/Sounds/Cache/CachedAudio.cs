@@ -101,25 +101,4 @@ namespace UnityUtils.GameObjects.ObjectCaches.Caches
 			Destroy();
 		}
 	}
-
-	public class AudioCache : BaseObjectCache<AudioClip, CachedAudio>
-	{
-		public static AudioCache GetOrCreate(Transform parent)
-		{
-			ObjectCacheController controller = ObjectCacheController.GetOrCreate(parent);
-			return (AudioCache)controller.GetOrCreateCache(() => new AudioCache(controller.transform, false));
-		}
-
-		public AudioCache(Transform parent, bool withController) : base(parent, withController) { }
-
-		public override CachedAudio Create(AudioClip key)
-		{
-			GameObject go = new GameObject(key.name);
-			AudioSource source = go.AddComponent<AudioSource>();
-			source.clip = key;
-			CachedAudio value = new CachedAudio(source);
-			value.OnPop(this);
-			return value;
-		}
-	}
 }

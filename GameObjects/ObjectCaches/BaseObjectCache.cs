@@ -13,13 +13,6 @@ namespace UnityUtils.GameObjects.ObjectCaches
 		private readonly Dictionary<TKey, List<TValue>> stored = new();
 		private readonly Transform storedTransform;
 
-		/// <summary>
-		/// Equivalent of PopOrCreate(<paramref name="key"/>)
-		/// </summary>
-		/// <param name="key">The key used to pop or create a <typeparamref name="TValue"/></param>
-		/// <returns>The poped or created <typeparamref name="TValue"/></returns>
-		public TValue this[TKey key] => PopOrCreate(key);
-
 		public BaseObjectCache(Transform parent = null, bool withController = false)
 		{
 			GameObject go = new GameObject(typeof(TValue).Name + " Cache");
@@ -47,13 +40,6 @@ namespace UnityUtils.GameObjects.ObjectCaches
 			TValue value = stored[key].Pop();
 			return value;
 		}
-		public TValue PopOrCreate(TKey key)
-		{
-			if (this.TryPop(key, out TValue value))
-				return value;
-
-			return Create(key);
-		}
 		public virtual void Dispose()
 		{
 			DestroyAll(stored);
@@ -79,13 +65,6 @@ namespace UnityUtils.GameObjects.ObjectCaches
 					}
 				}
 			}
-		}
-
-		public virtual TValue Create(TKey key)
-		{
-			TValue value = default;
-			value?.OnPop(this);
-			return value;
 		}
 
 		public void Cache(TKey key, TValue value)

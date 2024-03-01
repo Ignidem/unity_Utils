@@ -7,7 +7,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 namespace UnityUtils.GameObjects.ObjectCaches
 {
 	public class AddressableCache<TValue> : BaseObjectCache<string, TValue>
-		where TValue : UnityEngine.Object, ICacheableObject
+		where TValue : Object, ICacheableObject
 	{
 		private readonly Dictionary<string, AsyncOperationHandle<TValue>> handles = new();
 
@@ -21,7 +21,7 @@ namespace UnityUtils.GameObjects.ObjectCaches
 			return handles[key] = Addressables.LoadAssetAsync<TValue>(key);
 		}
 
-		public override TValue Create(string key)
+		public TValue Create(string key)
 		{
 			Debug.LogWarning("Async is recommended for addressable cache usages");
 			AsyncOperationHandle<TValue> handle = GetHandle(key);

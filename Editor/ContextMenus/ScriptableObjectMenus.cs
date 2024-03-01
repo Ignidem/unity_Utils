@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Assets.External.unity_utils.Editor.ContextMenus
+namespace WarmongersAPI.External.unity_utils.Editor.ContextMenus
 {
 	internal class ScriptableObjectMenus
 	{

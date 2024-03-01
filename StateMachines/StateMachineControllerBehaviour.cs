@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityUtils.PropertyAttributes;
 using Utils.StateMachines;
 
-namespace Assets.Systems.States
+namespace UnityUtils.Systems.States
 {
 	public abstract class StateMachineControllerBehaviour<T> : MonoBehaviour, IStateMachine<Type>
 		where T : IState<Type>

@@ -7,12 +7,6 @@ namespace UnityUtils.GameObjects.ObjectCaches
 {
 	public interface IObjectCacheController
 	{
-		TValue GetValue<TKey, TValue>(TKey key)
-			where TValue : ICacheableObject;
-
-		Task<TValue> GetValueAsync<TKey, TValue>(TKey key)
-			where TValue : ICacheableObject;
-
 		bool TryGetCache<TKey, TValue>(out IObjectCache<TKey, TValue> cache)
 			where TValue : ICacheableObject;
 
@@ -93,36 +87,12 @@ namespace UnityUtils.GameObjects.ObjectCaches
 			where TValue : ICacheableObject
 		{
 			Type key = typeof(TValue);
-			if (caches.TryGetValue(key, out IObjectCache _))
+			if (caches.ContainsKey(key))
 			{
 				throw new Exception("Cache already set");
 			}
 
 			caches[key] = cache;
-		}
-
-		public TValue GetValue<TKey, TValue>(TKey key)
-			where TValue : ICacheableObject
-		{
-			if (!TryGetCache(out IObjectCache<TKey, TValue> cache))
-				return default;
-
-			if (cache.TryPop(key, out TValue value))
-				return value;
-
-			return cache.Create(key);
-		}
-
-		public async Task<TValue> GetValueAsync<TKey, TValue>(TKey key)
-			where TValue : ICacheableObject
-		{
-			if (!TryGetCache(out IObjectCache<TKey, TValue> cache))
-				return default;
-
-			if (cache.TryPop(key, out TValue value))
-				return value;
-
-			return await cache.CreateAsync(key);
 		}
 	}
 }

@@ -7,13 +7,20 @@ using UnityUtils.GameObjects;
 
 namespace UnityUtils.AddressableUtils
 {
+	public interface IAddressableKey : System.IDisposable
+	{
+		string AssetGUID { get; }
+
+		Task<IAddressable<T>> Load<T>();
+	}
+
 	[System.Serializable]
-	public class AddressableReference<T> : System.IDisposable
+	public class AddressableReference<T> : IAddressableKey
 		where T : Object
 	{
 		public const string FieldName = nameof(prefabReference);
 
-		[SerializeField] 
+		[SerializeField]
 		private AssetReference prefabReference;
 
 		[field: SerializeField, HideInInspector]
@@ -40,6 +47,16 @@ namespace UnityUtils.AddressableUtils
 			prefabReference = asset;
 			Name = name;
 			Path = path;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is IAddressableKey key && AssetGUID == key.AssetGUID;
+		}
+
+		public override int GetHashCode()
+		{
+			return AssetGUID.GetHashCode();
 		}
 
 		public async Task<T> Instantiate(Transform parent = null)
@@ -71,6 +88,24 @@ namespace UnityUtils.AddressableUtils
 				return comp;
 
 			return Destroy();
+		}
+
+		async Task<IAddressable<K>> IAddressableKey.Load<K>()
+		{
+			if (adrsLoad == null)
+				await Load();
+
+			if (adrsLoad is IAddressable<K> adrs)
+				return adrs;
+
+			if (typeof(K).IsComponentType())
+			{
+				GameObject obj = await LoadAs<GameObject>();
+				obj.TryGetInSelfOrChildren(out K comp);
+				return new ComponentAddressable<K>(obj, comp);
+			}
+
+			return new ObjectAddressable<K>(adrsLoad.Asset is K _k ? _k : default);
 		}
 
 		public async Task<IAddressable<T>> Load()
@@ -111,6 +146,9 @@ namespace UnityUtils.AddressableUtils
 
 		private async Task<K> LoadAs<K>()
 		{
+			if (loadTask != null)
+				return await (Task<K>)loadTask;
+
 			AsyncOperationHandle<K> result = Addressables.LoadAssetAsync<K>(prefabReference.RuntimeKey);
 			loadTask = result.Task;
 			return await result.Task;

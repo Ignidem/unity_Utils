@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.External.unity_utils.Prefabs
+namespace  UnityUtils.Prefabs
 {
 	public static class PrefabUtils
 	{

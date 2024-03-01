@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assets.External.unity_utils.CSharpInputListener
+namespace WarmongersAPI.External.unity_utils.CSharpInputListener
 {
 	public class InputReceiverAttribute : Attribute
 	{

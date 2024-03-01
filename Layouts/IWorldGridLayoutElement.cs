@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.GameAssets.Common.Layout
+namespace UnityUtils.Common.Layout
 {
 	public interface IWorldGridLayoutElement
 	{

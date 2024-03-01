@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Maths = UnityEngine.Mathf;
 
-namespace Assets.GameAssets.Common.Layout
+namespace UnityUtils.Common.Layout
 {
 	[ExecuteInEditMode]
 	public class WorldGridLayout : MonoBehaviour
