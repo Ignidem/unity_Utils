@@ -72,7 +72,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 
 			if (!selectedType.IsSubclassOf(typeof(UnityEngine.Object)))
 			{
-				DefaultGUI(ref position, property);
+				DefaultGUI(ref position, property, property.depth + 1);
 				return position;
 			}
 			

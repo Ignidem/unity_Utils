@@ -90,7 +90,7 @@ namespace UnityUtils.Editor
 			return false;
 		}
 
-		protected void DefaultGUI(ref Rect position, SerializedProperty property)
+		protected void DefaultGUI(ref Rect position, SerializedProperty property, int maxDepth = -1)
 		{
 			PropertyHandler handler = new PropertyHandler(property, property.GetValueType());
 			if (handler.IsValid)
@@ -102,13 +102,25 @@ namespace UnityUtils.Editor
 			}
 
 			SerializedProperty prop = property.Copy();
+			int startingDepth = prop.depth;
 			string path = property.propertyPath;
 			position = position.MoveY(Spacing);
 
-			while (prop.NextVisible(prop.propertyType == SerializedPropertyType.ManagedReference))
+			bool IsWithinDepth(int depth)
+			{
+				return maxDepth <= -1 || depth <= maxDepth;
+			}
+
+			bool IsManagedReference()
+			{
+				return prop.propertyType == SerializedPropertyType.ManagedReference;
+			}
+
+			while (prop.NextVisible(IsWithinDepth(prop.depth + 1) && IsManagedReference()))
 			{
 				//Makes sure we don't step out while drawing an element from a list;
-				if (!prop.propertyPath.StartsWith(path)) continue;
+				if (!IsWithinDepth(prop.depth) || prop.depth < startingDepth || !prop.propertyPath.StartsWith(path)) 
+					continue;
 
 				float pHeight = EditorGUI.GetPropertyHeight(prop);
 				position = position.SetHeight(pHeight);

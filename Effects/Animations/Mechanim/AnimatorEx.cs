@@ -77,7 +77,13 @@ namespace UnityUtils.Effects.Animations.Mechanim
 				throw new ArgumentNullException(nameof(animator));
 			}
 
-			string assetPath = UnityEditor.AssetDatabase.GetAssetPath(animator.runtimeAnimatorController);
+			RuntimeAnimatorController rootController = animator.runtimeAnimatorController;
+			while (rootController is AnimatorOverrideController overide)
+			{
+				rootController = overide.runtimeAnimatorController;
+			}
+
+			string assetPath = UnityEditor.AssetDatabase.GetAssetPath(rootController);
 			return UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(assetPath);
 		}
 #endif
