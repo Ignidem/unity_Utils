@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
@@ -85,6 +86,38 @@ namespace UnityUtils.Effects.Animations.Mechanim
 
 			string assetPath = UnityEditor.AssetDatabase.GetAssetPath(rootController);
 			return UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(assetPath);
+		}
+
+		public static AnimationClip GetStateClip(this Animator animator, int layer, int namehash)
+		{
+			if (animator == null)
+			{
+				throw new ArgumentNullException(nameof(animator));
+			}
+
+			MethodInfo GetOverrideClip = typeof(AnimatorOverrideController).GetMethod(nameof(GetOverrideClip), 
+				BindingFlags.NonPublic | BindingFlags.Instance);
+
+			RuntimeAnimatorController GetRoot(RuntimeAnimatorController controller, out AnimationClip originalClip)
+			{
+				if (controller is not AnimatorOverrideController overide)
+				{
+					string assetPath = UnityEditor.AssetDatabase.GetAssetPath(controller);
+					var root = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(assetPath);
+					var states = root.layers[layer].stateMachine.states;
+					var state = states.FirstOrDefault(s => s.state.nameHash == namehash);
+					originalClip = state.state.motion as AnimationClip;
+					return controller;
+				}
+
+				//is not root;
+				var rootController = GetRoot(overide.runtimeAnimatorController, out originalClip);
+				originalClip = (AnimationClip)GetOverrideClip.Invoke(overide, new object[] { originalClip });
+				return rootController;
+			}
+
+			var root = GetRoot(animator.runtimeAnimatorController, out AnimationClip clip);
+			return clip;
 		}
 #endif
 	}
