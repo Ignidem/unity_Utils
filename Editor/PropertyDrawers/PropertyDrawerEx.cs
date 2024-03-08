@@ -105,7 +105,7 @@ namespace UnityUtils.Editor
 			string path = property.propertyPath;
 			position = position.MoveY(Spacing);
 
-			while (prop.Next(prop.propertyType == SerializedPropertyType.ManagedReference))
+			while (prop.NextVisible(prop.propertyType == SerializedPropertyType.ManagedReference))
 			{
 				//Makes sure we don't step out while drawing an element from a list;
 				if (!prop.propertyPath.StartsWith(path)) continue;

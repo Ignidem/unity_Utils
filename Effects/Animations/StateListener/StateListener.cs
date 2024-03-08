@@ -13,7 +13,7 @@ namespace UnityUtils.Animations.StateListener
 		private IAnimatorHandler handler;
 		private bool lookedForHandler;
 
-		public int Id => info.fullPathHash == 0 ? Animator.StringToHash(StateName) : info.fullPathHash;
+		public int Id => info.shortNameHash == 0 ? Animator.StringToHash(StateName) : info.shortNameHash;
 		public bool IsPlaying { get; private set; }
 		public float Length => info.length;
 		public int Layer { get; private set; }

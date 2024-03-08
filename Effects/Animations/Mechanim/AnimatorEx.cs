@@ -69,12 +69,17 @@ namespace UnityUtils.Effects.Animations.Mechanim
 			}
 		}
 
-		/*
-		public static IAnimationState GetAnimationState(this Animator animator, int layer)
+#if UNITY_EDITOR
+		public static UnityEditor.Animations.AnimatorController GetController(this Animator animator)
 		{
-			Playable controller = animator.GetAnimatorPlayable();
-			controller.GetOutput();
+			if (animator == null)
+			{
+				throw new ArgumentNullException(nameof(animator));
+			}
+
+			string assetPath = UnityEditor.AssetDatabase.GetAssetPath(animator.runtimeAnimatorController);
+			return UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(assetPath);
 		}
-		*/
+#endif
 	}
 }
