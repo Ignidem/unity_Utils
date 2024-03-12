@@ -42,10 +42,10 @@ namespace UnityUtils.AddressableUtils
 
 		public AddressableReference() { }
 
-		public AddressableReference(AssetReference asset, string name, string path)
+		public AddressableReference(AssetReference asset, string name = null, string path = null)
 		{
 			prefabReference = asset;
-			Name = name;
+			Name = name ?? asset.SubObjectName;
 			Path = path;
 		}
 
