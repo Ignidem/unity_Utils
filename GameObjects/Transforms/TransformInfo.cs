@@ -7,12 +7,7 @@ namespace UnityUtils.Transforms
 	{
 		public static implicit operator TransformInfo(Transform transform)
 		{
-			return new TransformInfo()
-			{
-				position = transform.position,
-				rotation = transform.rotation.eulerAngles,
-				scale = transform.lossyScale,
-			};
+			return new TransformInfo(transform, Space.Self);
 		}
 
 		public static bool operator !=(TransformInfo left, TransformInfo right) => !(left == right);
@@ -46,6 +41,13 @@ namespace UnityUtils.Transforms
 		public Vector3Info position;
 		public Vector3Info rotation;
 		public Vector3Info scale;
+
+		public TransformInfo(Transform transform, Space space)
+		{
+			position = new Vector3Info(space == Space.World ? transform.position : transform.localPosition, space);
+			rotation = new Vector3Info(space == Space.World ? transform.rotation.eulerAngles : transform.localRotation.eulerAngles, space);
+			scale = new Vector3Info(space == Space.World ? transform.lossyScale : transform.localScale, space);
+		}
 
 		public override readonly bool Equals(object obj)
 		{

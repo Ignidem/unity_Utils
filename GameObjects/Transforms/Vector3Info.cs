@@ -44,6 +44,12 @@ namespace UnityUtils.Transforms
 		public Vector3 vector;
 		public Space space;
 
+		public Vector3Info(Vector3 vector, Space space)
+		{
+			this.vector = vector;
+			this.space = space;
+		}
+
 		public override readonly bool Equals(object obj)
 		{
 			return base.Equals(obj);
