@@ -11,7 +11,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 	public class AddressableReferenceDrawer : ExtendedPropertyDrawer
 	{
 		private const string AssetGUID = "m_AssetGUID";
-		static readonly System.Type unityObjectType = typeof(Object);
+		protected static readonly System.Type unityObjectType = typeof(Object);
 
 		protected override LabelDrawType LabelType => LabelDrawType.None;
 
@@ -20,7 +20,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 			System.Type fieldType = fieldInfo.FieldType;
 			System.Type genericType = fieldType.IsArray ? fieldType.GetElementType() : fieldType;
 			System.Type objectType = genericType.GenericTypeArguments[0];
-
+			 
 			if (!unityObjectType.IsAssignableFrom(objectType))
 			{
 				return 0;
@@ -47,7 +47,8 @@ namespace UnityUtils.Editor.PropertyDrawers
 			guid = !result ? string.Empty : AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(result));
 			guidProp.stringValue = guid;
 
-			if (!result) return UpdateInfo(property, null);
+			if (!ValidateAsset(ref position, result)) 
+				return UpdateInfo(property, null);
 
 			AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
 			//Check is field value is already addressable;
@@ -55,6 +56,23 @@ namespace UnityUtils.Editor.PropertyDrawers
 
 			AssetReference asset = entry == null ? settings.CreateAssetReference(guid) : new AssetReference(guid);
 			return UpdateInfo(property, asset);
+		}
+
+		protected virtual System.Type GetPropertyFieldType()
+		{
+			return GetGenericType();
+		}
+
+		protected System.Type GetGenericType()
+		{
+			System.Type fieldType = fieldInfo.FieldType;
+			System.Type genericType = fieldType.IsArray ? fieldType.GetElementType() : fieldType;
+			return genericType.GenericTypeArguments[0];
+		}
+
+		protected virtual bool ValidateAsset(ref Rect position, Object asset)
+		{
+			return asset;
 		}
 
 		private int UpdateInfo(SerializedProperty property, AssetReference asset)

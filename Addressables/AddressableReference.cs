@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -19,6 +18,8 @@ namespace UnityUtils.AddressableUtils
 		where T : Object
 	{
 		public const string FieldName = nameof(prefabReference);
+
+		public System.Type Type => typeof(T);
 
 		[SerializeField]
 		private AssetReference prefabReference;
@@ -59,13 +60,13 @@ namespace UnityUtils.AddressableUtils
 			return AssetGUID.GetHashCode();
 		}
 
-		public async Task<T> Instantiate(Transform parent = null)
+		public async Task<T> InstantiateObject(Transform parent = null)
 		{
 			IAddressable<T> adrs = await Load();
 			return Object.Instantiate(adrs.Target, parent);
 		}
 
-		public async Task<K> Instantiate<K>(Transform parent = null)
+		public async Task<K> InstantiateAs<K>(Transform parent = null)
 		{
 			IAddressable<T> adrs = await Load();
 			T instance = Object.Instantiate(adrs.Target, parent);
@@ -152,37 +153,6 @@ namespace UnityUtils.AddressableUtils
 			AsyncOperationHandle<K> result = Addressables.LoadAssetAsync<K>(prefabReference.RuntimeKey);
 			loadTask = result.Task;
 			return await result.Task;
-		}
-	}
-
-	[System.Serializable]
-	public class LazyAddressable<T> : AddressableReference<T>
-		where T : Component
-	{
-		public static implicit operator bool(LazyAddressable<T> lazyAddressable)
-		{
-			return lazyAddressable.comp;
-		}
-
-		[SerializeField] private Transform parent;
-
-		private T comp;
-
-		public async Task<T> GetComponent()
-		{
-			if (comp) return comp;
-
-			comp = await Instantiate();
-			comp.transform.SetParent(parent);
-			return comp;
-		}
-
-		public TaskAwaiter<T> GetAwaiter() => GetComponent().GetAwaiter();
-
-		public override void Dispose()
-		{
-			if (comp) comp.DestroySelfObject();
-			base.Dispose();
 		}
 	}
 }
