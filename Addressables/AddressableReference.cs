@@ -63,7 +63,7 @@ namespace UnityUtils.AddressableUtils
 		public async Task<T> InstantiateObject(Transform parent = null)
 		{
 			IAddressable<T> adrs = await Load();
-			return Object.Instantiate(adrs.Target, parent);
+			return  Object.Instantiate(adrs.Target, parent);
 		}
 
 		public async Task<K> InstantiateAs<K>(Transform parent = null)
