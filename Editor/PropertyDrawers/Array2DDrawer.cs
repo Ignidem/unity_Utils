@@ -41,7 +41,7 @@ namespace UnityUtils.Editor
 			SerializedProperty list = prop.FindPropertyRelative(ElementsField);
 
 			float width = Mathf.Max(10, (ViewWidth - IndentWidth) / size.x);
-			Rect origin = position.MoveY(LineHeight).SetX(IndentX)
+			Rect origin = Indent(position.MoveY(LineHeight))
 				.SetWidth(width).SetHeight(LineHeight);
 
 			for (int x = 0; x < size.x; x++)

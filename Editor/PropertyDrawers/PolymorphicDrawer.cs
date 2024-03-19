@@ -37,23 +37,23 @@ namespace UnityUtils.Editor.PropertyDrawers
 
 			float width = CalcLabelSize(property.displayName).x;
 			PolyTypeDropdown(position.MoveX(width), polyAttr, property);
+
+			int indent = EditorGUI.indentLevel;
 			EditorGUI.indentLevel++;
+			position = Indent(position);
 
-			position = position.MoveY(SpacedLineHeight);
-
+			position = position.MoveY(SpacedLineHeight).SetRemainderWidth(ViewWidth);
 			Type selectedType = polyAttr.SelectedType;
-
 			position = DrawProperty(position, property, selectedType);
 
-			EditorGUI.indentLevel--;
+			EditorGUI.indentLevel = indent;
 			EditorGUI.EndFoldoutHeaderGroup();
 			return -LineHeight;
 		}
 
-		protected override bool DrawLabel(SerializedProperty property, GUIContent label, 
-			ref Rect position, int index, bool folded)
+		protected override bool DrawLabel(SerializedProperty property, GUIContent label, ref Rect position, int index, bool folded)
 		{
-			Rect pos = position;
+			position = Indent(position);
 			if (property.IsArrayElement() && folded)
 			{
 				PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
@@ -62,7 +62,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 			}
 
 			bool fold = base.DrawLabel(property, label, ref position, index, folded);
-			position = pos;
+			position = Indent(position);
 			return fold;
 		}
 
@@ -106,7 +106,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 			position = GetDropdownRect(position);
 			string option = polyAttr.Index == -1 ? "Null Reference" : polyAttr.options[polyAttr.Index];
 			float width = CalcLabelSize(option).x;
-			Rect popupPos = position.SetWidth(width + 25);
+			Rect popupPos = position.SetWidth(width + 50);
 
 			int index = EditorGUI.Popup(popupPos, polyAttr.Index, polyAttr.options);
 

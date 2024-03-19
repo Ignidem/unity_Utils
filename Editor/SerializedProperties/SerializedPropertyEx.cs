@@ -53,7 +53,7 @@ namespace UnityUtils.Editor.SerializedProperties
 				SerializedPropertyType.ExposedReference => prop.exposedReferenceValue.GetType(),
 				SerializedPropertyType.ManagedReference => prop.managedReferenceValue?.GetType(),
 				SerializedPropertyType.FixedBufferSize => throw new NotImplementedException(),
-				SerializedPropertyType.Enum => throw new NotImplementedException(),
+				SerializedPropertyType.Enum => typeof(Enum),
 				_ => throw new NotImplementedException()
 			};
 		}

@@ -27,6 +27,8 @@ namespace UnityUtils.Editor
 
 		public bool IsValid => drawer != null;
 
+		public Type DrawerType => drawer?.GetType();
+
 		private SerializedProperty property;
 		private readonly PropertyDrawer drawer;
 

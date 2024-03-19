@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityUtils.Editor.ContextMenus;
+using UnityUtils.Editor.PropertyDrawers;
 using UnityUtils.Editor.SerializedProperties;
 using UnityUtils.RectUtils;
 
@@ -18,9 +19,14 @@ namespace UnityUtils.Editor
 
 	public abstract class ExtendedPropertyDrawer : PropertyDrawer
 	{
-		public const float IndentWidth = 38;
+		public const float IndentWidth = 15f;
 
-		public static float IndentX => (IndentWidth * 0.5f) + (IndentWidth * EditorGUI.indentLevel);
+		public static float IndentOffset => EditorGUI.indentLevel * IndentWidth;
+		public static Rect Indent(Rect position)
+		{
+			//EditorGUI.IndentedRect
+			return position.SetX(IndentOffset);
+		}
 		public static float Spacing => EditorGUIUtility.standardVerticalSpacing * 2;
 		public static float LineHeight => EditorGUIUtility.singleLineHeight;
 		public static float SpacedLineHeight => LineHeight + EditorGUIUtility.standardVerticalSpacing;
@@ -29,7 +35,7 @@ namespace UnityUtils.Editor
 
 		public static Vector2 CalcLabelSize(string content)
 		{
-			return GUI.skin.button.CalcSize(new GUIContent(content));
+			return GUI.skin.label.CalcSize(new GUIContent(content));
 		}
 
 		protected virtual LabelDrawType LabelType => LabelDrawType.HeaderFoldout;
@@ -54,7 +60,7 @@ namespace UnityUtils.Editor
 
 			EditorGUI.BeginProperty(position, label, property);
 
-			Rect start = position;
+			Rect start = position = Indent(position);
 			position = position.SetHeight(LineHeight);
 
 			folded[index] = DrawLabel(property, label, ref position, index, folded[index]);
@@ -69,12 +75,10 @@ namespace UnityUtils.Editor
 			}
 
 			float height = (position.y - start.y) + LineHeight + extraHeight;
-
 			heights[property.propertyPath] = height;
 		}
 
-		protected virtual bool DrawLabel(SerializedProperty property, GUIContent label,
-			ref Rect position, int index, bool folded)
+		protected virtual bool DrawLabel(SerializedProperty property, GUIContent label, ref Rect position, int index, bool folded)
 		{
 			switch (LabelType)
 			{
@@ -95,9 +99,7 @@ namespace UnityUtils.Editor
 			PropertyHandler handler = new PropertyHandler(property, property.GetValueType());
 			if (handler.IsValid)
 			{
-				EditorGUI.indentLevel--;
 				position = handler.DrawProperty(position, property);
-				EditorGUI.indentLevel++;
 				return;
 			}
 

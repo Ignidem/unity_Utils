@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -9,6 +10,8 @@ namespace UnityUtils.PropertyAttributes
 {
 	public class PolymorphicAttribute : PropertyAttribute
 	{
+		private static readonly Dictionary<Type, Type[]> subTypes = new Dictionary<Type, Type[]>();
+
 		public readonly bool nullable;
 		public string[] options { get; private set; }
 		public Type baseType { get; private set; }
@@ -50,7 +53,9 @@ namespace UnityUtils.PropertyAttributes
 		private void Init(Type baseType)
 		{
 			this.baseType = baseType;
-			types = baseType.GetSubTypes();
+			Type unityType = typeof(UnityEngine.Object);
+			types = subTypes.TryGetValue(baseType, out var _types) ? _types :
+				subTypes[baseType] = baseType.GetImplementations().Where(t => !unityType.IsAssignableFrom(t)).ToArray();
 
 			int k = 0;
 			options = new string[types.Length + (nullable ? 1 : 0)];
