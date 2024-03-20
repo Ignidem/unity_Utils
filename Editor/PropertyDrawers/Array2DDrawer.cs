@@ -13,15 +13,11 @@ namespace UnityUtils.Editor
 	public class Array2DDrawer : ExtendedPropertyDrawer
 	{
 		private const string ElementsField = Array2D<object>.ElementsFieldName;
-
 		protected override LabelDrawType LabelType => LabelDrawType.None;
 
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
 		{
-			IArray2D target = property.GetInstance() as IArray2D;
-			DrawSize(ref position, target);
-
-			Vector2Int size = target.Size;
+			Vector2Int size = DrawSize(ref position, property);
 			if (size.x != 0 && size.y != 0)
 				DrawGrid(ref position, property, size);
 
@@ -29,11 +25,39 @@ namespace UnityUtils.Editor
 			return SpacedLineHeight * 3;
 		}
 
-		private void DrawSize(ref Rect position, IArray2D array)
+		private Vector2Int DrawSize(ref Rect position, SerializedProperty property)
 		{
+			Vector2Int size = GetSize(property);
 			position = position.SetHeight(LineHeight);
-			Vector2Int newSize = EditorGUI.Vector2IntField(position, GUIContent.none, array.Size);
-			array.Size = newSize;
+			Vector2Int newSize = EditorGUI.Vector2IntField(position, GUIContent.none, size);
+			if (size == newSize)
+				return size;
+
+			return Resize(property, newSize);
+		}
+
+		private Vector2Int GetSize(SerializedProperty prop)
+		{
+			SerializedProperty list = prop.FindPropertyRelative(ElementsField);
+			int x = list.arraySize;
+			int y = x <= 0 ? 0 : list.GetArrayElementAtIndex(0).FindPropertyRelative(ElementsField).arraySize;
+			return new Vector2Int(x, y);
+		}
+
+		private Vector2Int Resize(SerializedProperty prop, Vector2Int size)
+		{
+			SerializedProperty list = prop.FindPropertyRelative(ElementsField);
+			if (list.arraySize != size.x)
+				list.arraySize = size.x;
+
+			for (int i = 0; i < size.x; i++)
+			{
+				SerializedProperty subArrayObj = list.GetArrayElementAtIndex(i);
+				SerializedProperty subList = subArrayObj.FindPropertyRelative(ElementsField);
+				subList.arraySize = size.y;
+			}
+
+			return size;
 		}
 
 		protected virtual void DrawGrid(ref Rect position, SerializedProperty prop, Vector2Int size)
