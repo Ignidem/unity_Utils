@@ -21,7 +21,7 @@ namespace UnityUtils.Editor.ContextMenus
 
 		private static void OnPropertyContextMenu(GenericMenu menu, SerializedProperty property)
 		{
-			if (property.propertyType != SerializedPropertyType.ManagedReference || property.boxedValue == null)
+			if (property.boxedValue == null)
 				return;
 
 			Type type = property.boxedValue.GetType();

@@ -43,8 +43,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 			position = Indent(position);
 
 			position = position.MoveY(SpacedLineHeight).SetRemainderWidth(ViewWidth);
-			Type selectedType = polyAttr.SelectedType;
-			position = DrawProperty(position, property, selectedType);
+			position = DrawProperty(position, property);
 
 			EditorGUI.indentLevel = indent;
 			EditorGUI.EndFoldoutHeaderGroup();
@@ -66,8 +65,9 @@ namespace UnityUtils.Editor.PropertyDrawers
 			return fold;
 		}
 
-		private Rect DrawProperty(Rect position, SerializedProperty property, Type selectedType)
+		private Rect DrawProperty(Rect position, SerializedProperty property)
 		{
+			Type selectedType = property.boxedValue?.GetType();
 			if (selectedType == null) return position;
 
 			if (!selectedType.IsSubclassOf(typeof(UnityEngine.Object)))
@@ -113,9 +113,10 @@ namespace UnityUtils.Editor.PropertyDrawers
 			if (index == polyAttr.Index) return position;
 			
 			polyAttr.SetFieldInfo(property.GetParent(), fieldInfo, listIndex);
-			if (polyAttr.ChangeIndex(index, listIndex, false, out object value))
+			if (polyAttr.ChangeIndex(index, listIndex, true, out object value))
 			{
-				property.boxedValue = value;
+				//property.boxedValue = value;
+				property.serializedObject.Update();
 			}
 
 			return position;
