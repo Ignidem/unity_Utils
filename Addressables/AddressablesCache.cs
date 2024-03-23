@@ -7,12 +7,28 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace UnityUtils.AddressablesUtils
 {
+	public class AddressablesCache<TValue> : AddressablesCache<string, TValue>
+		where TValue : UnityEngine.Object
+	{
+		public override AsyncOperationHandle<TValue> Load(string key)
+		{
+			if (!handlers.TryGetValue(key, out AsyncOperationHandle<TValue> handler))
+			{
+				AssetReference assetRef = new AssetReference(key);
+				handler = assetRef.LoadAssetAsync<TValue>();
+				handlers[key] = handler;
+			}
+
+			return handler;
+		}
+	}
+
 	public class AddressablesCache<TKey, TValue> : IDisposable
 		where TValue : UnityEngine.Object
 	{
 		public readonly Dictionary<TKey, AsyncOperationHandle<TValue>> handlers = new();
 
-		public AsyncOperationHandle<TValue> Load(TKey key)
+		public virtual AsyncOperationHandle<TValue> Load(TKey key)
 		{
 			if (!handlers.TryGetValue(key, out AsyncOperationHandle<TValue> handler))
 			{

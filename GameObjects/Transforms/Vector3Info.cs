@@ -13,16 +13,12 @@ namespace UnityUtils.Transforms
 				space = Space.World,
 			};
 		}
-
 		public static bool operator !=(Vector3Info v1, Vector3Info v2) => !(v1 == v2);
-
 		public static bool operator ==(Vector3Info v1, Vector3Info v2)
 		{
 			return v1.space == v2.space && v1.vector == v2.vector;
 		}
-
 		public static implicit operator Vector3(Vector3Info info) => info.vector;
-
 		public static Vector3Info operator +(Vector3Info v1, Vector3Info v2)
 		{
 			return new Vector3Info()
@@ -31,7 +27,6 @@ namespace UnityUtils.Transforms
 				space = v1.space,
 			};
 		}
-
 		public static Vector3Info operator -(Vector3Info v1, Vector3Info v2)
 		{
 			return new Vector3Info()
@@ -40,6 +35,15 @@ namespace UnityUtils.Transforms
 				space = v1.space,
 			};
 		}
+
+		public readonly float this[int i] => i switch
+		{
+			0 => vector.x,
+			1 => vector.y,
+			2 => vector.z,
+			3 => (int)space,
+			_ => throw new System.IndexOutOfRangeException()
+		};
 
 		public Vector3 vector;
 		public Space space;

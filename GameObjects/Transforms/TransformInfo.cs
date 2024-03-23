@@ -9,7 +9,6 @@ namespace UnityUtils.Transforms
 		{
 			return new TransformInfo(transform, Space.Self);
 		}
-
 		public static bool operator !=(TransformInfo left, TransformInfo right) => !(left == right);
 		public static bool operator ==(TransformInfo left, TransformInfo right)
 		{
@@ -17,7 +16,6 @@ namespace UnityUtils.Transforms
 				&& left.rotation == right.rotation
 				&& left.scale == right.scale;
 		}
-
 		public static TransformInfo operator -(TransformInfo t1, TransformInfo t2)
 		{
 			return new TransformInfo()
@@ -27,7 +25,6 @@ namespace UnityUtils.Transforms
 				scale = t1.scale - t2.scale,
 			};
 		}
-
 		public static TransformInfo operator +(TransformInfo t1, TransformInfo t2)
 		{
 			return new TransformInfo()
@@ -37,6 +34,12 @@ namespace UnityUtils.Transforms
 				scale = t1.scale + t2.scale,
 			};
 		}
+
+		public readonly Vector3Info this[int i] => i switch
+		{
+			0 => position, 1 => rotation, 2 => scale,
+			_ => throw new System.IndexOutOfRangeException()
+		};
 
 		public Vector3Info position;
 		public Vector3Info rotation;

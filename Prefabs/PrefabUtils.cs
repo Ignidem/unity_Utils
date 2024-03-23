@@ -6,7 +6,7 @@ namespace  UnityUtils.Prefabs
 	{
 		public static bool IsPrefab(this Object obj)
 		{
-			return obj is GameObject go ? !go.scene.IsValid() : false;
+			return obj is GameObject go && go.scene.name != null;
 		}
 
 		public static bool IsPrefab(this Component comp) => comp.gameObject.IsPrefab();
