@@ -12,6 +12,20 @@ namespace UnityUtils.Editor.SerializedProperties
 			BindingFlags.Static;
 		private const string backingField = "<{0}>k__BackingField";
 
+		public static bool IsBoxedValueValid(this SerializedProperty prop)
+		{
+			if (prop.propertyType != SerializedPropertyType.Generic && !prop.isArray)
+				return true;
+
+			try
+			{
+				_ = prop.boxedValue;
+				return true;
+			}
+			catch { }
+			return false;
+		}
+
 		public static SerializedProperty GetRelativeProperty(this SerializedObject obj, string name)
 		{
 			return obj.FindProperty(name) ?? obj.FindProperty(string.Format(backingField, name));
@@ -49,12 +63,12 @@ namespace UnityUtils.Editor.SerializedProperties
 				SerializedPropertyType.Hash128 => typeof(Hash128),
 
 				SerializedPropertyType.ObjectReference => prop.objectReferenceValue.GetType(),
-				SerializedPropertyType.Generic => prop.boxedValue.GetType(),
+				SerializedPropertyType.Generic when prop.IsBoxedValueValid() => prop.boxedValue.GetType(),
 				SerializedPropertyType.ExposedReference => prop.exposedReferenceValue.GetType(),
 				SerializedPropertyType.ManagedReference => prop.managedReferenceValue?.GetType(),
-				SerializedPropertyType.FixedBufferSize => throw new NotImplementedException(),
+				SerializedPropertyType.FixedBufferSize => typeof(int),
 				SerializedPropertyType.Enum => typeof(Enum),
-				_ => throw new NotImplementedException()
+				_ => prop.GetFieldType(prop.isArray)
 			};
 		}
 
@@ -83,11 +97,22 @@ namespace UnityUtils.Editor.SerializedProperties
 
 		public static object GetInstance(this SerializedProperty prop)
 		{
-			return prop.boxedValue;
-			/*
+			if (prop.IsBoxedValueValid())
+				return prop.boxedValue;
+			
 			string[] path = prop.propertyPath.Replace(".Array.data[", "[").Split('.');
 			return GetInstance(prop, path, path.Length);
-			*/
+		}
+
+		public static Type GetFieldType(this SerializedProperty prop, bool elementType)
+		{
+			object parent = prop.GetParent();
+			Type pt = parent.GetType();
+			Type type = pt.GetField(prop.name, BindingAttr)?.FieldType ?? pt.GetProperty(prop.name, BindingAttr)?.PropertyType;
+			return !elementType ? type
+				: type.IsArray ? type.GetElementType()
+				: type.IsGenericType ? type.GetGenericArguments()[0]
+				: type;
 		}
 
 		public static object GetParent(this SerializedProperty prop)

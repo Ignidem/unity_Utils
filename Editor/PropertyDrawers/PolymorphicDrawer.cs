@@ -113,7 +113,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 			if (index == polyAttr.Index) return position;
 			
 			polyAttr.SetFieldInfo(property.GetParent(), fieldInfo, listIndex);
-			if (polyAttr.ChangeIndex(index, listIndex, true, out object value))
+			if (polyAttr.ChangeIndex(index, listIndex, true, out _))
 			{
 				//property.boxedValue = value;
 				property.serializedObject.Update();

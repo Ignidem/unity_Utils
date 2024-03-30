@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityUtils.Editor.SerializedProperties;
 
 namespace UnityUtils.Editor.ContextMenus
 {
@@ -20,11 +21,14 @@ namespace UnityUtils.Editor.ContextMenus
 
 		private static void OnPropertyContextMenu(GenericMenu menu, SerializedProperty property)
 		{
-			if (property.boxedValue == null)
+			if (property.objectReferenceValue is MonoScript script)
+			{
+				EditScriptMenuOption(menu, script);
 				return;
+			}
 
-			Type type = property.boxedValue.GetType();
-			if (type.IsPrimitive)
+			Type type = property.GetValueType();
+			if (type == null || type.IsPrimitive)
 				return;
 
 			TypeContextMenu(menu, type);
@@ -35,6 +39,11 @@ namespace UnityUtils.Editor.ContextMenus
 			if (type == null || !TryGetScript(type, out MonoScript script))
 				return;
 
+			EditScriptMenuOption(context, script);
+		}
+
+		private static void EditScriptMenuOption(GenericMenu context, MonoScript script)
+		{
 			context.AddItem(new GUIContent("Edit " + script.name), false, () => AssetDatabase.OpenAsset(script));
 		}
 
