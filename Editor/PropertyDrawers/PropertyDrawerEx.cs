@@ -19,9 +19,9 @@ namespace UnityUtils.Editor
 
 	public abstract class ExtendedPropertyDrawer : PropertyDrawer
 	{
-		public const float IndentWidth = 18f;
+		public const float IndentWidth = 15f;
 
-		public static float IndentOffset => Math.Max(1, EditorGUI.indentLevel) * IndentWidth;
+		public static float IndentOffset => EditorGUI.indentLevel * IndentWidth;
 		public static Rect Indent(Rect position)
 		{
 			//EditorGUI.IndentedRect
