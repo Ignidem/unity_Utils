@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UnityUtils.Editor.ContextMenus;
 using UnityUtils.Editor.SerializedProperties;
 using UnityUtils.PropertyAttributes;
 using UnityUtils.RectUtils;
+using Utilities.Reflection;
 
 namespace UnityUtils.Editor.PropertyDrawers
 {
@@ -28,6 +26,12 @@ namespace UnityUtils.Editor.PropertyDrawers
 		{
 			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
 			Init(property, polyAttr);
+
+			if (polyAttr.SelectedType != null && polyAttr.SelectedType.TryGetAttribute(out ITooltipAttribute tooltip)) 
+			{
+				label = new GUIContent(label.text, tooltip.Tooltip);
+			}
+
 			base.OnGUI(position, property, label);
 		}
 

@@ -8,6 +8,7 @@ using Utilities.Reflection;
 
 namespace UnityUtils.PropertyAttributes
 {
+
 	public class PolymorphicAttribute : PropertyAttribute
 	{
 		private static readonly Dictionary<Type, Type[]> subTypes = new Dictionary<Type, Type[]>();
