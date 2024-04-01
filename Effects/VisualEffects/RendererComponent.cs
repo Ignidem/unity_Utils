@@ -12,6 +12,16 @@ namespace UnityUtils.Effects.VisualEffects
 
 		private Material Material => render.material;
 
+		public void Play()
+		{
+			render.gameObject.SetActive(true);
+		}
+
+		public void Stop()
+		{
+			render.gameObject.SetActive(false);
+		}
+
 		public T GetValue<T>(int id)
 		{
 			return Material.TryGetProperty(id, out T value) ? value : default;

@@ -11,6 +11,18 @@ namespace UnityUtils.Effects.VisualEffects
 		private VisualEffect vfx;
 		public string Name => vfx.gameObject.name;
 
+		public void Play()
+		{
+			vfx.gameObject.SetActive(true);
+			vfx.Play();
+		}
+
+		public void Stop()
+		{
+			vfx.Stop();
+			vfx.gameObject.SetActive(false);
+		}
+
 		public T GetValue<T>(int id)
 		{
 			return vfx.TryGetProperty(id, out T value) ? value : default;

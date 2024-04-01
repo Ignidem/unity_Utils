@@ -21,6 +21,8 @@ namespace UnityUtils.AddressableUtils
 
 		public System.Type Type => typeof(T);
 
+		public bool IsValid => prefabReference != null && !string.IsNullOrEmpty(AssetGUID);
+
 		[SerializeField]
 		private AssetReference prefabReference;
 
@@ -63,7 +65,7 @@ namespace UnityUtils.AddressableUtils
 		public async Task<T> InstantiateObject(Transform parent = null)
 		{
 			IAddressable<T> adrs = await Load();
-			return  Object.Instantiate(adrs.Target, parent);
+			return Object.Instantiate(adrs.Target, parent);
 		}
 
 		public async Task<K> InstantiateAs<K>(Transform parent = null)
