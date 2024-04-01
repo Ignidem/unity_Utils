@@ -75,7 +75,7 @@ namespace UnityUtils.Effects.VisualEffects
 			}
 			catch (MissingPropertyException mpe)
 			{
-				Debug.LogError(mpe.Message);
+				Debug.LogException(mpe);
 			}
 			catch (Exception e)
 			{
@@ -101,7 +101,7 @@ namespace UnityUtils.Effects.VisualEffects
 			}
 			catch (MissingPropertyException mpe)
 			{
-				Debug.LogError(mpe.Message);
+				Debug.LogException(mpe);
 			}
 			catch (Exception e)
 			{
