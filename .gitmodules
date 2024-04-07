@@ -1,0 +1,3 @@
+[submodule "Effects/Animations/SimpleAnimation"]
+	path = Effects/Animations/SimpleAnimation
+	url = https://github.com/Unity-Technologies/SimpleAnimation
