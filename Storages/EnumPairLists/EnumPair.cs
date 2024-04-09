@@ -48,8 +48,14 @@ namespace UnityUtils.Storages.EnumPairLists
 
 		private IEnumerable<KeyValuePair<TEnum, TValue>> Enumerate()
 		{
-			for (int i = 0; i < values.Length; i++)
-				yield return new KeyValuePair<TEnum, TValue>(enumValues[i], values[i]);
+			int vCount = values.Length;
+			int eCount = enumValues.Length;
+			for (int i = 0; i < eCount; i++)
+			{
+				TEnum key = enumValues[i];
+				TValue value = i >= vCount ? default : values[i];
+				yield return new KeyValuePair<TEnum, TValue>(key, value);
+			}
 		}
 		public IEnumerator<KeyValuePair<TEnum, TValue>> GetEnumerator() => Enumerate().GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

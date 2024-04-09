@@ -18,7 +18,7 @@ namespace UnityUtils.Storages.Editor.EnumPairLists
 			SerializedProperty values = property.FindPropertyRelative(nameof(values));
 
 			int count = enumpair.Count;
-			if (values.arraySize < count)
+			if (values.arraySize != count)
 				values.arraySize = count;
 
 			if (count > 10)
