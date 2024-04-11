@@ -24,7 +24,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 
 		void OnEnable()
 		{
-			if (serializedObject == null)
+			if (targets == null || targets.Length == 0 || !targets[0])
 				return;
 
 			clip = serializedObject.FindProperty("m_Clip");
@@ -36,7 +36,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 
 		public override void OnInspectorGUI()
 		{
-			if (serializedObject == null)
+			if (targets == null || targets.Length == 0 || !targets[0])
 				return;
 
 			serializedObject.Update();
