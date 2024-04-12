@@ -4,7 +4,7 @@ using UnityEngine;
 namespace UnityUtils.Effects.VisualEffects
 {
 	[Serializable]
-	public class RendererComponent : IVisualEffectComponents
+	public class RendererComponent : IVisualEffectComponent
 	{
 		[SerializeField]
 		private Renderer render;

@@ -5,7 +5,7 @@ using UnityEngine.VFX;
 namespace UnityUtils.Effects.VisualEffects
 {
 	[Serializable]
-	public class VisualEffectComponent : IVisualEffectComponents
+	public class VisualEffectComponent : IVisualEffectComponent
 	{
 		[SerializeField]
 		private VisualEffect vfx;

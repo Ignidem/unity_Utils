@@ -2,7 +2,7 @@
 
 namespace UnityUtils.Effects.VisualEffects
 {
-	public interface IVisualEffectComponents : IVisualComponent
+	public interface IVisualEffectComponent : IVisualComponent
 	{
 		string Name { get; }
 

@@ -14,7 +14,7 @@ namespace UnityUtils.Effects.VisualEffects
 		public Transform Root => transform;
 
 		[SerializeReference, Polymorphic]
-		private IVisualEffectComponents[] components;
+		private IVisualEffectComponent[] components;
 
 		public virtual void Play()
 		{
@@ -62,6 +62,12 @@ namespace UnityUtils.Effects.VisualEffects
 		{
 			for (int i = 0; i < components.Length; i++)
 				components[i].Dispose();
+		}
+
+		public void ApplyOnComponents(IVisualEffectParameters parameters)
+		{
+			for (int i = 0; i < components.Length; i++)
+				parameters.Apply(components[i]);
 		}
 	}
 }
