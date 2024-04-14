@@ -10,7 +10,6 @@ namespace UnityUtils.Storages
 	public abstract class StorageObject : ScriptableObject
 	{
 		public abstract Type TableType { get; }
-
 		public abstract T[] GetAllAs<T>();
 	}
 
@@ -33,7 +32,6 @@ namespace UnityUtils.Storages
 			get => values[key]; 
 			set => values[key] = value; 
 		}
-
 
 		public void Delete(TKey key)
 		{
