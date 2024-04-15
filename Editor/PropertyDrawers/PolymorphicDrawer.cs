@@ -32,7 +32,12 @@ namespace UnityUtils.Editor.PropertyDrawers
 				label = new GUIContent(label.text, tooltip.Tooltip);
 			}
 
-			base.OnGUI(position, property, label);
+			int indent = EditorGUI.indentLevel;
+			if (property.isArray)
+				EditorGUI.indentLevel++;
+			base.OnGUI(Indent(position), property, label);
+
+			EditorGUI.indentLevel = indent;
 		}
 
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
@@ -107,7 +112,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 		private Rect PolyTypeDropdown(Rect position, PolymorphicAttribute polyAttr, SerializedProperty property)
 		{
 			int listIndex = property.GetIndex();
-			position = GetDropdownRect(position);
+			position = GetDropdownRect(position, property.depth);
 			string option = polyAttr.Index == -1 ? "Null Reference" : polyAttr.options[polyAttr.Index];
 			float width = CalcLabelSize(option).x;
 			Rect popupPos = position.SetWidth(width + 50);
@@ -127,7 +132,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 			return position;
 		}
 
-		private static Rect GetDropdownRect(Rect position)
+		private static Rect GetDropdownRect(Rect position, int depth)
 		{
 			Rect popupPos = position.MoveX(Spacing * 3);
 			return popupPos.SetWidth(ViewWidth - popupPos.x);
