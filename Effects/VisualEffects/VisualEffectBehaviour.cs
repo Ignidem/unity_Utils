@@ -69,5 +69,12 @@ namespace UnityUtils.Effects.VisualEffects
 			for (int i = 0; i < components.Length; i++)
 				parameters.Apply(components[i]);
 		}
+
+		public virtual void Destroy()
+		{
+			Dispose();
+			if (gameObject)
+				Destroy(gameObject, 3);
+		}
 	}
 }
