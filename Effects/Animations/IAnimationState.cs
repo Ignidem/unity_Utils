@@ -15,6 +15,10 @@ namespace UnityUtils.Animations.StateListener
 		void Play(float blendTime = 0.1f);
 		void Stop(float blendTime = 0.1f);
 		TaskAwaiter GetAwaiter();
+		async Task GetTask()
+		{
+			await this;
+		}
 	}
 
 	public readonly struct AnimationState : IAnimationState
