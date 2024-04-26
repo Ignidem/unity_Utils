@@ -74,7 +74,7 @@ namespace UnityUtils.Effects.VisualEffects
 		{
 			Dispose();
 			if (gameObject)
-				Destroy(gameObject, 3);
+				Destroy(gameObject, 1);
 		}
 	}
 }

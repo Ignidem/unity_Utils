@@ -23,6 +23,22 @@ namespace UnityUtils.Editor.SerializedProperties
 				return true;
 			}
 			catch { }
+
+			return false;
+		}
+		public static bool TryGetBoxedValue<T>(this SerializedProperty prop, out T value)
+		{
+			try
+			{
+				if (prop.boxedValue is T _t)
+				{
+					value = _t;
+					return true;
+				}
+			}
+			catch { }
+
+			value = default;
 			return false;
 		}
 

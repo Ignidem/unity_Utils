@@ -45,7 +45,7 @@ namespace UnityUtils.Editor
 
 		public ExtendedPropertyDrawer()
 		{
-			PropertyContextMenu.Enable();
+			//PropertyContextMenu.StartUp();
 		}
 
 		protected abstract float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label);
