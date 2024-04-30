@@ -154,7 +154,8 @@ namespace UnityUtils.AddressableUtils
 
 			AsyncOperationHandle<K> result = Addressables.LoadAssetAsync<K>(prefabReference.RuntimeKey);
 			loadTask = result.Task;
-			return await result.Task;
+			K value = await result.Task;
+			return value;
 		}
 	}
 }
