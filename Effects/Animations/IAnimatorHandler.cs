@@ -9,7 +9,6 @@ namespace UnityUtils.Animations.StateListener
 
 	public interface IAnimatorHandler
 	{
-		void OnValidate();
 		void RegisterState(IAnimationState state);
 
 		void OnStateEnter(IAnimationState state);
