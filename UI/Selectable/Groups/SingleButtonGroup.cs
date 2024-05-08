@@ -35,6 +35,8 @@ namespace UnityUtils.UI.Selectable.Groups
 			OnSelectionChanged?.Invoke();
 		}
 
+		public void DeselectActive() => Deselect(ActiveInput);
+
 		public void Deselect(ISelectableInput input)
 		{
 			if (input != ActiveInput) return;
