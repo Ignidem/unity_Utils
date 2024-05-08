@@ -18,19 +18,12 @@ namespace UnityUtils.UI.Selectable
 		[field: SerializeField]
 		public int Id { get; set; }
 
-		public ISelectableGroup Group
-		{
-			get => _group ?? group;
-			set => _group = value;
-		}
-
-		[SerializeField]
-		private SingleButtonGroup group;
-		[SerializeReference]
-		private ISelectableGroup _group;
+		[field: SerializeReference, Polymorphic(true)]
+		public ISelectableGroup Group { get; set; }
 
 		[field: SerializeField]
 		public bool IsToggle { get; private set; }
+		public bool IsSelected => currentSelectionState == SelectionState.Selected || Group.IsActive(Id);
 
 		[SerializeReference, Polymorphic]
 		[InspectorName("Events")]
