@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.VectorGraphics;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace UnityUtils.UI.Selectable
@@ -29,6 +30,25 @@ namespace UnityUtils.UI.Selectable
 				ButtonState.Highlighted => color * highlightMult,
 				_ => color
 			};
+		}
+
+		public readonly void SetSprite(Sprite sprite)
+		{
+			SetSprite(front, sprite);
+			SetSprite(back, sprite);
+		}
+
+		private readonly void SetSprite(Graphic graphic, Sprite sprite)
+		{
+			switch (graphic)
+			{
+				case Image fimg:
+					fimg.sprite = sprite;
+					break;
+				case SVGImage fsvg:
+					fsvg.sprite = sprite;
+					break;
+			}
 		}
 	}
 }

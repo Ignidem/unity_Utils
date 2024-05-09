@@ -2,6 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityUtils.PropertyAttributes;
 using UnityUtils.UI.Selectable.Groups;
+using Utils.Collections;
 
 namespace UnityUtils.UI.Selectable
 {

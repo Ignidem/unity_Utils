@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Utils.Collections;
 
 namespace UnityUtils.UI.Selectable.Groups
 {
@@ -7,6 +8,15 @@ namespace UnityUtils.UI.Selectable.Groups
 	public class SingleButtonGroup : ISingleSelectableGroup
 	{
 		public delegate void SelectionChangedDelegate();
+
+		public Button this[int id]
+		{
+			get
+			{
+				int index = buttons.IndexOf(b => b.Id == id);
+				return index == -1 ? null : buttons[index];
+			}
+		}
 
 		[SerializeField]
 		private Button[] buttons;
