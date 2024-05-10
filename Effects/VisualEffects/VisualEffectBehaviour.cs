@@ -39,6 +39,12 @@ namespace UnityUtils.Effects.VisualEffects
 			action();
 		}
 
+		public async Task AwaitEnd()
+		{
+			while (IsPlaying)
+				await Task.Yield();
+		}
+
 		public T GetValue<T>(string component, int id)
 		{
 			int index = components.IndexOf(c => c.Name == component);
