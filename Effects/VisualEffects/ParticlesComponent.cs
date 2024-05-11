@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace UnityUtils.Effects.VisualEffects
 {
+
 	[Serializable]
 	public class ParticlesComponent : IVisualEffectComponent
 	{
