@@ -3,21 +3,22 @@ using UnityEngine;
 
 namespace UnityUtils.Effects.VisualEffects
 {
+
 	[Serializable]
-	public class RendererComponent : IVisualEffectComponent
+	public struct RendererComponent : IVisualEffectComponent
 	{
 		[SerializeField]
 		private Renderer render;
-		public string Name => render.gameObject.name;
+		public readonly string Name => render.gameObject.name;
 
-		private Material Material => render.material;
+		private readonly Material Material => render.material;
 
-		public void Play()
+		public readonly void Play()
 		{
 			render.gameObject.SetActive(true);
 		}
 
-		public void Stop()
+		public readonly void Stop()
 		{
 			render.gameObject.SetActive(false);
 		}

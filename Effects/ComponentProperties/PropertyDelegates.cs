@@ -5,7 +5,6 @@
 	public delegate void SetPropertyDelegate<TComponent, TValue>(TComponent comp, int id, TValue value);
 
 	public class PropertyDelegates<TComponent, TValue> : IPropertyDelegates
-		where TComponent : UnityEngine.Object
 	{
 		private readonly HasPropertyDelegate<TComponent> hasProperty;
 		private readonly GetPropertyDelegate<TComponent, TValue> getProperty;

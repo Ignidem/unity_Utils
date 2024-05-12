@@ -9,7 +9,7 @@ namespace UnityUtils.Editor.SerializedProperties
 	public static class SerializedPropertyEx
 	{
 		private const BindingFlags BindingAttr = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
-			BindingFlags.Static;
+			BindingFlags.Static | BindingFlags.FlattenHierarchy;
 		private const string backingField = "<{0}>k__BackingField";
 
 		public static bool IsBoxedValueValid(this SerializedProperty prop)
@@ -109,12 +109,12 @@ namespace UnityUtils.Editor.SerializedProperties
 			return int.TryParse(num, out int index) ? index : -1;
 		}
 
-		public static object GetTarget(this SerializedProperty prop) => prop.serializedObject.targetObject;
+		public static UnityEngine.Object GetTarget(this SerializedProperty prop) => prop.serializedObject.targetObject;
 
 		public static object GetInstance(this SerializedProperty prop)
 		{
-			if (prop.IsBoxedValueValid())
-				return prop.boxedValue;
+			if (prop.TryGetBoxedValue(out object value))
+				return value;
 			
 			string[] path = prop.propertyPath.Replace(".Array.data[", "[").Split('.');
 			return GetInstance(prop, path, path.Length);
@@ -133,13 +133,25 @@ namespace UnityUtils.Editor.SerializedProperties
 
 		public static object GetParent(this SerializedProperty prop)
 		{
-			string[] path = prop.propertyPath.Replace(".Array.data[", "[").Split('.');
-			return GetInstance(prop, path, path.Length - 1);
+			/*
+			string path = prop.propertyPath;
+			if (path[^1] == ']') path = path[..path.LastIndexOf("Array.data")];
+			int parentIndex = path.LastIndexOf('.');
+			if (parentIndex != -1) path = path[..parentIndex];
+			SerializedProperty parentProp = prop.serializedObject.FindProperty(path);
+			if (parentProp.TryGetBoxedValue(out object value))
+				return value;
+			*/
+
+			string[] paths = prop.propertyPath.Replace(".Array.data[", "[").Split('.');
+			return GetInstance(prop, paths, paths.Length - 1);
 		}
 
 		private static object GetInstance(this SerializedProperty prop, string[] path, int maxDepth)
 		{
-			object target = GetTarget(prop);
+			UnityEngine.Object _target = GetTarget(prop);
+			
+			object target = _target;
 			for (int depth = 0; depth < maxDepth; depth++)
 			{
 				string name = path[depth];

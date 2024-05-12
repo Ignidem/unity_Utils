@@ -14,7 +14,7 @@ namespace UnityUtils.Effects.VisualEffects
 		public Transform Root => transform;
 
 		[SerializeReference, Polymorphic]
-		private IVisualEffectComponent[] components;
+		protected IVisualEffectComponent[] components;
 
 		public virtual void Play()
 		{
