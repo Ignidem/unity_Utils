@@ -20,16 +20,26 @@ namespace UnityUtils.Effects.VisualEffects.ParameterFunctions
 			get
 			{
 				int id = Shader.PropertyToID(name);
+				return this[id];
+			}
+			set
+			{
+				this[Shader.PropertyToID(name)] = value;
+			}
+		}
+		protected IPropertyDelegates this[int id]
+		{
+			get
+			{
 				return delegates.TryGetValue(id, out var value) ? value : null;
 			}
 			set
 			{
-				int id = Shader.PropertyToID(name);
 				delegates[id] = value;
 			}
 		}
 
-		private PropertyDelegates<TComponent, TValue> GetDelegate<TValue>(TComponent component, int id)
+		protected PropertyDelegates<TComponent, TValue> GetDelegate<TValue>(TComponent component, int id)
 		{
 			if (!delegates.TryGetValue(id, out IPropertyDelegates propertyDelegates))
 			{

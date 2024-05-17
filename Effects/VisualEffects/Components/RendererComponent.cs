@@ -1,16 +1,21 @@
 ﻿using System;
 using UnityEngine;
+using UnityUtils.Effects.VisualEffects.ParameterFunctions;
+using UnityUtils.PropertyAttributes;
 
 namespace UnityUtils.Effects.VisualEffects
 {
+	public interface IRendererParameterFunctions : IParameterFunctions<Renderer> { }
 
 	[Serializable]
 	public struct RendererComponent : IVisualEffectComponent
 	{
-		[SerializeField]
-		private Renderer render;
-		public readonly string Name => render.gameObject.name;
+		[SerializeField] private Renderer render;
 
+		[SerializeReference, Polymorphic(true)]
+		private IRendererParameterFunctions functions;
+
+		public readonly string Name => render.gameObject.name;
 		private readonly Material Material => render.material;
 
 		public readonly void Play()
@@ -23,14 +28,18 @@ namespace UnityUtils.Effects.VisualEffects
 			render.gameObject.SetActive(false);
 		}
 
-		public T GetValue<T>(int id)
+		public readonly T GetValue<T>(int id)
 		{
-			return Material.TryGetProperty(id, out T value) ? value : default;
+			return functions != null ? functions.GetValue<T>(render, id)
+				: Material.TryGetProperty(id, out T value) ? value : default;
 		}
 
-		public void SetValue<T>(int id, T value)
+		public readonly void SetValue<T>(int id, T value)
 		{
-			Material.TrySetProperty(id, value);
+			if (functions != null)
+				functions.SetValue(render, id, value);
+			else 
+				Material.TrySetProperty(id, value);
 		}
 	}
 }
