@@ -61,12 +61,6 @@ namespace UnityUtils.Effects.VisualEffects
 				components[i].SetValue(id, value);
 		}
 
-		public void ApplyOnComponents(IVisualEffectParameters parameters)
-		{
-			for (int i = 0; i < components.Length; i++)
-				parameters.Apply(components[i]);
-		}
-
 		public void Dispose()
 		{
 			for (int i = 0; i < components.Length; i++)

@@ -14,6 +14,8 @@ namespace UnityUtils.Animations.StateListener
 		float Length { get; }
 		int Layer { get; }
 		float Time { get; }
+		float Weight { get; }
+		float NormalizedTime { get; }
 
 		event AnimationEventListener OnEvent;
 

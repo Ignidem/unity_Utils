@@ -1,16 +1,23 @@
 ﻿using System;
-using System.Threading.Tasks;
 using UnityEngine;
+using UnityUtils.Effects.VisualEffects.ParameterFunctions;
+using UnityUtils.PropertyAttributes;
 
 namespace UnityUtils.Effects.VisualEffects
 {
+	public interface IParticlesParameterFunctions : IParameterFunctions<ParticlesComponent> { }
+
 	[Serializable]
 	public class ParticlesComponent : IVisualEffectComponent
 	{
 		[SerializeField]
 		private ParticleSystem particles;
-		public string Name => particles.gameObject.name;
 
+		[SerializeReference, Polymorphic]
+		private IParticlesParameterFunctions functions;
+
+		public string Name => particles.gameObject.name;
+		
 		public ParticleSystem.MinMaxCurve StartSize
 		{
 			get => particles.main.startSize;
@@ -48,6 +55,42 @@ namespace UnityUtils.Effects.VisualEffects
 		{
 			get => particles.shape;
 		}
+		public Vector3 Position
+		{
+			get => Area.position;
+			set
+			{
+				var area = Area;
+				area.position = value;
+			}
+		}
+		public Vector3 Rotation
+		{
+			get => Area.rotation;
+			set
+			{
+				var area = Area;
+				area.rotation = value;
+			}
+		}
+		public Vector3 Scale
+		{
+			get => Area.scale;
+			set
+			{
+				var area = Area;
+				area.scale = value;
+			}
+		}
+		public float Radius
+		{
+			get => Area.radius;
+			set
+			{
+				var area = Area;
+				area.radius = value;
+			}
+		}
 
 		public void Play()
 		{
@@ -67,12 +110,18 @@ namespace UnityUtils.Effects.VisualEffects
 
 		public T GetValue<T>(int id)
 		{
+			if (functions != null)
+				return functions.GetValue<T>(this, id);
+
 			return particles.TryGetProperty(id, out T value) ? value : default;
 		}
 
 		public void SetValue<T>(int id, T value)
 		{
-			particles.TrySetProperty(id, value);
+			if (functions != null)
+				functions.SetValue<T>(this, id, value);
+			else 
+				particles.TrySetProperty(id, value);
 		}
 	}
 }

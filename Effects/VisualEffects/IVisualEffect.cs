@@ -12,8 +12,6 @@ namespace UnityUtils.Effects.VisualEffects
 		void SetValue<T>(string component, int id, T value);
 		void SetAll<T>(int id, T value);
 
-		void ApplyOnComponents(IVisualEffectParameters parameters);
-
 		void OnEnd(Action action);
 	}
 }
