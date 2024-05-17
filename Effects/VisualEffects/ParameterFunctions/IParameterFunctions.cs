@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using WarmongersAPI.Systems;
 
 namespace UnityUtils.Effects.VisualEffects.ParameterFunctions
 {
 	public interface IParameterFunctions<TComponent>
 	{
 		T GetValue<T>(TComponent component, int id);
-		void SetValue<T>(TComponent component, int id, T value);
+		void SetValue<T>(TComponent component, int id, T value, bool isOptional = false);
 	}
 
 	public abstract class ParameterFunctions<TComponent> : IParameterFunctions<TComponent>
@@ -39,20 +41,32 @@ namespace UnityUtils.Effects.VisualEffects.ParameterFunctions
 			}
 		}
 
-		protected PropertyDelegates<TComponent, TValue> GetDelegate<TValue>(TComponent component, int id)
+		protected PropertyDelegates<TComponent, TValue> GetDelegate<TValue>(TComponent component, int id, bool isOptional = false)
 		{
 			if (!delegates.TryGetValue(id, out IPropertyDelegates propertyDelegates))
 			{
-				return ThrowExceptions ? throw new MissingPropertyException(component, id, GetType()) : null;
+				var exception = new MissingPropertyException(component, id, GetType());
+				OnException(isOptional, exception);
+				return null;
 			}
 
 			if (propertyDelegates is not PropertyDelegates<TComponent, TValue> dgt)
 			{
-				return !ThrowExceptions ? null :
-					throw new System.Exception($"Property Delegate {propertyDelegates.GetType()} is not of type {typeof(TValue)}");
+				var exception = new Exception($"Property Delegate {propertyDelegates.GetType()} is not of type {typeof(TValue)}");
+				OnException(isOptional, exception);
+				return null;
 			}
 
 			return dgt;
+		}
+
+		protected void OnException(bool isOptional, Exception exception)
+		{
+			if (ThrowExceptions && !isOptional)
+				throw exception;
+
+			if (!isOptional)
+				exception.LogException();
 		}
 
 		public virtual T GetValue<T>(TComponent component, int id)
@@ -60,9 +74,9 @@ namespace UnityUtils.Effects.VisualEffects.ParameterFunctions
 			PropertyDelegates<TComponent, T> propDelegates = GetDelegate<T>(component, id);
 			return propDelegates == null ? default : propDelegates.Get(component, id);
 		}
-		public virtual void SetValue<T>(TComponent component, int id, T value)
+		public virtual void SetValue<T>(TComponent component, int id, T value, bool isOptional = false)
 		{
-			PropertyDelegates<TComponent, T> propDelegates = GetDelegate<T>(component, id);
+			PropertyDelegates<TComponent, T> propDelegates = GetDelegate<T>(component, id, isOptional);
 			propDelegates?.Set(component, id, value);
 		}
 	}

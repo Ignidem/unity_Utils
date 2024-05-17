@@ -28,9 +28,9 @@ namespace UnityUtils.Effects.VisualEffects
 			return vfx.TryGetProperty(id, out T value) ? value : default;
 		}
 
-		public void SetValue<T>(int id, T value)
+		public void SetValue<T>(int id, T value, bool isOptional)
 		{
-			vfx.TrySetProperty(id, value);
+			vfx.TrySetProperty(id, value, !isOptional);
 		}
 	}
 }

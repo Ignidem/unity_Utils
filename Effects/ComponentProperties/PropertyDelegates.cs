@@ -1,4 +1,6 @@
-﻿namespace UnityUtils.Effects
+﻿using System;
+
+namespace UnityUtils.Effects
 {
 	public delegate bool HasPropertyDelegate<TComponent>(TComponent comp, int id);
 	public delegate TValue GetPropertyDelegate<TComponent, TValue>(TComponent comp, int id);
@@ -6,6 +8,9 @@
 
 	public class PropertyDelegates<TComponent, TValue> : IPropertyDelegates
 	{
+		public static readonly PropertyDelegates<TComponent, TValue> Empty = 
+			new PropertyDelegates<TComponent, TValue>((_, _) => true, (_, _) => default, (_, _, _) => { });
+
 		private readonly HasPropertyDelegate<TComponent> hasProperty;
 		private readonly GetPropertyDelegate<TComponent, TValue> getProperty;
 		private readonly SetPropertyDelegate<TComponent, TValue> setProperty;

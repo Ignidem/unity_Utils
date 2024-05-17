@@ -15,7 +15,7 @@ namespace UnityUtils.Effects.VisualEffects
 		private Coroutine lifetimeCoroutine;
 
 		public T GetValue<T>(int id) => default;
-		public void SetValue<T>(int id, T value) { }
+		public void SetValue<T>(int id, T value, bool isOptional = false) { }
 
 		public void Play()
 		{

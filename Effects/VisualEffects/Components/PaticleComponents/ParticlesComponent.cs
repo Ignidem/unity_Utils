@@ -116,12 +116,15 @@ namespace UnityUtils.Effects.VisualEffects
 			return particles.TryGetProperty(id, out T value) ? value : default;
 		}
 
-		public void SetValue<T>(int id, T value)
+		public void SetValue<T>(int id, T value, bool isOptional = false)
 		{
 			if (functions != null)
-				functions.SetValue<T>(this, id, value);
-			else 
-				particles.TrySetProperty(id, value);
+			{
+				functions.SetValue(this, id, value, isOptional);
+				return;
+			}
+			
+			particles.TrySetProperty(id, value, !isOptional);
 		}
 	}
 }

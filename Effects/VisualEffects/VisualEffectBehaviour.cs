@@ -55,10 +55,10 @@ namespace UnityUtils.Effects.VisualEffects
 			int index = components.IndexOf(c => c.Name == component);
 			components[index].SetValue(id, value);
 		}
-		public void SetAll<T>(int id, T value)
+		public void SetAll<T>(int id, T value, bool isOptional = false)
 		{
 			for (int i = 0; i < components.Length; i++)
-				components[i].SetValue(id, value);
+				components[i].SetValue(id, value, isOptional);
 		}
 
 		public void Dispose()

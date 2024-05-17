@@ -86,10 +86,10 @@ namespace UnityUtils.Effects.VisualEffects
 			return false;
 		}
 
-		public static bool TrySetProperty<T>(this Material comp, string name, T value)
-			=> comp.TrySetProperty(Shader.PropertyToID(name), value);
+		public static bool TrySetProperty<T>(this Material comp, string name, T value, bool log)
+			=> comp.TrySetProperty(Shader.PropertyToID(name), value, log);
 
-		public static bool TrySetProperty<T>(this Material comp, int id, T value)
+		public static bool TrySetProperty<T>(this Material comp, int id, T value, bool log)
 		{
 			if (!comp) return false;
 
@@ -101,11 +101,11 @@ namespace UnityUtils.Effects.VisualEffects
 			}
 			catch (MissingPropertyException mpe)
 			{
-				Debug.LogException(mpe);
+				if (log) Debug.LogException(mpe);
 			}
 			catch (Exception e)
 			{
-				Debug.LogException(e);
+				if (log) Debug.LogException(e);
 			}
 
 			return false;

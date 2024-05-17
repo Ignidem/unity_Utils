@@ -34,12 +34,12 @@ namespace UnityUtils.Effects.VisualEffects
 				: Material.TryGetProperty(id, out T value) ? value : default;
 		}
 
-		public readonly void SetValue<T>(int id, T value)
+		public readonly void SetValue<T>(int id, T value, bool isOptional)
 		{
 			if (functions != null)
-				functions.SetValue(render, id, value);
+				functions.SetValue(render, id, value, isOptional);
 			else 
-				Material.TrySetProperty(id, value);
+				Material.TrySetProperty(id, value, !isOptional);
 		}
 	}
 }

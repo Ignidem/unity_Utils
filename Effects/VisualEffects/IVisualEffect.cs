@@ -10,7 +10,7 @@ namespace UnityUtils.Effects.VisualEffects
 
 		T GetValue<T>(string component, int id);
 		void SetValue<T>(string component, int id, T value);
-		void SetAll<T>(int id, T value);
+		void SetAll<T>(int id, T value, bool isOptional = false);
 
 		void OnEnd(Action action);
 	}

@@ -17,9 +17,9 @@ namespace UnityUtils.Effects.VisualEffects
 
 		public readonly string Name => light.name;
 
-		public readonly void SetValue<T>(int id, T value) 
+		public readonly void SetValue<T>(int id, T value, bool isOptional = false) 
 		{
-			functions?.SetValue(light, id, value);
+			functions?.SetValue(light, id, value, isOptional);
 		}
 		public readonly T GetValue<T>(int id)
 		{

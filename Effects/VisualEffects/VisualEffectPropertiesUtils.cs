@@ -86,10 +86,10 @@ namespace UnityUtils.Effects.VisualEffects
 			return false;
 		}
 
-		public static bool TrySetProperty<T>(this VisualEffect vfx, string name, T value)
-			=> vfx.TrySetProperty(Shader.PropertyToID(name), value);
+		public static bool TrySetProperty<T>(this VisualEffect vfx, string name, T value, bool log)
+			=> vfx.TrySetProperty(Shader.PropertyToID(name), value, log);
 
-		public static bool TrySetProperty<T>(this VisualEffect vfx, int id, T value)
+		public static bool TrySetProperty<T>(this VisualEffect vfx, int id, T value, bool log)
 		{
 			if (!vfx) return false;
 
@@ -101,11 +101,11 @@ namespace UnityUtils.Effects.VisualEffects
 			}
 			catch (MissingPropertyException mpe)
 			{
-				Debug.LogException(mpe);
+				if (log) Debug.LogException(mpe);
 			}
 			catch (Exception e)
 			{
-				Debug.LogException(e);
+				if (log) Debug.LogException(e);
 			}
 
 			return false;
