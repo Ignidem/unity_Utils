@@ -34,6 +34,7 @@ namespace UnityUtils.Effects.VisualEffects.Editor
 		private void ApplyToChildren(IVisualEffectParameters parameters, IVisualComponent component)
 		{
 			parameters.Apply(component);
+			component.Play();
 		}
 	}
 }

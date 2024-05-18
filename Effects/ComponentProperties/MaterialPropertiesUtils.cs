@@ -25,6 +25,11 @@ namespace UnityUtils.Effects.VisualEffects
 				(comp, id) => comp.GetInt(id),
 				(comp, id, value) => comp.SetInt(id, value)
 				),
+			[typeof(bool)] = new PropertyDelegates<Material, bool>(
+				(comp, id) => comp.HasInt(id),
+				(comp, id) => comp.GetInt(id) == 0 ? false : true,
+				(comp, id, value) => comp.SetInt(id, value ? 1 : 0)
+				),
 			[typeof(Vector2)] = new PropertyDelegates<Material, Vector2>(
 				(comp, id) => comp.HasVector(id),
 				(comp, id) => comp.GetVector(id),
