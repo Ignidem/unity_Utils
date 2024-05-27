@@ -45,7 +45,7 @@ namespace UnityUtils.Effects.VisualEffects.ParameterFunctions
 		{
 			if (!delegates.TryGetValue(id, out IPropertyDelegates propertyDelegates))
 			{
-				var exception = new MissingPropertyException(component, id, GetType());
+				var exception = new MissingPropertyException(component, id, typeof(TValue));
 				OnException(isOptional, exception);
 				return null;
 			}
