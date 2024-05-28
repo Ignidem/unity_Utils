@@ -548,7 +548,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "9309888f00094514a925c69aa9b1865b",
     "m_Id": 0,
-    "m_DisplayName": "Vector1",
+    "m_DisplayName": "Min",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -668,10 +668,10 @@
     "m_Guid": {
         "m_GuidSerialized": "770fd993-2f0c-4e46-ae0e-1d4e478dc826"
     },
-    "m_Name": "Vector1",
+    "m_Name": "Min",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Vector1",
-    "m_DefaultReferenceName": "_Vector1",
+    "m_RefNameGeneratedByDisplayName": "Min",
+    "m_DefaultReferenceName": "_Min",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
