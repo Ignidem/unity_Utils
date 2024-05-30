@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace UnityUtils.Cameras.Cinemachine.Extensions
 {
+
 	public class CinemachineCullingMask : CinemachineExtension
 	{
 		[SerializeField]

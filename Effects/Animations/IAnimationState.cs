@@ -16,6 +16,7 @@ namespace UnityUtils.Animations.StateListener
 		float Time { get; }
 		float Weight { get; }
 		float NormalizedTime { get; }
+		float RemainingTime => Length - Time;
 
 		event AnimationEventListener OnEvent;
 
