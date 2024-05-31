@@ -7,18 +7,6 @@ namespace UnityUtils.Animations.AnimationEvents
 	[System.Serializable]
 	public struct SoundAnimationEvent : IAnimationEvent
 	{
-		private static AudioCache cache;
-		private static AudioCache Cache
-		{
-			get
-			{
-				if (cache != null && cache.IsAlive)
-					return cache;
-
-				return cache = AudioCache.GetOrCreate(null);
-			}
-		}
-
 		[SerializeField]
 		private AudioClipCollection clips;
 

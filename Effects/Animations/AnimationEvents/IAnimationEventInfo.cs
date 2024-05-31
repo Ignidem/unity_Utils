@@ -8,12 +8,14 @@ namespace UnityUtils.Animations.AnimationEvents
 		Transform Target { get; }
 		float Time { get; }
 		IAnimationState State { get; }
+		AnimationClip Clip { get; }
 	}
 
 	public readonly struct AnimationEventInfo : IAnimationEventInfo
 	{
 		public Transform Target { get; }
 		public readonly float Time => evnt.time;
+		public readonly AnimationClip Clip => evnt.animatorClipInfo.clip;
 		public IAnimationState State { get; }
 		private readonly AnimationEvent evnt;
 
