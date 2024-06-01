@@ -9,6 +9,10 @@ namespace UnityUtils.Transforms
 		{
 			return new TransformInfo(transform, Space.Self);
 		}
+		public static implicit operator Matrix4x4(TransformInfo info)
+		{
+			return Matrix4x4.TRS(info.position, info.rotation, info.scale);
+		}
 		public static bool operator !=(TransformInfo left, TransformInfo right) => !(left == right);
 		public static bool operator ==(TransformInfo left, TransformInfo right)
 		{
@@ -34,6 +38,7 @@ namespace UnityUtils.Transforms
 				scale = t1.scale + t2.scale,
 			};
 		}
+
 
 		public readonly Vector3Info this[int i] => i switch
 		{

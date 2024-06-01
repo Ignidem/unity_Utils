@@ -19,6 +19,7 @@ namespace UnityUtils.Transforms
 			return v1.space == v2.space && v1.vector == v2.vector;
 		}
 		public static implicit operator Vector3(Vector3Info info) => info.vector;
+		public static implicit operator Quaternion(Vector3Info info) => Quaternion.Euler(info.vector);
 		public static Vector3Info operator +(Vector3Info v1, Vector3Info v2)
 		{
 			return new Vector3Info()
