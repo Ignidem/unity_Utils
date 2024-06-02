@@ -23,7 +23,5 @@ namespace UnityUtils.Effects.Rendering.GPUInstancing
 		{
 			method.Draw();
 		}
-
-
 	}
 }

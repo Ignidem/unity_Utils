@@ -1,21 +1,19 @@
 ﻿using UnityEngine;
+using UnityUtils.Effects.Rendering.MeshRendering;
 using UnityUtils.Transforms;
 
 namespace UnityUtils.Effects.Rendering.GPUInstancing
 {
-	public class AreaRandom : IInstancingMethod
+	public class GroundMeshArea : IInstancingMethod
 	{
 		[SerializeField]
-		private Transform transform;
+		private GroundMesh ground;
 
 		[SerializeField]
 		private Mesh mesh;
 
 		[SerializeField]
 		private Material material;
-
-		[SerializeField]
-		private LayerMask layer;
 
 		[SerializeField]
 		private int count;
@@ -35,13 +33,13 @@ namespace UnityUtils.Effects.Rendering.GPUInstancing
 
 		public void Setup()
 		{
-			System.Random rng = new System.Random();
 			matrices = new Matrix4x4[count];
 			for (int i = 0; i < count; i++)
 			{
+				Vector3 pos = RandomBetween(min.position, max.position);
 				matrices[i] = Matrix4x4.TRS(
-					transform.position + RandomBetween(min.position, max.position),
-					transform.rotation * Quaternion.Euler(RandomBetween(min.rotation, max.rotation)),
+					ground.transform.position + ground.GetPosition(pos),
+					ground.transform.rotation * Quaternion.Euler(RandomBetween(min.rotation, max.rotation)),
 					RandomScale());
 			}
 		}
@@ -49,18 +47,18 @@ namespace UnityUtils.Effects.Rendering.GPUInstancing
 		private Vector3 RandomBetween(Vector3 min, Vector3 max)
 		{
 			return new Vector3(
-				UnityEngine.Random.Range(min[0], max[0]),
-				UnityEngine.Random.Range(min[1], max[1]),
-				UnityEngine.Random.Range(min[2], max[2])
+				Random.Range(min[0], max[0]),
+				Random.Range(min[1], max[1]),
+				Random.Range(min[2], max[2])
 				);
 		}
 
 		private Vector3 RandomScale()
 		{
-			int index = UnityEngine.Random.Range(0, 3);
-			float scale = UnityEngine.Random.Range(min.scale[index], max.scale[index]);
+			int index = Random.Range(0, 3);
+			float scale = Random.Range(min.scale[index], max.scale[index]);
 
-			return transform.localScale * scale;
+			return ground.transform.localScale * scale;
 		}
 
 		public void Draw()
