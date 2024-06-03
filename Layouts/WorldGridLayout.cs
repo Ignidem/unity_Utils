@@ -5,6 +5,7 @@ using Maths = UnityEngine.Mathf;
 
 namespace UnityUtils.Common.Layout
 {
+
 	[ExecuteInEditMode]
 	public class WorldGridLayout : MonoBehaviour
 	{
@@ -51,6 +52,8 @@ namespace UnityUtils.Common.Layout
 				Math.Max(1, GridSize.y),
 				Math.Max(1, GridSize.z)
 				);
+
+			ReloadLayout();
 		}
 
 		private void OnEnable()
