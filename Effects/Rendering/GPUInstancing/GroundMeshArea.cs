@@ -37,8 +37,11 @@ namespace UnityUtils.Effects.Rendering.GPUInstancing
 			for (int i = 0; i < count; i++)
 			{
 				Vector3 pos = RandomBetween(min.position, max.position);
+				if (ground)
+					pos = ground.GetPosition(pos);
+
 				matrices[i] = Matrix4x4.TRS(
-					ground.transform.position + ground.GetPosition(pos),
+					ground.transform.position + pos,
 					ground.transform.rotation * Quaternion.Euler(RandomBetween(min.rotation, max.rotation)),
 					RandomScale());
 			}
