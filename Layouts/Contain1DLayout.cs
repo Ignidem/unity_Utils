@@ -12,7 +12,7 @@ namespace UnityUtils.Common.Layout
 		}
 
 		[SerializeField] private Axis axis;
-		[SerializeField] private float spacing;
+		[SerializeField] private float spacing_mult;
 
 		public void Reload(Transform transform)
 		{
@@ -21,6 +21,7 @@ namespace UnityUtils.Common.Layout
 
 			Vector3 _axis = GetAxisVector();
 			float spacing = GetSpacing(rect, out int count);
+			Vector3 offset = GetOffset(rect);
 			
 			for (int i = 0; i < count; i++)
 			{
@@ -29,17 +30,27 @@ namespace UnityUtils.Common.Layout
 			}
 		}
 
+		private Vector3 GetOffset(RectTransform rect)
+		{
+			return axis switch
+			{
+				Axis.Horizontal => new Vector3(rect.rect.width * rect.pivot.x, 0, 0),
+				Axis.Vertical => new Vector3(0, rect.rect.height * rect.pivot.y, 0),
+				_ => throw new ArgumentOutOfRangeException()
+			};
+		}
+
 		private float GetSpacing(RectTransform transform, out int count)
 		{
 			count = transform.childCount;
-			float max_size = axis switch
+			(float max_size, float spacing) = axis switch
 			{
-				Axis.Horizontal => transform.rect.width,
-				Axis.Vertical => transform.rect.height,
+				Axis.Horizontal => (transform.rect.width, transform.rect.height * spacing_mult),
+				Axis.Vertical => (transform.rect.height, transform.rect.width * spacing_mult),
 				_ => throw new ArgumentOutOfRangeException()
 			};
 
-			float m = spacing < 0 ? -1 : 1;
+			float m = spacing_mult < 0 ? -1 : 1;
 			float min_spacing = max_size / count;
 			return Math.Min(min_spacing, Math.Abs(spacing)) * m;
 		}

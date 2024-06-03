@@ -23,6 +23,11 @@ namespace UnityUtils.Common.Layout
 			ReloadLayout();
 		}
 
+		private void OnRectTransformDimensionsChange()
+		{
+			ReloadLayout();
+		}
+
 		public void ReloadLayout()
 		{
 			controller?.Reload(transform);
