@@ -13,11 +13,11 @@ namespace UnityUtils.Animations.StateListener
 		void OnStateEnter(IAnimationState state);
 		void OnStateExit(IAnimationState state);
 
-		IAnimationState Play(AnimationClip clip, int layer = 1, float blendTime = 0.1f);
-		IAnimationState Play(string name, int layer = 1, float blendTime = 0.1f)
+		IAnimationState Play(AnimationClip clip, int layer = 0, float blendTime = 0.1f);
+		IAnimationState Play(string name, int layer = 0, float blendTime = 0.1f)
 		{
 			return SwitchState(Animator.StringToHash(name), layer, blendTime);
 		}
-		IAnimationState SwitchState(int id, int layer = 1, float blendTime = 0.1f);
+		IAnimationState SwitchState(int id, int layer = 0, float blendTime = 0.1f);
 	}
 }
