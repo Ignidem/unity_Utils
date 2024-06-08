@@ -11,6 +11,14 @@ namespace UnityUtils.Animations.AnimationEvents
 		[SerializeReference, Polymorphic]
 		private IAnimationEvent[] _events;
 
+		private void OnValidate()
+		{
+			if (_event != null)
+			{
+				Debug.LogWarning("_event field is depricated, please move to _events. " + name);
+			}
+		}
+
 		public void HandleEvent(Object target, Animator animator, AnimationEvent evnt)
 		{
 			AnimationEventInfo info = new AnimationEventInfo(animator, evnt);

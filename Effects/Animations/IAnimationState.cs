@@ -1,10 +1,11 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityUtils.Animations.AnimationEvents;
 
 namespace UnityUtils.Animations.StateListener
 {
-	public delegate void AnimationEventListener(IAnimationState state, AnimationEvent evnt);
+	public delegate void AnimationEventListener(IAnimationState state, IAnimationEventInfo evnt);
 
 	public interface IAnimationState
 	{
