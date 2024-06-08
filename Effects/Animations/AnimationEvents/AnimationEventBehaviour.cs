@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using UnityUtils.PropertyAttributes;
 
 namespace UnityUtils.Animations.AnimationEvents
@@ -11,6 +12,7 @@ namespace UnityUtils.Animations.AnimationEvents
 		[SerializeReference, Polymorphic]
 		private IAnimationEvent[] _events;
 
+#if UNITY_EDITOR
 		private void OnValidate()
 		{
 			if (_event != null)
@@ -18,6 +20,12 @@ namespace UnityUtils.Animations.AnimationEvents
 				Debug.LogWarning("_event field is depricated, please move to _events. " + name);
 			}
 		}
+		public bool HasSubEvent(string name)
+		{
+			return _events.Any(_e => _e is InvokeEvent invoker && invoker.IsName(name));
+		}
+#endif
+
 
 		public void HandleEvent(Object target, Animator animator, AnimationEvent evnt)
 		{
