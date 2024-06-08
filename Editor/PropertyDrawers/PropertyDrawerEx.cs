@@ -43,11 +43,6 @@ namespace UnityUtils.Editor
 
 		private readonly Dictionary<string, float> heights = new();
 
-		public ExtendedPropertyDrawer()
-		{
-			//PropertyContextMenu.StartUp();
-		}
-
 		protected abstract float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label);
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

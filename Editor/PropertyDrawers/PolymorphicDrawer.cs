@@ -62,7 +62,7 @@ namespace UnityUtils.Editor.PropertyDrawers
 		protected override bool DrawLabel(SerializedProperty property, GUIContent label, ref Rect position, int index, bool folded)
 		{
 			position = Indent(position);
-			if (property.IsArrayElement() && folded)
+			if (folded)
 			{
 				PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
 				label = new GUIContent(polyAttr.GetFieldValue(index).GetType().Name);
