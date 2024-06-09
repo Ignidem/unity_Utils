@@ -22,10 +22,9 @@ namespace UnityUtils.Animations.AnimationEvents
 		}
 		public bool HasSubEvent(string name)
 		{
-			return _events.Any(_e => _e is InvokeEvent invoker && invoker.IsName(name));
+			return _events.Any(_e => _e is IEventSubstitute substitute && substitute.IsName(name));
 		}
 #endif
-
 
 		public void HandleEvent(Object target, Animator animator, AnimationEvent evnt)
 		{
