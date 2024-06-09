@@ -5,6 +5,13 @@ namespace UnityUtils.Transforms
 	[System.Serializable]
 	public struct TransformInfo
 	{
+		public static TransformInfo LocalDefault = new TransformInfo() 
+		{
+			position = Vector3Info.LocalDefault,
+			rotation = Vector3Info.LocalDefault,
+			scale = new Vector3Info(Vector3.one, Space.Self) 
+		};
+
 		public static implicit operator TransformInfo(Transform transform)
 		{
 			return new TransformInfo(transform, Space.Self);

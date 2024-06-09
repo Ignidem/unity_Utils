@@ -5,6 +5,8 @@ namespace UnityUtils.Transforms
 	[System.Serializable]
 	public struct Vector3Info
 	{
+		public static Vector3Info LocalDefault = new Vector3Info(Vector3.zero, Space.Self);
+
 		public static implicit operator Vector3Info(Vector3 vect)
 		{
 			return new Vector3Info()
