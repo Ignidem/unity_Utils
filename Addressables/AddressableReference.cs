@@ -75,7 +75,7 @@ namespace UnityUtils.AddressableUtils
 
 			K Destroy()
 			{
-				//Object should be destroyed as its reference will be lost if nothing is returned;
+				//Object should be destroyed as its reference will leak if nothing is returned;
 				Object obj = instance;
 				obj.DestroySelfObject();
 				return default;
