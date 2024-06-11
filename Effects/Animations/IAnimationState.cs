@@ -1,12 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityUtils.Animations.AnimationEvents;
 
 namespace UnityUtils.Animations.StateListener
 {
-	public delegate void AnimationEventListener(string subEvent, IAnimationEventInfo evnt);
-
 	public interface IAnimationState
 	{
 		string StateName { get; }
@@ -19,8 +16,7 @@ namespace UnityUtils.Animations.StateListener
 		float NormalizedTime { get; }
 		float RemainingTime => Length - Time;
 
-		event AnimationEventListener OnEvent;
-		Task<bool> OnEventAsync(string eventName, float offset);
+		public IAnimationEventBroadcaster EventBroadcaster { get; set; }
 
 		void Play(float blendTime = 0.1f);
 		void Stop(float blendTime = 0.1f);
