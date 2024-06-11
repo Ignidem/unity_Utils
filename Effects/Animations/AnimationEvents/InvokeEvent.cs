@@ -28,8 +28,6 @@ namespace UnityUtils.Animations.AnimationEvents
 
 		public readonly void Invoke(Object target, IAnimationEventInfo info) { }
 
-#if UNITY_EDITOR
 		public readonly bool IsName(string name) => ignoredEvent == name;
-#endif
 	}
 }
