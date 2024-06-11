@@ -9,6 +9,8 @@ namespace UnityUtils.Animations.StateListener
 
 	public interface IAnimatorHandler
 	{
+		IAnimationState this[AnimationClip clip] { get; }
+
 		void RegisterState(IAnimationState state);
 		void OnStateEnter(IAnimationState state);
 		void OnStateExit(IAnimationState state);

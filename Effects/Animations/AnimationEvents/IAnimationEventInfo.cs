@@ -19,10 +19,10 @@ namespace UnityUtils.Animations.AnimationEvents
 		public IAnimationState State { get; }
 		private readonly AnimationEvent evnt;
 
-		public AnimationEventInfo(Animator animator, AnimationEvent evnt)
+		public AnimationEventInfo(Animator animator, AnimationEvent evnt, IAnimationState state)
 		{
 			this.evnt = evnt;
-			State = null;
+			State = state;
 			Target = animator.transform;
 		}
 	}

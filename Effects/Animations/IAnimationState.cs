@@ -5,7 +5,7 @@ using UnityUtils.Animations.AnimationEvents;
 
 namespace UnityUtils.Animations.StateListener
 {
-	public delegate void AnimationEventListener(IAnimationState state, IAnimationEventInfo evnt);
+	public delegate void AnimationEventListener(string subEvent, IAnimationEventInfo evnt);
 
 	public interface IAnimationState
 	{
@@ -20,6 +20,7 @@ namespace UnityUtils.Animations.StateListener
 		float RemainingTime => Length - Time;
 
 		event AnimationEventListener OnEvent;
+		Task<bool> OnEventAsync(string eventName, float offset);
 
 		void Play(float blendTime = 0.1f);
 		void Stop(float blendTime = 0.1f);

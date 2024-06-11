@@ -4,9 +4,7 @@ namespace UnityUtils.Animations.AnimationEvents
 {
 	public interface IEventSubstitute : IAnimationEvent
 	{
-#if UNITY_EDITOR
 		public bool IsName(string name);
-#endif
 	}
 
 	public struct InvokeEvent : IEventSubstitute
@@ -20,9 +18,7 @@ namespace UnityUtils.Animations.AnimationEvents
 				listener.OnAnimationEvent(subEventName, info);
 		}
 
-#if UNITY_EDITOR
 		public readonly bool IsName(string name) => name == subEventName;
-#endif
 	}
 
 	public struct IgnoreEvent : IEventSubstitute
