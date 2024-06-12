@@ -7,21 +7,9 @@ namespace UnityUtils.Animations.AnimationEvents
 {
 	public class AnimationEventBehaviour : ScriptableObject
 	{
-		[SerializeReference, Polymorphic(true)]
-		private IAnimationEvent _event;
-
 		[SerializeReference, Polymorphic]
 		private IAnimationEvent[] _events;
 
-#if UNITY_EDITOR
-		private void OnValidate()
-		{
-			if (_event != null)
-			{
-				Debug.LogWarning("_event field is depricated, please move to _events. " + name);
-			}
-		}
-#endif
 		public bool HasSubEvent(string name)
 		{
 			return _events.Any(_e => _e is IEventSubstitute substitute && substitute.IsName(name));
@@ -32,7 +20,6 @@ namespace UnityUtils.Animations.AnimationEvents
 			AnimationClip clip = evnt.animatorClipInfo.clip;
 			IAnimationState state = target is IAnimatorHandlerProvider provider ? provider.Handler[clip] : null;
 			AnimationEventInfo info = new AnimationEventInfo(animator, evnt, state);
-			_event?.Invoke(target, info);
 
 			if (_events == null)
 				return;
