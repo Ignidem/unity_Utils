@@ -21,6 +21,7 @@ namespace UnityUtils.Effects.VisualEffects
 		public readonly void Play()
 		{
 			source.enabled = true;
+			source.Play();
 		}
 		public readonly void Stop()
 		{

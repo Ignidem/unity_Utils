@@ -14,13 +14,14 @@ namespace UnityUtils.Effects.VisualEffects
 		public void Play()
 		{
 			vfx.gameObject.SetActive(true);
+			vfx.enabled = true;
 			vfx.Play();
 		}
 
 		public void Stop()
 		{
 			vfx.Stop();
-			vfx.gameObject.SetActive(false);
+			vfx.enabled = false;
 		}
 
 		public T GetValue<T>(int id)
