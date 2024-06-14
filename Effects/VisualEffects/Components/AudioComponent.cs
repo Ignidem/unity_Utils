@@ -21,7 +21,8 @@ namespace UnityUtils.Effects.VisualEffects
 		public readonly void Play()
 		{
 			source.enabled = true;
-			source.Play();
+			if (source.gameObject.activeInHierarchy)
+				source.Play();
 		}
 		public readonly void Stop()
 		{
