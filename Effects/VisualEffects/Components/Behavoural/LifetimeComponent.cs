@@ -11,6 +11,7 @@ namespace UnityUtils.Effects.VisualEffects
 
 		[SerializeField] private VisualEffectBehaviour subject;
 		[SerializeField] private float lifetime;
+		[SerializeField] private bool destroy;
 
 		private Coroutine lifetimeCoroutine;
 
@@ -34,7 +35,9 @@ namespace UnityUtils.Effects.VisualEffects
 		private IEnumerator CountdownLifetime()
 		{
 			yield return new WaitForSeconds(lifetime);
-			subject.Destroy();
+			subject.Stop();
+			if (destroy)
+				subject.Destroy();
 		}
 	}
 }
