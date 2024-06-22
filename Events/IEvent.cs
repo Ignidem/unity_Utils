@@ -45,7 +45,7 @@ namespace UnityUtils.Events
 			throw new System.NotImplementedException();
 		}
 
-		private async Task Instantiate(Transform parent)
+		private Task Instantiate(Transform parent)
 		{
 			throw new System.NotImplementedException();
 		}
