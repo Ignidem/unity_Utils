@@ -14,7 +14,7 @@ namespace UnityUtils.Transforms
 
 		public static implicit operator TransformInfo(Transform transform)
 		{
-			return new TransformInfo(transform, Space.Self);
+			return new TransformInfo(transform, Space.World);
 		}
 		public static implicit operator Matrix4x4(TransformInfo info)
 		{
