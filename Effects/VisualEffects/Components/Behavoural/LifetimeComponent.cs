@@ -5,13 +5,21 @@ using UnityEngine;
 namespace UnityUtils.Effects.VisualEffects
 {
 	[Serializable]
-	public class LifetimeComponent : IVisualEffectComponent
+	public class LifetimeComponent : IVisualEffectComponent,
+		ISerializationCallbackReceiver
 	{
+		public enum Action
+		{
+			None,
+			Destroy,
+		}
+
 		public string Name => nameof(LifetimeComponent);
 
 		[SerializeField] private VisualEffectBehaviour subject;
 		[SerializeField] private float lifetime;
-		[SerializeField] private bool destroy;
+		[SerializeField, HideInInspector] private bool destroy;
+		[SerializeField] private Action action;
 
 		private Coroutine lifetimeCoroutine;
 
@@ -36,8 +44,20 @@ namespace UnityUtils.Effects.VisualEffects
 		{
 			yield return new WaitForSeconds(lifetime);
 			subject.Stop();
-			if (destroy)
-				subject.Destroy();
+			switch (action)
+			{
+				case Action.Destroy:
+					subject.Destroy();
+					break;
+			}
 		}
+
+		public void OnBeforeSerialize()
+		{
+			if (destroy)
+				action = Action.Destroy;
+		}
+
+		public void OnAfterDeserialize() { }
 	}
 }
