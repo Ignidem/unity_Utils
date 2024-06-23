@@ -8,6 +8,7 @@ namespace UnityUtils.Cameras.Cinemachine.Extensions
 	{
 		[SerializeField]
 		private UnityEvent unityEvent;
+
 		public override bool OnTransitionFromCamera(ICinemachineCamera fromCam, Vector3 worldUp, float deltaTime)
 		{
 			unityEvent?.Invoke();
