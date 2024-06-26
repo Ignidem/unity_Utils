@@ -1,11 +1,10 @@
-﻿using DG.Tweening;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityUtils.Storages.EnumPairLists;
 
 namespace UnityUtils.UI.Selectable
 {
-
 	[System.Serializable]
 	public struct ButtonColorAnimation : IButtonAnimations
 	{
@@ -16,6 +15,8 @@ namespace UnityUtils.UI.Selectable
 		private EnumPair<ButtonState, Color> colors;
 
 		private bool isGroupSelected;
+
+		private Coroutine colorLerp;
 
 		public void DoStateTransition(ButtonState state, bool animate)
 		{
@@ -33,12 +34,28 @@ namespace UnityUtils.UI.Selectable
 
 			if (animate)
 			{
-				graphic.DOColor(colors[state], 0.3f);
+				if (colorLerp != null)
+					graphic.StopCoroutine(colorLerp);
+
+				colorLerp = graphic.StartCoroutine(LerpColor(colors[state]));
 			}
 			else
 			{
 				graphic.color = colors[state];
 			}
+		}
+
+		private IEnumerator LerpColor(Color color)
+		{
+			const float duration = 0.3f;
+			Color current = graphic.color;
+			for (float time = 0; time < duration; time += Time.deltaTime)
+			{
+				graphic.color = Color.Lerp(current, color, time / duration);
+				yield return null;
+			}
+
+			this.colorLerp = null;
 		}
 	}
 }

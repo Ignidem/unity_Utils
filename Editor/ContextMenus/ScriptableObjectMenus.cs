@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace WarmongersAPI.External.unity_utils.Editor.ContextMenus
 {
-	internal class ScriptableObjectMenus
+	public static class ScriptableObjectMenus
 	{
 		[MenuItem("Assets/Create/Scriptable Object", false, 0)]
 		public static void CreateScriptableObject()

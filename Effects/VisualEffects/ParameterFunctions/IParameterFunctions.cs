@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using WarmongersAPI.Systems;
 
 namespace UnityUtils.Effects.VisualEffects.ParameterFunctions
 {
@@ -74,7 +73,7 @@ namespace UnityUtils.Effects.VisualEffects.ParameterFunctions
 				throw exception;
 
 			if (!isOptional)
-				exception.LogException();
+				Debug.LogException(exception);
 		}
 
 		public virtual T GetValue<T>(TComponent component, int id)

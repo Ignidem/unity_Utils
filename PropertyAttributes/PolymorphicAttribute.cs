@@ -8,14 +8,13 @@ using Utilities.Reflection;
 
 namespace UnityUtils.PropertyAttributes
 {
-
 	public class PolymorphicAttribute : PropertyAttribute
 	{
 		private static readonly Dictionary<Type, Type[]> subTypes = new Dictionary<Type, Type[]>();
 
 		public readonly bool nullable;
-		public string[] options { get; private set; }
-		public Type baseType { get; private set; }
+		public string[] Options { get; private set; }
+		public Type BaseType { get; private set; }
 		public bool WasInitialized => types != null;
 		private Type[] types;
 		private ConstructorInfo[] constructors;
@@ -53,17 +52,17 @@ namespace UnityUtils.PropertyAttributes
 
 		private void Init(Type baseType)
 		{
-			this.baseType = baseType;
+			this.BaseType = baseType;
 			Type unityType = typeof(UnityEngine.Object);
 			types = subTypes.TryGetValue(baseType, out var _types) ? _types :
 				subTypes[baseType] = baseType.GetImplementations().Where(t => !unityType.IsAssignableFrom(t)).ToArray();
 
 			int k = 0;
-			options = new string[types.Length + (nullable ? 1 : 0)];
+			Options = new string[types.Length + (nullable ? 1 : 0)];
 			if (nullable)
-				options[k++] = "Null Reference";
+				Options[k++] = "Null Reference";
 			for (int i = 0; i < types.Length; i++, k++)
-				options[k] = types[i].Name;
+				Options[k] = types[i].Name;
 
 			constructors = types.Select(t =>
 				t.GetConstructor(new Type[] { baseType }) ?? t.GetConstructor(new Type[0])
@@ -158,7 +157,7 @@ namespace UnityUtils.PropertyAttributes
 			if (constructorInfo == null)
 			{
 				Debug.LogWarning(string.Format("{0} does not have an empty constructor or a constructor with a {1} parameter.",
-					type.Name, baseType.Name));
+					type.Name, BaseType.Name));
 				return null;
 			}
 

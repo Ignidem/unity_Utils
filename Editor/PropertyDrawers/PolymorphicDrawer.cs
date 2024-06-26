@@ -113,11 +113,11 @@ namespace UnityUtils.Editor.PropertyDrawers
 		{
 			int listIndex = property.GetIndex();
 			position = GetDropdownRect(position, property.depth);
-			string option = polyAttr.Index == -1 ? "Null Reference" : polyAttr.options[polyAttr.Index];
+			string option = polyAttr.Index == -1 ? "Null Reference" : polyAttr.Options[polyAttr.Index];
 			float width = CalcLabelSize(option).x;
 			Rect popupPos = position.SetWidth(width + 50);
 
-			int index = EditorGUI.Popup(popupPos, polyAttr.Index, polyAttr.options);
+			int index = EditorGUI.Popup(popupPos, polyAttr.Index, polyAttr.Options);
 
 			if (index == polyAttr.Index) return position;
 			
