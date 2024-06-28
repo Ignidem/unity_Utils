@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityUtils.PropertyAttributes;
 using Utilities.Collections;
 
@@ -16,6 +15,19 @@ namespace UnityUtils.Effects.VisualEffects
 		[SerializeReference, Polymorphic]
 		protected IVisualEffectComponent[] components;
 
+		[field: SerializeReference, Polymorphic(true)]
+		public IVisualEffectEventHandler EventsHandler { get; set; }
+
+		private void Awake()
+		{
+			EventsHandler.Add<IVisualEffectParameters>(VisualEffectEvents.UpdateParameters, UpdateParameters);
+		}
+
+		private void OnDestroy()
+		{
+			EventsHandler.Remove<IVisualEffectParameters>(VisualEffectEvents.UpdateParameters, UpdateParameters);
+		}
+
 		public virtual void Play()
 		{
 			for (int i = 0; i < components.Length; i++)
@@ -27,6 +39,11 @@ namespace UnityUtils.Effects.VisualEffects
 			IsPlaying = false;
 			for (int i = 0; i < components.Length; i++)
 				components[i].Stop();
+		}
+
+		public void UpdateParameters(IVisualEffectParameters parameters)
+		{
+			parameters.Apply(this);
 		}
 
 		public async void OnEnd(Action action)
