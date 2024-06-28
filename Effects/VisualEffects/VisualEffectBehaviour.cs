@@ -20,12 +20,12 @@ namespace UnityUtils.Effects.VisualEffects
 
 		private void Awake()
 		{
-			EventsHandler.Add<IVisualEffectParameters>(VisualEffectEvents.UpdateParameters, UpdateParameters);
+			EventsHandler?.Add<IVisualEffectParameters>(VisualEffectEvents.UpdateParameters, UpdateParameters);
 		}
 
 		private void OnDestroy()
 		{
-			EventsHandler.Remove<IVisualEffectParameters>(VisualEffectEvents.UpdateParameters, UpdateParameters);
+			EventsHandler?.Remove<IVisualEffectParameters>(VisualEffectEvents.UpdateParameters, UpdateParameters);
 		}
 
 		public virtual void Play()
