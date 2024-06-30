@@ -6,7 +6,6 @@ using Utils.Storage;
 
 namespace UnityUtils.Storages
 {
-	[CreateAssetMenu(fileName = nameof(ScriptableObjectDatabase), menuName = "Storage/" + nameof(ScriptableObjectDatabase))]
 	public class ScriptableObjectDatabase : ScriptableObject, ISimpleDataStorage, IDisposable
 	{
 		[SerializeField] private List<StorageObject> tables;

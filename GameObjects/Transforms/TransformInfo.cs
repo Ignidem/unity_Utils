@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace UnityUtils.Transforms
 {
@@ -59,9 +60,10 @@ namespace UnityUtils.Transforms
 
 		public TransformInfo(Transform transform, Space space)
 		{
-			position = new Vector3Info(space == Space.World ? transform.position : transform.localPosition, space);
-			rotation = new Vector3Info(space == Space.World ? transform.rotation.eulerAngles : transform.localRotation.eulerAngles, space);
-			scale = new Vector3Info(space == Space.World ? transform.lossyScale : transform.localScale, space);
+			bool isWorldSpace = space == Space.World;
+			position = new Vector3Info(isWorldSpace ? transform.position : transform.localPosition, space);
+			rotation = new Vector3Info(isWorldSpace ? transform.rotation.eulerAngles : transform.localRotation.eulerAngles, space);
+			scale = new Vector3Info(isWorldSpace ? transform.lossyScale : transform.localScale, space);
 		}
 
 		public override readonly bool Equals(object obj)

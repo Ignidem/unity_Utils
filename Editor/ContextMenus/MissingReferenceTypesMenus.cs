@@ -9,7 +9,7 @@ namespace WarmongersAPI.External.unity_utils.Editor.ContextMenus
 {
 	public static class MissingReferenceTypesMenus
 	{
-		[MenuItem("Assets/Utilities/List Missing Type References")]
+		//[MenuItem("Assets/Utilities/List Missing Type References")]
 		public static void ShowMissingReferenceTypesMenus()
 		{
 			string enginePath = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[0]);
