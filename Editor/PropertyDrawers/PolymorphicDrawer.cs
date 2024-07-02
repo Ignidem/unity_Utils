@@ -65,8 +65,12 @@ namespace UnityUtils.Editor.PropertyDrawers
 			if (folded)
 			{
 				PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
-				label = new GUIContent(polyAttr.GetFieldValue(index).GetType().Name);
-				position = position.SetWidth(CalcLabelSize(label.text).x);
+				Type type = polyAttr.GetFieldValue(index)?.GetType();
+				if (type != null)
+				{
+					label = new GUIContent(type.Name);
+					position = position.SetWidth(CalcLabelSize(label.text).x);
+				}
 			}
 
 			bool fold = base.DrawLabel(property, label, ref position, index, folded);

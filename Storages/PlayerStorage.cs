@@ -48,7 +48,7 @@ namespace UnityUtils.Storage.PlayerPreferences
 					PlayerPrefs.SetFloat(key, f);
 					break;
 				case int i:
-					PlayerPrefs.GetInt(key, i);
+					PlayerPrefs.SetInt(key, i);
 					break;
 				default:
 					Default();
