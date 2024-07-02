@@ -23,7 +23,7 @@ namespace UnityUtils.UI.Selectable
 			if (back) back.enabled = !isPressed;
 			if (!front) return;
 
-			front.rectTransform.localPosition = isPressed ? Vector3.zero : offset;
+			front.rectTransform.localPosition = isPressed ? Vector3.zero : offset * back.rectTransform.rect.size;
 
 			front.color = state switch
 			{

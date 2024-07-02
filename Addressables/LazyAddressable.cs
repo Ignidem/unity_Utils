@@ -22,8 +22,7 @@ namespace UnityUtils.AddressableUtils
 		{
 			if (comp) return comp;
 
-			comp = await InstantiateObject();
-			comp.transform.SetParent(parent);
+			comp = await InstantiateObject(parent);
 			return comp;
 		}
 

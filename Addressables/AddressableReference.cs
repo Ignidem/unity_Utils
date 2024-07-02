@@ -39,6 +39,7 @@ namespace UnityUtils.AddressableUtils
 		public bool IsLoading => !(loadTask?.IsCompleted ?? true);
 
 		private Task loadTask;
+		private object handle;
 		private IAddressable<T> adrsLoad;
 
 		private bool IsComponent => typeof(T).IsComponentType();
@@ -65,32 +66,14 @@ namespace UnityUtils.AddressableUtils
 		public async Task<T> InstantiateObject(Transform parent = null)
 		{
 			IAddressable<T> adrs = await Load();
-			return Object.Instantiate(adrs.Target, parent, false);
-		}
-
-		public async Task<K> InstantiateAs<K>(Transform parent = null)
-		{
-			IAddressable<T> adrs = await Load();
-			T instance = Object.Instantiate(adrs.Target, parent);
-
-			K Destroy()
+			if (parent != null)
 			{
-				//Object should be destroyed as its reference will leak if nothing is returned;
-				Object obj = instance;
-				obj.DestroySelfObject();
-				return default;
+				return Object.Instantiate(adrs.Target, parent, false);
 			}
-
-			if (instance is K _k) return _k;
-
-			System.Type kType = typeof(K);
-			if (!kType.IsComponentType())
-				return Destroy();
-
-			if (instance is GameObject obj && obj.TryGetInSelfOrChildren(out K comp))
-				return comp;
-
-			return Destroy();
+			else
+			{
+				return Object.Instantiate(adrs.Target);
+			}
 		}
 
 		async Task<IAddressable<K>> IAddressableKey.Load<K>()
@@ -103,12 +86,14 @@ namespace UnityUtils.AddressableUtils
 
 			if (typeof(K).IsComponentType())
 			{
-				GameObject obj = await LoadAs<GameObject>();
+				AsyncOperationHandle<GameObject> objHandle = LoadHandleAs<GameObject>();
+				GameObject obj = await objHandle;
 				obj.TryGetInSelfOrChildren(out K comp);
-				return new ComponentAddressable<K>(obj, comp);
+				return new ComponentAddressable<K>(obj, comp, objHandle);
 			}
 
-			return new ObjectAddressable<K>(adrsLoad.Asset is K _k ? _k : default);
+			AsyncOperationHandle<K> handle = adrsLoad.Handle is AsyncOperationHandle<K> _handle ? _handle : default;
+			return new ObjectAddressable<K>(adrsLoad.Asset is K _k ? _k : default, handle);
 		}
 
 		public async Task<IAddressable<T>> Load()
@@ -118,15 +103,16 @@ namespace UnityUtils.AddressableUtils
 
 			if (!IsComponent)
 			{
-				T t = await LoadAs<T>();
-				return adrsLoad = new ObjectAddressable<T>(t);
+				AsyncOperationHandle<T> handle = LoadHandleAs<T>();
+				T t = await handle;
+				return adrsLoad = new ObjectAddressable<T>(t, handle);
 			}
 
-			GameObject obj = await LoadAs<GameObject>();
-
+			AsyncOperationHandle<GameObject> objHandle = LoadHandleAs<GameObject>();
+			GameObject obj = await objHandle;
 			obj.TryGetInSelfOrChildren(out T comp);
 
-			return adrsLoad = new ComponentAddressable<T>(obj, comp);
+			return adrsLoad = new ComponentAddressable<T>(obj, comp, objHandle);
 		}
 
 		public virtual void Dispose()
@@ -139,6 +125,9 @@ namespace UnityUtils.AddressableUtils
 			}
 
 			adrsLoad?.Dispose();
+			adrsLoad = null;
+			loadTask = null;
+			handle = null;
 		}
 
 		private async void DisposeAsync()
@@ -147,15 +136,16 @@ namespace UnityUtils.AddressableUtils
 			Dispose();
 		}
 
-		private async Task<K> LoadAs<K>()
+		private AsyncOperationHandle<K> LoadHandleAs<K>()
 		{
-			if (loadTask != null)
-				return await (Task<K>)loadTask;
+			if (handle is not AsyncOperationHandle<K> result)
+			{
+				result = Addressables.LoadAssetAsync<K>(prefabReference.RuntimeKey);
+				handle = result;
+			}
 
-			AsyncOperationHandle<K> result = Addressables.LoadAssetAsync<K>(prefabReference.RuntimeKey);
-			loadTask = result.Task;
-			K value = await result.Task;
-			return value;
+			loadTask ??= result.Task;
+			return result;
 		}
 	}
 }

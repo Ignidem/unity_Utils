@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UObject = UnityEngine.Object;
 
 namespace UnityUtils.AddressableUtils
@@ -9,6 +10,7 @@ namespace UnityUtils.AddressableUtils
 	{
 		UObject Asset { get; }
 		T Target { get; }
+		AsyncOperationHandle<T> Handle { get; }
 		bool IsAlive { get; }
 	}
 
@@ -20,12 +22,15 @@ namespace UnityUtils.AddressableUtils
 		}
 
 		public readonly TObject objectTarget;
+		public AsyncOperationHandle<TObject> Handle { get; }
+
 		public UObject Asset => objectTarget as UObject;
 		public TObject Target => objectTarget;
 
-		public ObjectAddressable(TObject obj)
+		public ObjectAddressable(TObject obj, AsyncOperationHandle<TObject> handle)
 		{
 			objectTarget = obj;
+			this.Handle = handle;
 		}
 
 		protected bool WasReleased { get; private set; }
@@ -40,7 +45,16 @@ namespace UnityUtils.AddressableUtils
 
 		public void Dispose()
 		{
-			Addressables.Release(objectTarget);
+			if (Handle.IsValid())
+			{
+				Addressables.Release(Handle);
+			}
+			else
+			{
+				Addressables.Release(objectTarget); 
+				Debug.LogError("Using Invalid Handle " + Asset);
+			}
+
 			WasReleased = true;
 		}
 	}
@@ -71,7 +85,16 @@ namespace UnityUtils.AddressableUtils
 			}
 		}
 
-		public ComponentAddressable(GameObject obj, T t) : base(obj)
+		AsyncOperationHandle<T> IAddressable<T>.Handle
+		{
+			get
+			{
+				return Handle is AsyncOperationHandle<T> _handle ? _handle : default;
+			}
+		}
+
+		public ComponentAddressable(GameObject obj, T t, AsyncOperationHandle<GameObject> objHandle) 
+			: base(obj, objHandle)
 		{
 			this.targetComponent = t;
 			gameObject = obj;
