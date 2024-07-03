@@ -37,7 +37,7 @@ namespace UnityUtils.Systems.States
 		{
 			try
 			{
-				stateMachine = new StateMachine<Type>(states.Cast<IState<Type>>());
+				stateMachine = CreateStateMachine(states);
 				OnStateChange += (_, state) => activeState = (T)state;
 				OnException += e => Debug.LogException(e);
 			}
@@ -46,6 +46,11 @@ namespace UnityUtils.Systems.States
 				Debug.LogError($"Error in {GetType().Name} state machine");
 				Debug.LogException(e);
 			}
+		}
+
+		protected virtual IStateMachine<Type> CreateStateMachine(T[] states)
+		{
+			return new StateMachine<Type>(states.Cast<IState<Type>>());
 		}
 
 		protected virtual void Start()
