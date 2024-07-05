@@ -9,7 +9,6 @@ using Utilities.Reflection;
 
 namespace UnityUtils.Editor.ContextMenus
 {
-
 	[InitializeOnLoad]
 	public class PropertyContextMenu
 	{
