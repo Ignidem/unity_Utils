@@ -8,6 +8,8 @@ namespace UnityUtils.Asynchronous
 	{
 		public static async void LogException(this Task task)
 		{
+			if (task == null) return;
+
 			try
 			{
 				await task;
