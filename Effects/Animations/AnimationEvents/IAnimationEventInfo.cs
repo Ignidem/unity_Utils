@@ -5,6 +5,7 @@ namespace UnityUtils.Animations.AnimationEvents
 {
 	public interface IAnimationEventInfo
 	{
+		bool IsValid { get; }
 		Transform Target { get; }
 		float Time { get; }
 		IAnimationState State { get; }
@@ -13,6 +14,7 @@ namespace UnityUtils.Animations.AnimationEvents
 
 	public readonly struct AnimationEventInfo : IAnimationEventInfo
 	{
+		public bool IsValid => evnt != null;
 		public Transform Target { get; }
 		public readonly float Time => evnt.time;
 		public readonly AnimationClip Clip => evnt.animatorClipInfo.clip;
