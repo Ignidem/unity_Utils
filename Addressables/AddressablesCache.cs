@@ -41,7 +41,9 @@ namespace UnityUtils.AddressablesUtils
 
 		public Task<TValue> LoadValue(TKey key)
 		{
-			AsyncOperationHandle<TValue> handler = Load(key);
+			AsyncOperationHandle<TValue> handler = Load(key); 
+			if (!handler.IsValid())
+				throw new Exception("Invalid handle for key " + key);
 			return handler.Task;
 		}
 
@@ -57,6 +59,8 @@ namespace UnityUtils.AddressablesUtils
 			{
 				Addressables.Release(value);
 			}
+
+			handlers.Clear();
 		}
 	}
 }
