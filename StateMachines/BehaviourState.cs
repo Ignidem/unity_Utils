@@ -26,9 +26,10 @@ namespace UnityUtils.Systems.States
 
 		protected override Task OnExit()
 		{
+			/*
 			if (Instance)
 				Instance.gameObject.SetActive(false);
-
+			*/
 			return base.OnExit();
 		}
 
