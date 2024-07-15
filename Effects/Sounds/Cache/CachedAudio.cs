@@ -6,7 +6,7 @@ namespace UnityUtils.GameObjects.ObjectCaches.Caches
 {
 	public class CachedAudio : ICacheableObject
 	{
-		public bool IsAlive => audio && audio.gameObject;
+		public bool IsAlive => audio && audio.clip && audio.gameObject;
 		public bool IsActive => IsAlive && audio.isPlaying;
 		public Transform Transform => audio.transform;
 
@@ -31,12 +31,13 @@ namespace UnityUtils.GameObjects.ObjectCaches.Caches
 
 		public void Destroy()
 		{
-			Object.Destroy(audio.gameObject, audio.RemainingTime());
+			audio.DestroySelfObject(audio.RemainingTime());
 		}
 
 		public void OnCached(IObjectCache cache)
 		{
-			Transform.gameObject.SetActive(false);
+			audio.Stop();
+			audio.gameObject.SetActive(false);
 			if (cache is not AudioCache audioCache)
 				return;
 
@@ -46,7 +47,7 @@ namespace UnityUtils.GameObjects.ObjectCaches.Caches
 		public void OnPop(IObjectCache cache) 
 		{
 			audioCache = cache as AudioCache;
-			Transform.gameObject.SetActive(true);
+			audio.gameObject.SetActive(true);
 		}
 
 		public void Play(Transform source, bool cacheOnEnd)
@@ -87,7 +88,7 @@ namespace UnityUtils.GameObjects.ObjectCaches.Caches
 
 		private bool DestroyIfCacheless()
 		{
-			if (audioCache == null || !audioCache.IsAlive)
+			if (!audio.clip || audioCache == null || !audioCache.IsAlive)
 			{
 				Destroy();
 				return true;
