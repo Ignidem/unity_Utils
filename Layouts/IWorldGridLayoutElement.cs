@@ -4,6 +4,7 @@ namespace UnityUtils.Common.Layout
 {
 	public interface IWorldGridLayoutElement
 	{
+		Transform Transform { get; }
 		void SetLayoutPosition(LayoutElementInfo info);
 	}
 

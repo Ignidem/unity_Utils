@@ -1,11 +1,12 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityUtils.Layouts.SpacingEvaluators;
+using UnityUtils.PropertyAttributes;
 using Maths = UnityEngine.Mathf;
 
 namespace UnityUtils.Common.Layout
 {
-
 	[ExecuteInEditMode]
 	public class WorldGridLayout : MonoBehaviour
 	{
@@ -15,11 +16,11 @@ namespace UnityUtils.Common.Layout
 
 		public Vector3 Offset;
 
-		[Header("Spacing")]
-		[InspectorName("Minimum")]
-		public Vector3 MinSpacing;
-		[InspectorName("Maximum")]
-		public Vector3 MaxSpacing;
+		[SerializeField] private Vector3 MinSpacing;
+		[SerializeField] private Vector3 MaxSpacing;
+
+		[SerializeReference, Polymorphic]
+		public ISpacingEvaluator spacing;
 
 		public Vector3Int GridSize;
 
@@ -53,6 +54,12 @@ namespace UnityUtils.Common.Layout
 				Math.Max(1, GridSize.z)
 				);
 
+			spacing ??= new DefinedSpacing()
+			{
+				MinSpacing = this.MinSpacing,
+				MaxSpacing = this.MaxSpacing,
+			};
+
 			ReloadLayout();
 		}
 
@@ -71,7 +78,7 @@ namespace UnityUtils.Common.Layout
 		{
 			int count = transform.childCount;
 
-			Vector3 spacing = GetSpacing(count);
+			Vector3 spacing = this.spacing.GetSpacing(count, this);
 			Vector3Int grid = GetFittingGridSize(count);
 
 			for (int i = 0; i < count; i++)
@@ -103,18 +110,10 @@ namespace UnityUtils.Common.Layout
 		{
 			child.SetParent(transform, true);
 			int count = transform.childCount;
-			Vector3 spacing = GetSpacing(count);
+			Vector3 spacing = this.spacing.GetSpacing(count, this);
 			Vector3Int grid = GetFittingGridSize(count);
 			Vector3Int position = GetChildGridPosition(count - 1, grid);
 			return GetLocalPositionOfChild(position, spacing, grid);
-		}
-
-		public Vector3 GetSpacing(float count)
-		{
-			if (count <= MaxElements)
-				return MaxSpacing;
-
-			return Vector3.Lerp(MaxSpacing, MinSpacing, 0.9f * (count + 1 - MaxElements) / MaxElements);
 		}
 
 		public Vector3Int GetFittingGridSize(int count)
@@ -261,7 +260,7 @@ namespace UnityUtils.Common.Layout
 
 		public Vector3 GetLocalPositionOfChild(int i, int count)
 		{
-			Vector3 spacing = GetSpacing(count);
+			Vector3 spacing = this.spacing.GetSpacing(count, this);
 			Vector3Int grid = GetFittingGridSize(count);
 			Vector3Int position = GetChildGridPosition(i, grid);
 			return GetLocalPositionOfChild(position, spacing, grid);
