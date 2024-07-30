@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityUtils.Asynchronous;
 using UnityUtils.Layouts.SpacingEvaluators;
 using UnityUtils.PropertyAttributes;
 using Maths = UnityEngine.Mathf;
@@ -60,7 +62,7 @@ namespace UnityUtils.Common.Layout
 				MaxSpacing = this.MaxSpacing,
 			};
 
-			ReloadLayout();
+			AutoReloadAsync().LogException();
 		}
 
 		private void OnEnable()
@@ -68,14 +70,27 @@ namespace UnityUtils.Common.Layout
 			ReloadLayout();
 		}
 
+		private void OnRectTransformDimensionsChange()
+		{
+			AutoReloadAsync().LogException();
+		}
+
 		private void OnTransformChildrenChanged()
 		{
+			AutoReloadAsync().LogException();
+		}
+
+		private async Task AutoReloadAsync()
+		{
 			if (!AutoReload) return;
+			await Task.Yield();
 			ReloadLayout();
 		}
 
 		public void ReloadLayout()
 		{
+			if (!this) return;
+
 			int count = transform.childCount;
 
 			Vector3 spacing = this.spacing.GetSpacing(count, this);
@@ -92,7 +107,7 @@ namespace UnityUtils.Common.Layout
 				OnChildReloaded?.Invoke(child, pos, i, count);
 				if (child.TryGetComponent(out IWorldGridLayoutElement element))
 				{
-					LayoutElementInfo info = new LayoutElementInfo(i, gridPos, pos, spacing);
+					LayoutElementInfo info = new LayoutElementInfo(i, gridPos, grid, GridSize, pos, spacing);
 					element.SetLayoutPosition(info);
 				}
 			}

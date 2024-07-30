@@ -7,8 +7,7 @@ namespace UnityUtils.Layouts.SpacingEvaluators
 	[Serializable]
 	public class AutoCanvasSpacing : ISpacingEvaluator
 	{
-		[SerializeField]
-		private RectTransform container;
+		[SerializeField] private RectTransform container;
 
 		public Vector3 GetSpacing(int count, WorldGridLayout layout)
 		{
