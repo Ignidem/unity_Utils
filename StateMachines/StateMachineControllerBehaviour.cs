@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityUtils.Asynchronous;
 using UnityUtils.PropertyAttributes;
 using Utils.StateMachines;
 
@@ -35,6 +36,14 @@ namespace UnityUtils.Systems.States
 
 		protected virtual void Awake()
 		{
+			InitStateMachine();
+		}
+
+		public void InitStateMachine()
+		{
+			if (stateMachine != null)
+				return;
+
 			try
 			{
 				stateMachine = CreateStateMachine(states);
@@ -61,7 +70,7 @@ namespace UnityUtils.Systems.States
 
 		private void OnDestroy()
 		{
-			activeState?.Exit();
+			stateMachine.ExitActiveState().LogException();
 		}
 
 		public Task SwitchState(IStateData<Type> data) => stateMachine.SwitchState(data);
