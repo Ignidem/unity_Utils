@@ -28,8 +28,11 @@ namespace UnityUtils.AddressableUtils
 
 		public TaskAwaiter<T> GetAwaiter() => GetComponent().GetAwaiter();
 
-		public override void Dispose()
+		public override async void Dispose()
 		{
+			if (IsLoading)
+				await LoadTask;
+
 			if (comp) comp.DestroySelfObject();
 			base.Dispose();
 		}

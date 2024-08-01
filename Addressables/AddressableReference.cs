@@ -35,10 +35,10 @@ namespace UnityUtils.AddressableUtils
 		public object RuntimeKey => prefabReference.RuntimeKey;
 		public string AssetGUID => prefabReference.AssetGUID;
 
-		public bool IsLoaded => loadTask?.IsCompleted ?? false;
-		public bool IsLoading => !(loadTask?.IsCompleted ?? true);
+		public bool IsLoaded => LoadTask?.IsCompleted ?? false;
+		public bool IsLoading => !(LoadTask?.IsCompleted ?? true);
 
-		private Task loadTask;
+		protected Task LoadTask { get; private set; }
 		private object handle;
 		private IAddressable<T> adrsLoad;
 
@@ -126,13 +126,13 @@ namespace UnityUtils.AddressableUtils
 
 			adrsLoad?.Dispose();
 			adrsLoad = null;
-			loadTask = null;
+			LoadTask = null;
 			handle = null;
 		}
 
 		private async void DisposeAsync()
 		{
-			await loadTask;
+			await LoadTask;
 			Dispose();
 		}
 
@@ -144,7 +144,7 @@ namespace UnityUtils.AddressableUtils
 				handle = result;
 			}
 
-			loadTask ??= result.Task;
+			LoadTask ??= result.Task;
 			return result;
 		}
 	}
