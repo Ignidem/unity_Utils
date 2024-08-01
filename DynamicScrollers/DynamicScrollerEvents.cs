@@ -28,7 +28,8 @@ namespace UnityUtils.DynamicScrollers
 			cells[cellIndex] = cell;
 
 			Vector2 cellSize = cell.GetSize(content.rect, ScrollAxis);
-			AddContentSize(cellSize, cellIndex);
+			if (contentComponents.Sizing == ContentComponents.SizingType.Additive)
+				AddViewportSize(cellSize, cellIndex);
 
 			OnCellInitialized?.Invoke(cell);
 		}

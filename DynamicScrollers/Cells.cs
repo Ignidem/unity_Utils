@@ -28,7 +28,11 @@ namespace UnityUtils.DynamicScrollers
 
 			[SerializeField]
 			private GameObject[] cellPrefabs;
-			internal int prefabCount => cellPrefabs.Length;
+
+			[SerializeField]
+			private RectTransform cellParent;
+
+			internal int PrefabCount => cellPrefabs.Length;
 			private readonly Dictionary<Type, GameObject> mappedPrefabs = new();
 
 			private readonly List<IScrollerCell> activeCells = new();
@@ -49,17 +53,11 @@ namespace UnityUtils.DynamicScrollers
 				return true;
 			}
 
-			/// <summary>
-			/// Try to use a recicled cell or create a new one.
-			/// </summary>
-			public bool TryRecycleOrCreate(IScrollerCellData data, Transform parent, out IScrollerCell cell)
+			public bool TryRecycleOrCreate(IScrollerCellData data, out IScrollerCell cell)
 			{
-				return TryRecycle(data, out cell) || TryCreate(data, parent, out cell);
+				return TryRecycle(data, out cell) || TryCreate(data, out cell);
 			}
 
-			/// <summary>
-			/// Recycle an active cell.
-			/// </summary>
 			public bool RecycleCellAt(int index, out IScrollerCell cell)
 			{
 				if (index < 0 || index >= activeCells.Count)
@@ -94,7 +92,7 @@ namespace UnityUtils.DynamicScrollers
 				return true;
 			}
 
-			private bool TryCreate(IScrollerCellData data, Transform parent, out IScrollerCell cell)
+			private bool TryCreate(IScrollerCellData data, out IScrollerCell cell)
 			{
 				if (!TryGetPrefab(data, out GameObject prefab))
 				{
@@ -102,7 +100,7 @@ namespace UnityUtils.DynamicScrollers
 					return false;
 				}
 
-				GameObject inst = Instantiate(prefab, parent);
+				GameObject inst = Instantiate(prefab, cellParent);
 				if (!inst.TryGetComponent(out cell))
 				{
 					Destroy(inst);

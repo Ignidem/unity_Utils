@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityUtils.PropertyAttributes;
 using UnityUtils.UI.Selectable.Groups;
@@ -24,6 +25,16 @@ namespace UnityUtils.UI.Selectable
 		[field: SerializeField]
 		public bool IsToggle { get; private set; }
 		public bool IsSelected => currentSelectionState == SelectionState.Selected || Group.IsActive(Id);
+
+		[SerializeField] private TMP_Text label;
+		public string Text
+		{
+			get => label ? label.text : null;
+			set
+			{
+				if (label) label.text = value;
+			}
+		}
 
 		[SerializeReference, Polymorphic]
 		[InspectorName("Events")]

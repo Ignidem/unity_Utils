@@ -12,6 +12,9 @@ namespace UnityUtils.UI.Selectable.Editor
 			EditorGUILayout.PropertyField(serializedObject.GetRelativeProperty("Group"));
 			EditorGUILayout.PropertyField(serializedObject.GetRelativeProperty(nameof(Button.IsToggle)));
 			EditorGUILayout.PropertyField(serializedObject.GetRelativeProperty("animations"));
+
+			EditorGUILayout.PropertyField(serializedObject.GetRelativeProperty("label"));
+
 			serializedObject.ApplyModifiedProperties();
 			base.OnInspectorGUI();
 		}

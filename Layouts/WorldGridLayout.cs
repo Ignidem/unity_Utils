@@ -92,8 +92,7 @@ namespace UnityUtils.Common.Layout
 			if (!this) return;
 
 			int count = transform.childCount;
-
-			Vector3 spacing = this.spacing.GetSpacing(count, this);
+			Vector3 spacing = GetSpacing();
 			Vector3Int grid = GetFittingGridSize(count);
 
 			for (int i = 0; i < count; i++)
@@ -111,6 +110,11 @@ namespace UnityUtils.Common.Layout
 					element.SetLayoutPosition(info);
 				}
 			}
+		}
+
+		public Vector3 GetSpacing()
+		{
+			return spacing.GetSpacing(transform.childCount, this);
 		}
 
 		public void InsertChildren(Transform child, int index)

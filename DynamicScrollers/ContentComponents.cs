@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityUtils.PropertyAttributes;
 using Axis = UnityEngine.RectTransform.Axis;
 
 namespace UnityUtils.DynamicScrollers
@@ -10,26 +11,40 @@ namespace UnityUtils.DynamicScrollers
 		[Serializable]
 		public class ContentComponents
 		{
-			public float Spacing => layoutGroup ? layoutGroup.spacing : 0;
+			public enum SizingType
+			{
+				Additive,
+				OnReload
+			}
 
-			[SerializeField] private HorizontalOrVerticalLayoutGroup layoutGroup;
+			public Vector2 Spacing => layoutGroup?.Spacing ?? Vector2.zero;
+
+			public ILayoutGroupContainer Layout => layoutGroup;
+
+			[SerializeReference, Polymorphic]
+			private ILayoutGroupContainer layoutGroup;
+
+			[field: SerializeField]
+			public SizingType Sizing { get; private set; }
 
 			public Vector2 StartPadding(Axis axis)
 			{
+				var padding = layoutGroup.Padding;
 				return axis switch
 				{
-					Axis.Horizontal => new Vector2(layoutGroup ? layoutGroup.padding.left : 0, 0),
-					Axis.Vertical => new Vector2(0, layoutGroup ? layoutGroup.padding.top : 0),
+					Axis.Horizontal => new Vector2(padding.left, 0),
+					Axis.Vertical => new Vector2(0, padding.top),
 					_ => Vector2.zero
 				};
 			}
 
 			public Vector2 EndPadding(Axis axis)
 			{
+				var padding = layoutGroup.Padding;
 				return axis switch
 				{
-					Axis.Horizontal => new Vector2(layoutGroup ? layoutGroup.padding.right : 0, 0),
-					Axis.Vertical => new Vector2(0, layoutGroup ? layoutGroup.padding.bottom : 0),
+					Axis.Horizontal => new Vector2(padding.right, 0),
+					Axis.Vertical => new Vector2(0, padding.bottom),
 					_ => Vector2.zero
 				};
 			}
