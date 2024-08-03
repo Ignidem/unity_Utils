@@ -3,7 +3,6 @@ using UnityUtils.PropertyAttributes;
 
 namespace UnityUtils.Common.Layout
 {
-
 	[ExecuteInEditMode]
 	public class LayoutBehaviour : MonoBehaviour
 	{
