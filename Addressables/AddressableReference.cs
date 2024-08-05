@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityUtils.Asynchronous;
 using UnityUtils.GameObjects;
 
 namespace UnityUtils.AddressableUtils
@@ -120,7 +121,7 @@ namespace UnityUtils.AddressableUtils
 			if (IsLoading)
 			{
 				//was not yet loaded
-				DisposeAsync();
+				DisposeAsync().LogException();
 				return;
 			}
 
@@ -130,7 +131,7 @@ namespace UnityUtils.AddressableUtils
 			handle = null;
 		}
 
-		private async void DisposeAsync()
+		public virtual async Task DisposeAsync()
 		{
 			await LoadTask;
 			Dispose();

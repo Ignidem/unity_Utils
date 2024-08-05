@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityUtils.Asynchronous;
 using UnityUtils.GameObjects;
 
 namespace UnityUtils.AddressableUtils
@@ -28,10 +29,14 @@ namespace UnityUtils.AddressableUtils
 
 		public TaskAwaiter<T> GetAwaiter() => GetComponent().GetAwaiter();
 
-		public override async void Dispose()
+		public override void Dispose()
 		{
 			if (IsLoading)
-				await LoadTask;
+			{
+				//was not yet loaded
+				DisposeAsync().LogException();
+				return;
+			}
 
 			if (comp) comp.DestroySelfObject();
 			base.Dispose();

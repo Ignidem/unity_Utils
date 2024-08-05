@@ -40,14 +40,14 @@ namespace UnityUtils.Systems.States
 			return base.OnExit();
 		}
 
-		protected override Task OnCleanup()
+		protected override async Task OnCleanup()
 		{
 			if (DoReleaseAsset)
 			{
-				viewAddressable.Dispose();
+				await viewAddressable.DisposeAsync();
 			}
 
-			return base.OnCleanup();
+			await base.OnCleanup();
 		}
 
 		public override async Task Reload(IStateData<TKey> data)

@@ -86,7 +86,7 @@ namespace UnityUtils.Effects.VisualEffects
 		public virtual void Destroy()
 		{
 			Dispose();
-			if (gameObject)
+			if (this && gameObject)
 				Destroy(gameObject, 1);
 		}
 	}

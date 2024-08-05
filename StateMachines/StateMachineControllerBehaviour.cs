@@ -21,6 +21,7 @@ namespace UnityUtils.Systems.States
 		protected IStateMachine<Type> stateMachine;
 		public IState<Type> ActiveState => stateMachine?.ActiveState;
 		IState IStateMachine.ActiveState => stateMachine?.ActiveState;
+		public bool IsSwitching => stateMachine.IsSwitching;
 
 		public event StateChangeDelegate<Type> OnStateChange
 		{
