@@ -40,6 +40,7 @@ namespace UnityUtils.UI.Selectable.Groups
 
 			if (ActiveInput != null)
 				ActiveInput?.OnGroupDeselected();
+
 			ActiveInput = input;
 			ActiveInput?.OnGroupSelected();
 			OnSelectionChanged?.Invoke();
