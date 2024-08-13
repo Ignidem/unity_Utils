@@ -133,7 +133,8 @@ namespace UnityUtils.AddressableUtils
 
 		public virtual async Task DisposeAsync()
 		{
-			await LoadTask;
+			if (LoadTask != null)
+				await LoadTask;
 			Dispose();
 		}
 
