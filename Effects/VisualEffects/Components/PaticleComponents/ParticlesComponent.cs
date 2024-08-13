@@ -13,7 +13,7 @@ namespace UnityUtils.Effects.VisualEffects
 		[SerializeField]
 		private ParticleSystem particles;
 
-		[SerializeReference, Polymorphic]
+		[SerializeReference, Polymorphic(true)]
 		private IParticlesParameterFunctions functions;
 
 		public string Name => particles.gameObject.name;
@@ -123,8 +123,6 @@ namespace UnityUtils.Effects.VisualEffects
 				functions.SetValue(this, id, value, isOptional);
 				return;
 			}
-			
-			particles.TrySetProperty(id, value, !isOptional);
 		}
 	}
 }
