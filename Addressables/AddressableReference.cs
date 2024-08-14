@@ -2,8 +2,8 @@
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityUtils.Asynchronous;
 using UnityUtils.GameObjects;
+using Utils.Logger;
 
 namespace UnityUtils.AddressableUtils
 {

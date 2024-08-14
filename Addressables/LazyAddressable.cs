@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityUtils.Asynchronous;
+using Utils.Logger;
 using UnityUtils.GameObjects;
 
 namespace UnityUtils.AddressableUtils

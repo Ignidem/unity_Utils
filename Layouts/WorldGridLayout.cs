@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityUtils.Asynchronous;
+using Utils.Logger;
 using UnityUtils.Layouts.SpacingEvaluators;
 using UnityUtils.PropertyAttributes;
 using Maths = UnityEngine.Mathf;
