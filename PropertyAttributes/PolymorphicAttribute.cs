@@ -82,11 +82,13 @@ namespace UnityUtils.PropertyAttributes
 				{
 					baseType = baseType.GetElementType();
 				}
+				/*
 				else if (baseType.IsGenericType) //Generic collections
 				{
 					Type[] generics = baseType.GetGenericArguments();
 					baseType = generics[0];
 				}
+				*/
 
 				Init(baseType);
 			}
