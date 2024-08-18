@@ -26,10 +26,7 @@ namespace UnityUtils.GameObjects.ObjectCaches
 			}
 		}
 
-		public BaseObjectCache()
-		{
-
-		}
+		public BaseObjectCache() { }
 
 		public bool Peek(TKey key)
 		{
@@ -42,6 +39,8 @@ namespace UnityUtils.GameObjects.ObjectCaches
 		}
 		public virtual void Dispose()
 		{
+			isDisposed = true;
+
 			DestroyAll(stored);
 			stored.Clear();
 
