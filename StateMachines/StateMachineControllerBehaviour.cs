@@ -23,22 +23,25 @@ namespace UnityUtils.Systems.States
 		public IStateMachine<Type>.SwitchInfo ActiveSwitch => stateMachine.ActiveSwitch;
 		public bool IsSwitching => stateMachine.IsSwitching;
 
-
-		public event StateChangeDelegate<Type> OnStateChange
-		{
-			add => stateMachine.OnStateChange += value;
-			remove => stateMachine.OnStateChange -= value;
-		}
-
-		public event ExceptionHandlerDelegate OnException
-		{
-			add => stateMachine.OnException += value;
-			remove => stateMachine.OnException -= value;
-		}
+		public event StateChangeDelegate<Type> OnStateChange;
+		public event ExceptionHandlerDelegate OnException;
 
 		protected virtual void Awake()
 		{
 			InitStateMachine();
+		}
+
+		private void OnDestroy()
+		{
+			stateMachine.ExitActiveState().LogException();
+			stateMachine.OnStateChange -= OnStateMachineStateChange;
+			stateMachine.OnException -= OnStateMachineException;
+		}
+
+		protected virtual void Start()
+		{
+			Type key = activeState?.GetType();
+			if (key != null) SwitchState(key);
 		}
 
 		public void InitStateMachine()
@@ -49,8 +52,8 @@ namespace UnityUtils.Systems.States
 			try
 			{
 				stateMachine = CreateStateMachine(states);
-				OnStateChange += (_, state) => activeState = (T)state;
-				OnException += e => Debug.LogException(e);
+				stateMachine.OnStateChange += OnStateMachineStateChange;
+				stateMachine.OnException += OnStateMachineException;
 			}
 			catch (Exception e)
 			{
@@ -59,20 +62,21 @@ namespace UnityUtils.Systems.States
 			}
 		}
 
+		protected virtual void OnStateMachineException(Exception exception)
+		{
+			exception.LogException();
+			OnException?.Invoke(exception);
+		}
+
+		protected virtual void OnStateMachineStateChange(IState<Type> current, IState<Type> next)
+		{
+			activeState = (T)next;
+			OnStateChange?.Invoke(current, next);
+		}
+
 		protected virtual IStateMachine<Type> CreateStateMachine(T[] states)
 		{
 			return new StateMachine<Type>(states.Cast<IState<Type>>());
-		}
-
-		protected virtual void Start()
-		{
-			Type key = activeState?.GetType();
-			if (key != null) SwitchState(key);
-		}
-
-		private void OnDestroy()
-		{
-			stateMachine.ExitActiveState().LogException();
 		}
 
 		public Task SwitchState(IStateData<Type> data) => stateMachine.SwitchState(data);
