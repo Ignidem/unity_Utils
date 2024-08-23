@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -78,7 +79,7 @@ namespace UnityUtils.Storages
 		}
 	}
 
-	public class StorageObject<TValue> : StorageObject, IStorageObject<int, TValue>
+	public class StorageObject<TValue> : StorageObject, IStorageObject<int, TValue>, IEnumerable<TValue>
 	{
 		public override Type TableType => typeof(TValue);
 
@@ -117,6 +118,16 @@ namespace UnityUtils.Storages
 		public override T[] GetAllAs<T>()
 		{
 			return values.Where(v => v is T).Cast<T>().ToArray();
+		}
+
+		public IEnumerator<TValue> GetEnumerator()
+		{
+			return values.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 	}
 }
