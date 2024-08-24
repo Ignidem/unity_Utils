@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityUtils.Animations.AnimationEvents;
 
 namespace UnityUtils.Animations.StateListener
 {
@@ -9,6 +10,7 @@ namespace UnityUtils.Animations.StateListener
 		string StateName { get; }
 		int Id { get; }
 		bool IsPlaying { get; }
+		bool IsLoop { get; }
 		float Length { get; }
 		int Layer { get; }
 		float Time { get; }
@@ -28,5 +30,7 @@ namespace UnityUtils.Animations.StateListener
 		{
 			await this;
 		}
+
+		IAnimationEventInfo GetEventInfo(Animator animator, string name);
 	}
 }
