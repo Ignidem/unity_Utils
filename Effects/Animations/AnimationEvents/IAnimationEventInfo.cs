@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UnityUtils.Animations.StateListener;
+using Utils.Results;
 
 namespace UnityUtils.Animations.AnimationEvents
 {
 	public interface IAnimationEventInfo
 	{
-		bool IsValid { get; }
+		Result IsValid { get; }
 		Transform Target { get; }
 		float Time { get; }
 		IAnimationState State { get; }
@@ -14,7 +15,14 @@ namespace UnityUtils.Animations.AnimationEvents
 
 	public readonly struct AnimationEventInfo : IAnimationEventInfo
 	{
-		public bool IsValid => evnt != null;
+		public static AnimationEventInfo MissingState(string stateName, string eventName, string source)
+		{
+			return new AnimationEventInfo($"Animation state {stateName} not found " +
+				$"while searching for event {eventName} in {source}.");
+		}
+
+		public Result IsValid { get; }
+
 		public Transform Target { get; }
 		public readonly float Time => evnt.time;
 		public readonly AnimationClip Clip => evnt.animatorClipInfo.clip;
@@ -26,6 +34,12 @@ namespace UnityUtils.Animations.AnimationEvents
 			this.evnt = evnt;
 			State = state;
 			Target = animator.transform;
+			IsValid = true;
+		}
+
+		private AnimationEventInfo(Result error) : this()
+		{
+			IsValid = error;
 		}
 	}
 }
