@@ -32,7 +32,7 @@ namespace UnityUtils.DynamicScrollers
 
 		public void ReloadCells()
 		{
-			ResetViewportSize();
+			ResetContentSize();
 
 			int cellIndex = 0;
 			for (int dataIndex = 0; dataIndex < _data.Length; dataIndex++)
@@ -78,7 +78,7 @@ namespace UnityUtils.DynamicScrollers
 			return cellIndex;
 		}
 
-		private void ResetViewportSize()
+		private void ResetContentSize()
 		{
 			content.sizeDelta = Vector2.zero;
 			Axis scrollAxis = ScrollAxis;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using Axis = UnityEngine.RectTransform.Axis;
 
@@ -22,7 +23,7 @@ namespace UnityUtils.DynamicScrollers
 
 		Vector2 GetSize(Rect container, Axis axis);
 
-		bool SetData(IScrollerCellData data);
+		Task<bool> SetData(IScrollerCellData data);
 		void Refresh();
 		void Clear();
 	}

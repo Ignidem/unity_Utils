@@ -43,20 +43,25 @@ namespace UnityUtils.Editor.PropertyDrawers
 		protected override float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label)
 		{
 			PolymorphicAttribute polyAttr = attribute as PolymorphicAttribute;
-
+			bool drawChildren = !polyAttr.IgnoreChildren;
 			float width = CalcLabelSize(property.displayName).x;
 			PolyTypeDropdown(position.MoveX(width), polyAttr, property);
 
-			int indent = EditorGUI.indentLevel;
-			EditorGUI.indentLevel++;
-			position = Indent(position);
+			if (drawChildren)
+			{
+				int indent = EditorGUI.indentLevel;
+				EditorGUI.indentLevel++;
+				position = Indent(position);
 
-			position = position.MoveY(SpacedLineHeight).SetRemainderWidth(ViewWidth);
-			position = DrawProperty(position, property);
+				position = position.MoveY(SpacedLineHeight).SetRemainderWidth(ViewWidth);
+				position = DrawProperty(position, property);
 
-			EditorGUI.indentLevel = indent;
+				EditorGUI.indentLevel = indent;
+				position = position.MoveY(-LineHeight);
+			}
+
 			EditorGUI.EndFoldoutHeaderGroup();
-			return -LineHeight;
+			return 0;
 		}
 
 		protected override bool DrawLabel(SerializedProperty property, GUIContent label, ref Rect position, int index, bool folded)

@@ -11,7 +11,7 @@ namespace UnityUtils.Systems.States
 	public abstract class StateMachineControllerBehaviour<T> : MonoBehaviour, IStateMachine<Type>
 		where T : IState<Type>
 	{
-		[SerializeReference, Polymorphic(true)]
+		[SerializeReference, Polymorphic(PolymorphicSettings.Nullable | PolymorphicSettings.IgnoreChildren)]
 		protected T activeState;
 
 		[SerializeReference, Polymorphic]

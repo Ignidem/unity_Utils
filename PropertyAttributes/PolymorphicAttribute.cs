@@ -8,11 +8,17 @@ using Utilities.Reflection;
 
 namespace UnityUtils.PropertyAttributes
 {
+	public enum PolymorphicSettings
+	{
+		Nullable,
+		IgnoreChildren
+	}
+
 	public class PolymorphicAttribute : PropertyAttribute
 	{
 		private static readonly Dictionary<Type, Type[]> subTypes = new Dictionary<Type, Type[]>();
 
-		public readonly bool nullable;
+		public readonly PolymorphicSettings settings;
 		public string[] Options { get; private set; }
 		public Type BaseType { get; private set; }
 		public bool WasInitialized => types != null;
@@ -22,9 +28,11 @@ namespace UnityUtils.PropertyAttributes
 		public Type SelectedType => _index == -1 ? null : types?[_index];
 		public int Index
 		{
-			get => nullable ? _index + 1 : _index;
-			set => _index = nullable ? value - 1 : value;
+			get => Nullable ? _index + 1 : _index;
+			set => _index = Nullable ? value - 1 : value;
 		}
+		private bool Nullable => settings.HasFlag(PolymorphicSettings.Nullable);
+		public bool IgnoreChildren => settings.HasFlag(PolymorphicSettings.IgnoreChildren);
 
 		private int _index;
 
@@ -34,10 +42,15 @@ namespace UnityUtils.PropertyAttributes
 		/// <summary>
 		/// Uses the field's type as base type.
 		/// </summary>
-		/// <param name="nullable">Can the instance be null.</param>
-		public PolymorphicAttribute(bool nullable = false)
+		/// <param name="nullable">Can the instance be null.</param>		
+		public PolymorphicAttribute(bool nullable)
 		{
-			this.nullable = nullable;
+			if (nullable)
+				this.settings = PolymorphicSettings.Nullable;
+		}
+		public PolymorphicAttribute(PolymorphicSettings settings = default)
+		{
+			this.settings = settings;
 		}
 
 		/// <summary>
@@ -58,8 +71,8 @@ namespace UnityUtils.PropertyAttributes
 				subTypes[baseType] = baseType.GetImplementations().Where(t => !unityType.IsAssignableFrom(t)).ToArray();
 
 			int k = 0;
-			Options = new string[types.Length + (nullable ? 1 : 0)];
-			if (nullable)
+			Options = new string[types.Length + (Nullable ? 1 : 0)];
+			if (Nullable)
 				Options[k++] = "Null Reference";
 			for (int i = 0; i < types.Length; i++, k++)
 				Options[k] = types[i].Name;

@@ -6,6 +6,7 @@ using Utils.Logger;
 using UnityUtils.Layouts.SpacingEvaluators;
 using UnityUtils.PropertyAttributes;
 using Maths = UnityEngine.Mathf;
+using Utils.Asyncronous;
 
 namespace UnityUtils.Common.Layout
 {
@@ -38,8 +39,9 @@ namespace UnityUtils.Common.Layout
 		public UnityEvent<Transform, Vector3, int, int> OnChildReloaded;
 
 		public int MaxElements => Math.Max(1, GridSize.x) * Math.Max(1, GridSize.y) * Math.Max(1, GridSize.z);
-
 		public bool HasOverflow => overflowX || overflowY || overflowZ;
+
+		private TaskDelayer reloadDelayer;
 
 		private void OnValidate()
 		{
@@ -62,27 +64,35 @@ namespace UnityUtils.Common.Layout
 				MaxSpacing = this.MaxSpacing,
 			};
 
-			AutoReloadAsync().LogException();
+			OnAutoReload();
 		}
 
+		private void Awake()
+		{
+			reloadDelayer = new TaskDelayer(50, ReloadNext);
+		}
 		private void OnEnable()
 		{
-			ReloadLayout();
+			OnAutoReload();
 		}
 
 		private void OnRectTransformDimensionsChange()
 		{
-			AutoReloadAsync().LogException();
+			OnAutoReload();
 		}
 
 		private void OnTransformChildrenChanged()
 		{
-			AutoReloadAsync().LogException();
+			OnAutoReload();
 		}
 
-		private async Task AutoReloadAsync()
+		private void OnAutoReload()
 		{
 			if (!AutoReload) return;
+			reloadDelayer?.TryRun();
+		}
+		public async Task ReloadNext()
+		{
 			await Task.Yield();
 			ReloadLayout();
 		}
@@ -122,7 +132,7 @@ namespace UnityUtils.Common.Layout
 			index = Math.Clamp(index, 0, transform.childCount);
 			child.SetParent(transform, true);
 			child.SetSiblingIndex(index);
-			ReloadLayout();
+			OnAutoReload();
 		}
 
 		public Vector3 AddChildren(Transform child)
