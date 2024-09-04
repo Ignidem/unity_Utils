@@ -24,8 +24,7 @@ namespace UnityUtils.Editor
 		public static float IndentOffset => EditorGUI.indentLevel * IndentWidth;
 		public static Rect Indent(Rect position)
 		{
-			//EditorGUI.IndentedRect
-			return position.SetX(IndentOffset);
+			return EditorGUI.IndentedRect(position);
 		}
 		public static float Spacing => EditorGUIUtility.standardVerticalSpacing * 2;
 		public static float LineHeight => EditorGUIUtility.singleLineHeight;
