@@ -14,7 +14,7 @@ namespace UnityUtils.Storages.EnumPairLists
 			get => pairs[key];
 			set => pairs[key] = value;
 		}
-		public (TEnum, TValue) this[int index] => pairs[index];
+		public (TEnum key, TValue value) this[int index] => pairs[index];
 
 		[SerializeField]
 		private EnumPair<TEnum, TValue> pairs;

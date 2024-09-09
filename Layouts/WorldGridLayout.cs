@@ -99,7 +99,7 @@ namespace UnityUtils.Common.Layout
 
 		public void ReloadLayout()
 		{
-			if (!this) return;
+			if (!this || !enabled) return;
 
 			int count = transform.childCount;
 			Vector3 spacing = GetSpacing();

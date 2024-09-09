@@ -6,7 +6,7 @@ using static UnityEngine.RectTransform;
 
 namespace UnityUtils.UI.TMPPro
 {
-	[RequireComponent(typeof(TMP_Text))]
+	[RequireComponent(typeof(TMP_Text)), ExecuteAlways]
 	public class LinkedTextBehaviour : MonoBehaviour, IPointerClickHandler
 	{
 		[field: SerializeField]

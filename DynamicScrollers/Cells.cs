@@ -110,5 +110,7 @@ namespace UnityUtils.DynamicScrollers
 				return true;
 			}
 		}
+
+		public IScrollerCell GetCellAt(int index) => cells[index];
 	}
 }

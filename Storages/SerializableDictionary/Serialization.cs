@@ -8,24 +8,26 @@ namespace Serialized
 	public partial class Dictionary<TKey, TValue> : ISerializationCallbackReceiver
 	{
 		[Serializable]
-		public class Pair
+		public struct PairKey : IDictionaryElement<TKey>
 		{
-			public TKey Key;
+			[field: SerializeField]
+			public TKey Key { get; set; }
+
 			public TValue Value;
 		}
 
 		[SerializeField]
-		private Pair[] pairs;
+		private PairKey[] pairs;
 
 		public void OnAfterDeserialize()
 		{
 			dict = new();
 
-			pairs ??= new Pair[0];
+			pairs ??= new PairKey[0];
 
 			for (int i = 0; i < pairs.Length; i++)
 			{
-				Pair p = pairs[i];
+				PairKey p = pairs[i];
 
 				if (p.Key is null || (p.Key is string s && string.IsNullOrEmpty(s)) || dict.ContainsKey(p.Key))
 					continue;
@@ -47,7 +49,7 @@ namespace Serialized
 
 		public void ApplyChanges()
 		{
-			pairs = dict.Select(kp => new Pair() { Key = kp.Key, Value = kp.Value }).ToArray();
+			pairs = dict.Select(kp => new PairKey() { Key = kp.Key, Value = kp.Value }).ToArray();
 		}
 	}
 }
