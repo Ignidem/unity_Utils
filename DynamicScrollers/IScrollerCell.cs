@@ -8,9 +8,7 @@ namespace UnityUtils.DynamicScrollers
 	public interface IScrollerCellData
 	{
 		Type CellType { get; }
-
 		bool IsSelected { get; set; }
-
 		void Clear();
 	}
 

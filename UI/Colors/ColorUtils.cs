@@ -7,6 +7,11 @@ namespace UnityUtils.UI.Colors
 	{
 		private const float size = 255f;
 
+		public static Color SetAlpha(this Color color, float a)
+		{
+			return new Color(color.r, color.g, color.b, a);
+		}
+
 		public static Color ToUnityColor(this SystemColor color)
 		{
 			return new Color(color.R / size, color.G / size, color.B / size, color.A / size);
