@@ -40,6 +40,11 @@ namespace UnityUtils.Effects.VisualEffects
 				(comp, id) => comp.GetVector4(id),
 				(comp, id, value) => comp.SetVector4(id, value)
 				),
+			[typeof(SkinnedMeshRenderer)] = new PropertyDelegates<VisualEffect, SkinnedMeshRenderer>(
+				(comp, id) => comp.HasSkinnedMeshRenderer(id),
+				(comp, id) => comp.GetSkinnedMeshRenderer(id),
+				(comp, id, value) => comp.SetSkinnedMeshRenderer(id, value)
+				),
 		};
 
 		public static T GetProperty<T>(this VisualEffect vfx, int id)
