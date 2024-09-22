@@ -51,14 +51,6 @@ namespace UnityUtils.UI.Selectable
 			onClick.RemoveAllListeners();
 		}
 
-		protected override void OnValidate()
-		{
-			base.OnValidate();
-#if UNITY_EDITOR
-			ReloadAnimation(currentSelectionState, false);
-#endif
-		}
-
 		public override void OnPointerDown(PointerEventData eventData)
 		{
 			base.OnPointerDown(eventData);
