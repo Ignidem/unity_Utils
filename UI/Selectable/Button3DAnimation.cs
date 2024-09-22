@@ -14,9 +14,19 @@ namespace UnityUtils.UI.Selectable
 		[SerializeField] private Color color;
 		[SerializeField] private float disabledMult;
 		[SerializeField] private float highlightMult;
+#if UNITY_EDITOR
+		[SerializeField] private Sprite sprite;
+#endif
 
 		public readonly void DoStateTransition(ButtonState state, bool animate)
 		{
+#if UNITY_EDITOR
+			if (sprite)
+			{
+				SetSprite(sprite);
+			}
+#endif
+
 			bool isPressed = state is ButtonState.Selected or ButtonState.GroupSelected 
 				or ButtonState.Pressed or ButtonState.Highlighted;
 

@@ -51,6 +51,14 @@ namespace UnityUtils.UI.Selectable
 			onClick.RemoveAllListeners();
 		}
 
+		protected override void OnValidate()
+		{
+			base.OnValidate();
+#if UNITY_EDITOR
+			ReloadAnimation(currentSelectionState, false);
+#endif
+		}
+
 		public override void OnPointerDown(PointerEventData eventData)
 		{
 			base.OnPointerDown(eventData);
@@ -85,6 +93,11 @@ namespace UnityUtils.UI.Selectable
 				return;
 
 			base.DoStateTransition(state, instant);
+			ReloadAnimation(state, instant);
+		}
+
+		private void ReloadAnimation(SelectionState state, bool instant)
+		{
 			UpdateAnimations(state switch
 			{
 				SelectionState.Highlighted => ButtonState.Highlighted,
@@ -94,6 +107,7 @@ namespace UnityUtils.UI.Selectable
 				_ => ButtonState.Normal
 			}, !instant);
 		}
+
 		public virtual void OnGroupSelected() 
 		{
 			UpdateAnimations(ButtonState.GroupSelected, true);
@@ -105,7 +119,7 @@ namespace UnityUtils.UI.Selectable
 
 		private void UpdateAnimations(ButtonState state, bool animate)
 		{
-			if (animations == null || !Application.isPlaying)
+			if (animations == null)
 				return;
 
 			for (int i = 0; i < animations.Length; i++)
