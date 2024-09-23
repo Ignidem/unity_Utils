@@ -57,29 +57,26 @@ namespace UnityUtils.Effects.VisualEffects
 		}
 		public Vector3 Position
 		{
-			get => Area.position;
+			get => particles.transform.localPosition;
 			set
 			{
-				var area = Area;
-				area.position = value;
+				particles.transform.localPosition = value;
 			}
 		}
 		public Vector3 Rotation
 		{
-			get => Area.rotation;
+			get => particles.transform.localRotation.eulerAngles;
 			set
 			{
-				var area = Area;
-				area.rotation = value;
+				particles.transform.localRotation = Quaternion.Euler(value);
 			}
 		}
 		public Vector3 Scale
 		{
-			get => Area.scale;
+			get => particles.transform.localScale;
 			set
 			{
-				var area = Area;
-				area.scale = value;
+				particles.transform.localScale = value;
 			}
 		}
 		public float Radius
@@ -118,11 +115,7 @@ namespace UnityUtils.Effects.VisualEffects
 
 		public void SetValue<T>(int id, T value, bool isOptional = false)
 		{
-			if (functions != null)
-			{
-				functions.SetValue(this, id, value, isOptional);
-				return;
-			}
+			functions?.SetValue(this, id, value, isOptional);
 		}
 	}
 }
