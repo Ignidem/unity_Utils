@@ -51,6 +51,12 @@ namespace UnityUtils.UI.Selectable
 			onClick.RemoveAllListeners();
 		}
 
+		protected override void Start()
+		{
+			base.Start();
+			ReloadAnimation(true);
+		}
+
 		public override void OnPointerDown(PointerEventData eventData)
 		{
 			base.OnPointerDown(eventData);
@@ -86,6 +92,11 @@ namespace UnityUtils.UI.Selectable
 
 			base.DoStateTransition(state, instant);
 			ReloadAnimation(state, instant);
+		}
+
+		public void ReloadAnimation(bool instant)
+		{
+			ReloadAnimation(currentSelectionState, instant);
 		}
 
 		private void ReloadAnimation(SelectionState state, bool instant)

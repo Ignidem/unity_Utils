@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
-using Utils.Logger;
 using UnityUtils.Layouts.SpacingEvaluators;
 using UnityUtils.PropertyAttributes;
 using Maths = UnityEngine.Mathf;
@@ -19,8 +18,8 @@ namespace UnityUtils.Common.Layout
 
 		public Vector3 Offset;
 
-		[SerializeField] private Vector3 MinSpacing;
-		[SerializeField] private Vector3 MaxSpacing;
+		[SerializeField, HideInInspector] private Vector3 MinSpacing;
+		[SerializeField, HideInInspector] private Vector3 MaxSpacing;
 
 		[SerializeReference, Polymorphic]
 		public ISpacingEvaluator spacing;
@@ -89,7 +88,17 @@ namespace UnityUtils.Common.Layout
 		private void OnAutoReload()
 		{
 			if (!AutoReload) return;
-			reloadDelayer?.TryRun();
+
+			if (reloadDelayer != null) 
+			{
+				reloadDelayer.TryRun();
+			}
+#if UNITY_EDITOR
+			else
+			{
+				_ = ReloadNext();
+			}
+#endif
 		}
 		public async Task ReloadNext()
 		{

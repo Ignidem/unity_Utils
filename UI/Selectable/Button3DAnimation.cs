@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 namespace UnityUtils.UI.Selectable
 {
-
 	[System.Serializable]
 	public struct Button3DAnimation : IButtonAnimations
 	{

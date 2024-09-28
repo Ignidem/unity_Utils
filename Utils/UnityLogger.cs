@@ -6,7 +6,7 @@ namespace UnityUtils
 {
 	public class UnityLogger : ILogger
 	{
-		public void Log(Severity severity, string content)
+		public virtual void Log(Severity severity, string content)
 		{
 			switch (severity)
 			{
@@ -25,7 +25,7 @@ namespace UnityUtils
 			}
 		}
 
-		public void Log(Exception e)
+		public virtual void Log(Exception e)
 		{
 			Debug.LogException(e);
 		}

@@ -5,12 +5,14 @@ namespace UnityUtils.GameObjects
 {
 	public class PlatformAvailability : MonoBehaviour
 	{
+		public bool IsAvailable => platforms.Contains(Application.platform);
+
 		[SerializeField]
 		private RuntimePlatform[] platforms;
 
 		private void OnEnable()
 		{
-			gameObject.SetActive(platforms.Contains(Application.platform));
+			gameObject.SetActive(IsAvailable);
 		}
 	}
 }

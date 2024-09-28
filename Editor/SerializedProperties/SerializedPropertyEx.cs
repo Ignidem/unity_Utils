@@ -191,6 +191,7 @@ namespace UnityUtils.Editor.SerializedProperties
 			{
 				throw new Exception("Failed to int parse " + sint + " from " + name);
 			}
+
 			object list = ReadPath(name[..start], target);
 			return list switch
 			{

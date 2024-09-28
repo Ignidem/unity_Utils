@@ -44,6 +44,11 @@ namespace UnityUtils.Systems.States
 			if (key != null) SwitchState(key);
 		}
 
+		public Type GetKeyAt(int index)
+		{
+			return states[index].Key;
+		}
+
 		public void InitStateMachine()
 		{
 			if (stateMachine != null)
@@ -79,10 +84,11 @@ namespace UnityUtils.Systems.States
 			return new StateMachine<Type>(states.Cast<IState<Type>>());
 		}
 
+		public Task SwitchState(IState<Type> state) => stateMachine.SwitchState(state);
 		public Task SwitchState(IStateData<Type> data) => stateMachine.SwitchState(data);
-
 		public Task SwitchState(Type key) => stateMachine.SwitchState(key);
-
 		public Task ExitActiveState() => stateMachine.ExitActiveState();
+		public bool ContainsState(Type key) => stateMachine.ContainsState(key);
+		public void AddOrReplaceState(IState<Type> state) => stateMachine.AddOrReplaceState(state);
 	}
 }

@@ -34,7 +34,7 @@ namespace UnityUtils.Animations.AnimationEvents
 			this.evnt = evnt;
 			State = state;
 			Target = animator.transform;
-			IsValid = true;
+			IsValid = evnt != null ? true : ("Event Not Found!\n" + new System.Diagnostics.StackTrace().ToString()[..1000]);
 		}
 
 		private AnimationEventInfo(Result error) : this()
