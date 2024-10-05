@@ -2,7 +2,7 @@
 
 namespace UnityUtils.Effects.VisualEffects
 {
-	public interface IVisualEffectEventHandler : IEventHandler<object> { }
+	public interface IVisualEffectEventHandler : ISimpleEventHandler<object> { }
 
 	public enum VisualEffectEvents
 	{
