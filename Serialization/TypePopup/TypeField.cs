@@ -4,19 +4,26 @@ using UnityEngine;
 
 namespace UnityUtils.Serialization
 {
-	[System.Serializable]
-	public struct TypeField<T> : ISerializationCallbackReceiver
+	[Serializable]
+	public class TypeField<T> : ITypeField, ISerializationCallbackReceiver
 	{
-		[SerializeField]
-		private string fullname;
+		public static implicit operator Type(TypeField<T> field) => field.Type;
+
+		[SerializeField] private string assembly;
+		[SerializeField] private string fullname;
+		[SerializeField] private string name;
+
+		public Type BaseType => typeof(T);
 
 		public Type Type
 		{
-			readonly get => type;
+			get => type;
 			set
 			{
 				type = value;
+				assembly = type?.Assembly.FullName;
 				fullname = type?.FullName;
+				name = type?.Name;
 			}
 		}
 		private Type type;
@@ -24,9 +31,9 @@ namespace UnityUtils.Serialization
 		public void OnAfterDeserialize()
 		{
 			if (!string.IsNullOrEmpty(fullname))
-				type = Assembly.GetAssembly(typeof(T)).GetType(fullname);
+				type = Assembly.Load(assembly).GetType(fullname);
 		}
 
-		public readonly void OnBeforeSerialize() { }
+		public void OnBeforeSerialize() { }
 	}
 }

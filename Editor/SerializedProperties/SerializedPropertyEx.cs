@@ -81,7 +81,7 @@ namespace UnityUtils.Editor.SerializedProperties
 				SerializedPropertyType.ObjectReference => prop.objectReferenceValue.GetType(),
 				SerializedPropertyType.Generic when prop.IsBoxedValueValid() => prop.boxedValue.GetType(),
 				SerializedPropertyType.ExposedReference => prop.exposedReferenceValue.GetType(),
-				SerializedPropertyType.ManagedReference => prop.managedReferenceValue?.GetType(),
+				SerializedPropertyType.ManagedReference when prop.managedReferenceValue != null => prop.managedReferenceValue.GetType(),
 				SerializedPropertyType.FixedBufferSize => typeof(int),
 				SerializedPropertyType.Enum => typeof(Enum),
 				_ => prop.GetFieldType(prop.isArray)

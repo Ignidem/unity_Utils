@@ -31,7 +31,7 @@ namespace UnityUtils.Editor.ContextMenus
 			try
 			{
 				type = property.GetValueType();
-				foreach (var t in menuBuilders.Keys)
+				foreach (Type t in menuBuilders.Keys)
 				{
 					if (!type.Inherits(t))
 						continue;
@@ -45,7 +45,7 @@ namespace UnityUtils.Editor.ContextMenus
 				return;
 			}
 
-			if (property.objectReferenceValue is MonoScript script)
+			if (property.propertyType == SerializedPropertyType.ObjectReference && property.objectReferenceValue is MonoScript script)
 			{
 				EditScriptMenuOption(menu, script);
 				return;
