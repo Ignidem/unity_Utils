@@ -53,6 +53,16 @@ namespace UnityUtils.DynamicScrollers
 			}
 		}
 
+		public bool ReloadDataAt(int dataIndex, IScrollerCellData data)
+		{
+			IScrollerCell cell = FindCellForDataAt(dataIndex);
+			if (cell == null)
+				return false;
+
+			Data[dataIndex] = data;
+			cell.SetData(data);
+			return true;
+		}
 		private int ReloadAt(int cellIndex, int dataIndex)
 		{
 			IScrollerCellData data = _data[dataIndex];
@@ -63,7 +73,7 @@ namespace UnityUtils.DynamicScrollers
 				ClearCell(currentCell);
 				currentCell.SetData(data);
 				InitializeCell(currentCell, cellIndex, dataIndex);
-				return cellIndex + 1;
+				return cellIndex++;
 			}
 
 			if (currentCell != null && cells.RecycleCellAt(dataIndex, out IScrollerCell cell))

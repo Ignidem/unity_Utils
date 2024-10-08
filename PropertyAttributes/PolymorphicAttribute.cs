@@ -131,7 +131,7 @@ namespace UnityUtils.PropertyAttributes
 			}
 
 			value = ChangeType(types[_index], listIndex, setField);
-			return true;
+			return value != null;
 		}
 
 		private object ChangeType(Type type, int listIndex, bool setValue)

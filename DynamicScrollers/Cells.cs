@@ -45,7 +45,7 @@ namespace UnityUtils.DynamicScrollers
 				Type type = data.CellType;
 				if (!mappedPrefabs.TryGetValue(type, out prefab))
 				{
-					prefab = cellPrefabs.FirstOrDefault(p => p.GetComponent(type));
+					prefab = cellPrefabs.FirstOrDefault(p => p.GetComponent<IScrollerCell>().CellType == type);
 					if (!prefab) return false;
 					mappedPrefabs[type] = prefab;
 				}
@@ -112,5 +112,16 @@ namespace UnityUtils.DynamicScrollers
 		}
 
 		public IScrollerCell GetCellAt(int index) => cells[index];
+		public IScrollerCell FindCellForDataAt(int index)
+		{
+			for (int i = 0; i < cells.Count; i++)
+			{
+				IScrollerCell cell = cells[i];
+				if (cell.DataIndex == index)
+					return cell;
+			}
+
+			return null;
+		}
 	}
 }

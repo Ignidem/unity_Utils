@@ -35,7 +35,6 @@ namespace UnityUtils.Serialization.TypePopup.Editor
 			int nIndex = EditorGUI.Popup(position, property.displayName, index, names);
 			if (nIndex != index)
 			{
-			Debug.Log("Start");
 				Type type = nIndex == -1 ? null : types[nIndex];
 
 				if (assembly != null)
@@ -46,7 +45,6 @@ namespace UnityUtils.Serialization.TypePopup.Editor
 
 				if (name != null)
 					name.stringValue = type?.Name;
-			Debug.Log("End");
 			}
 
 			return 0;

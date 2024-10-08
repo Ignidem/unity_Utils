@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Utilities.Numbers;
 
 namespace IgnitedBox.UnityUtilities.Vectors
 {
@@ -23,6 +24,16 @@ namespace IgnitedBox.UnityUtilities.Vectors
             int y = from.y > to.y ? -1 : 1;
             return Vector2.Angle(Vector2.right, to - from) * y;
         }
+
+		public static Vector2 Ratio(this Vector2 size, float ratio, RectTransform.Axis axis)
+		{
+			return axis switch
+			{
+				RectTransform.Axis.Horizontal => new Vector2(size.x, size.x.SafeDivide(ratio)),
+				RectTransform.Axis.Vertical => new Vector2(size.y * ratio, size.y),
+				_ => size
+			};
+		}
     }
 
     [System.Serializable]

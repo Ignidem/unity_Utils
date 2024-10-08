@@ -8,7 +8,7 @@ using Utils.StateMachines;
 
 namespace UnityUtils.Systems.States
 {
-	public abstract class StateMachineControllerBehaviour<T> : MonoBehaviour, IStateMachine<Type>
+	public abstract class StateMachineControllerBehaviour<T> : MonoBehaviour, IStateMachine<Type>, IDisposable
 		where T : IState<Type>
 	{
 		[SerializeReference, Polymorphic(PolymorphicSettings.Nullable | PolymorphicSettings.IgnoreChildren)]
@@ -32,6 +32,11 @@ namespace UnityUtils.Systems.States
 		}
 
 		private void OnDestroy()
+		{
+			Dispose();
+		}
+
+		public virtual void Dispose()
 		{
 			stateMachine.ExitActiveState().LogException();
 			stateMachine.OnStateChange -= OnStateMachineStateChange;
