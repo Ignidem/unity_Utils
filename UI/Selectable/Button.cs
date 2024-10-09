@@ -1,8 +1,10 @@
-﻿using TMPro;
+﻿using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityUtils.PropertyAttributes;
 using UnityUtils.UI.Selectable.Groups;
+using Utils.Logger;
 
 namespace UnityUtils.UI.Selectable
 {
@@ -40,6 +42,12 @@ namespace UnityUtils.UI.Selectable
 		[InspectorName("Events")]
 		private IButtonAnimations[] animations;
 
+		protected override void Start()
+		{
+			base.Start();
+			ReloadAnimation(true);
+		}
+
 		protected override void OnDestroy()
 		{
 			base.OnDestroy();
@@ -49,12 +57,6 @@ namespace UnityUtils.UI.Selectable
 			PointerExitEvent = null;
 			PointerPressEvent = null;
 			onClick.RemoveAllListeners();
-		}
-
-		protected override void Start()
-		{
-			base.Start();
-			ReloadAnimation(true);
 		}
 
 		public override void OnPointerDown(PointerEventData eventData)
@@ -84,6 +86,9 @@ namespace UnityUtils.UI.Selectable
 			base.OnPointerClick(eventData);
 			PointerPressEvent?.Invoke(eventData);
 			Group?.Toggle(this);
+
+			if (!IsToggle)
+				OnDeselect(null);
 		}
 		protected override void DoStateTransition(SelectionState state, bool instant)
 		{

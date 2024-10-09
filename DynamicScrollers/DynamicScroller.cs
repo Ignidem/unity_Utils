@@ -35,7 +35,8 @@ namespace UnityUtils.DynamicScrollers
 			ResetContentSize();
 
 			int cellIndex = 0;
-			for (int dataIndex = 0; dataIndex < _data.Length; dataIndex++)
+			int count = _data?.Length ?? 0;
+			for (int dataIndex = 0; dataIndex < count; dataIndex++)
 			{
 				cellIndex = ReloadAt(cellIndex, dataIndex);
 			}
