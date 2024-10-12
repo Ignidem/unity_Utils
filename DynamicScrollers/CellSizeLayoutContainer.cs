@@ -31,6 +31,8 @@ namespace UnityUtils.DynamicScrollers
 			for (int i = 0; i < data.Length; i++)
 			{
 				IScrollerCell cell = scroller.GetCellAt(i);
+				if (cell == null)
+					continue;
 				Vector2 cellSize = cell.GetSize(rect, axis);
 				size += cellSize * axisSizing;
 				cell.Transform.sizeDelta = size;

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Threading.Tasks;
+using UnityEngine;
 
 namespace UnityUtils.UI.ImageComponents
 {
@@ -8,5 +9,7 @@ namespace UnityUtils.UI.ImageComponents
 		Sprite OverrideSprite { get; set; }
 		Sprite Sprite { get; set; }
 		Color Color { get; set; }
+
+		public Task Load(Task<Sprite> spriteTask);
 	}
 }

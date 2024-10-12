@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace UnityUtils.UI.ImageComponents
@@ -7,6 +8,7 @@ namespace UnityUtils.UI.ImageComponents
 	{
 		[SerializeField] private Image image;
 
+		public bool IsAlive => image;
 		public RectTransform Transform => image.transform as RectTransform;
 		public Sprite OverrideSprite
 		{
@@ -22,6 +24,21 @@ namespace UnityUtils.UI.ImageComponents
 		{
 			get => image.color;
 			set => image.color = value;
+		}
+
+		private Task<Sprite> loadingSprite;
+
+		public async Task Load(Task<Sprite> spriteTask)
+		{
+			loadingSprite = spriteTask;
+			Sprite sprite = await spriteTask;
+
+			//Component is destroyed or task was overriden
+			if (!image || loadingSprite != spriteTask)
+				return;
+
+			loadingSprite = null;
+			OverrideSprite = sprite;
 		}
 	}
 }

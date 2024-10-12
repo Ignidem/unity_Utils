@@ -1,4 +1,5 @@
-﻿using Unity.VectorGraphics;
+﻿using System.Threading.Tasks;
+using Unity.VectorGraphics;
 using UnityEngine;
 
 namespace UnityUtils.UI.ImageComponents
@@ -7,6 +8,7 @@ namespace UnityUtils.UI.ImageComponents
 	{
 		[SerializeField] private SVGImage image;
 
+		public bool IsAlive => image;
 		public RectTransform Transform => image.transform as RectTransform;
 		public Sprite OverrideSprite
 		{
@@ -17,6 +19,11 @@ namespace UnityUtils.UI.ImageComponents
 				{
 					baseSprite = image.sprite;
 					isOverriden = true;
+				}
+				else if (!value)
+				{
+					isOverriden = false;
+					image.sprite = baseSprite;
 				}
 
 				image.sprite = value;
@@ -45,5 +52,20 @@ namespace UnityUtils.UI.ImageComponents
 
 		private bool isOverriden;
 		private Sprite baseSprite;
+
+		private Task<Sprite> loadingSprite;
+
+		public async Task Load(Task<Sprite> spriteTask)
+		{
+			loadingSprite = spriteTask;
+			Sprite sprite = await spriteTask;
+
+			//Component is destroyed or task was overriden
+			if (!image || loadingSprite != spriteTask)
+				return;
+
+			loadingSprite = null;
+			OverrideSprite = sprite;
+		}
 	}
 }
