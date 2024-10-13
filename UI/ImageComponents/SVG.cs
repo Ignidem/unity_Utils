@@ -15,7 +15,7 @@ namespace UnityUtils.UI.ImageComponents
 			get => isOverriden ? image.sprite : null;
 			set
 			{
-				if (!isOverriden)
+				if (!isOverriden && value)
 				{
 					baseSprite = image.sprite;
 					isOverriden = true;
@@ -23,7 +23,7 @@ namespace UnityUtils.UI.ImageComponents
 				else if (!value)
 				{
 					isOverriden = false;
-					image.sprite = baseSprite;
+					value = baseSprite;
 				}
 
 				image.sprite = value;
