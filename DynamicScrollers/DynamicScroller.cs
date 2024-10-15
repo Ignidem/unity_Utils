@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityUtils.PropertyAttributes;
 using Axis = UnityEngine.RectTransform.Axis;
 
 namespace UnityUtils.DynamicScrollers
@@ -10,11 +11,13 @@ namespace UnityUtils.DynamicScrollers
 		{
 			nameof(cells),
 			nameof(contentComponents),
+			nameof(_data),
 		};
 
 		[SerializeField] private Cells cells;
 		[SerializeField] private ContentComponents contentComponents;
 
+		[SerializeReference, Polymorphic]
 		private IScrollerCellData[] _data;
 		public IScrollerCellData[] Data
 		{
@@ -74,7 +77,7 @@ namespace UnityUtils.DynamicScrollers
 				ClearCell(currentCell);
 				currentCell.SetData(data);
 				InitializeCell(currentCell, cellIndex, dataIndex);
-				return cellIndex++;
+				return cellIndex + 1;
 			}
 
 			if (currentCell != null && cells.RecycleCellAt(dataIndex, out IScrollerCell cell))
@@ -83,7 +86,7 @@ namespace UnityUtils.DynamicScrollers
 			if (cells.TryRecycleOrCreate(data, out cell))
 			{
 				InitializeCell(cell, cellIndex, dataIndex);
-				cellIndex++;
+				return cellIndex + 1;
 			}
 
 			return cellIndex;
