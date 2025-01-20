@@ -174,7 +174,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 			m_Playable.Rewind(stateName);
 		}
 
-		public State GetState(string stateName)
+		public IState GetState(string stateName)
 		{
 			SimpleAnimationPlayable.IState state = m_Playable.GetState(stateName);
 			if (state == null)
@@ -183,12 +183,12 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 			return new StateImpl(state, this);
 		}
 
-		public IEnumerable<State> GetStates()
+		public IEnumerable<IState> GetStates()
 		{
 			return new StateEnumerable(this);
 		}
 
-		public State this[string name]
+		public IState this[string name]
 		{
 			get { return GetState(name); }
 		}

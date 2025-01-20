@@ -13,7 +13,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 	public partial class SimplePlayableAnimator : MonoBehaviour, IAnimationClipSource
 	{
 		const string kDefaultStateName = "Default";
-		private class StateEnumerable : IEnumerable<State>
+		private class StateEnumerable : IEnumerable<IState>
 		{
 			private SimplePlayableAnimator m_Owner;
 			public StateEnumerable(SimplePlayableAnimator owner)
@@ -21,7 +21,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				m_Owner = owner;
 			}
 
-			public IEnumerator<State> GetEnumerator()
+			public IEnumerator<IState> GetEnumerator()
 			{
 				return new StateEnumerator(m_Owner);
 			}
@@ -31,7 +31,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				return new StateEnumerator(m_Owner);
 			}
 
-			class StateEnumerator : IEnumerator<State>
+			class StateEnumerator : IEnumerator<IState>
 			{
 				private SimplePlayableAnimator m_Owner;
 				private IEnumerator<SimpleAnimationPlayable.IState> m_Impl;
@@ -42,14 +42,14 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 					Reset();
 				}
 
-				State GetCurrent()
+				IState GetCurrent()
 				{
 					return new StateImpl(m_Impl.Current, m_Owner);
 				}
 
 				object IEnumerator.Current { get { return GetCurrent(); } }
 
-				State IEnumerator<State>.Current { get { return GetCurrent(); } }
+				IState IEnumerator<IState>.Current { get { return GetCurrent(); } }
 
 				public void Dispose() { }
 
@@ -64,7 +64,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				}
 			}
 		}
-		private class StateImpl : State
+		private class StateImpl : IState
 		{
 			public StateImpl(SimpleAnimationPlayable.IState handle, SimplePlayableAnimator component)
 			{
@@ -75,7 +75,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 			private SimpleAnimationPlayable.IState m_StateHandle;
 			private SimplePlayableAnimator m_Component;
 
-			bool State.enabled
+			bool IState.Enabled
 			{
 				get { return m_StateHandle.enabled; }
 				set
@@ -88,11 +88,11 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				}
 			}
 
-			bool State.isValid
+			bool IState.IsValid
 			{
 				get { return m_StateHandle.IsValid(); }
 			}
-			float State.time
+			float IState.Time
 			{
 				get { return m_StateHandle.time; }
 				set
@@ -101,7 +101,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 					m_Component.Kick();
 				}
 			}
-			float State.normalizedTime
+			float IState.NormalizedTime
 			{
 				get { return m_StateHandle.normalizedTime; }
 				set
@@ -110,7 +110,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 					m_Component.Kick();
 				}
 			}
-			float State.speed
+			float IState.Speed
 			{
 				get { return m_StateHandle.speed; }
 				set
@@ -120,12 +120,12 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				}
 			}
 
-			string State.name
+			string IState.Name
 			{
 				get { return m_StateHandle.name; }
 				set { m_StateHandle.name = value; }
 			}
-			float State.weight
+			float IState.Weight
 			{
 				get { return m_StateHandle.weight; }
 				set
@@ -134,17 +134,17 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 					m_Component.Kick();
 				}
 			}
-			float State.length
+			float IState.Length
 			{
 				get { return m_StateHandle.length; }
 			}
 
-			AnimationClip State.clip
+			AnimationClip IState.Clip
 			{
 				get { return m_StateHandle.clip; }
 			}
 
-			WrapMode State.wrapMode
+			WrapMode IState.WrapMode
 			{
 				get { return m_StateHandle.wrapMode; }
 				set { Debug.LogError("Not Implemented"); }
@@ -301,8 +301,8 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 			foreach (var state in playableStates)
 			{
 				var newState = new EditorState();
-				newState.clip = state.clip;
-				newState.name = state.name;
+				newState.clip = state.Clip;
+				newState.name = state.Name;
 				list.Add(newState);
 			}
 			m_States = list.ToArray();

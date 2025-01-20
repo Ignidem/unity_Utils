@@ -11,10 +11,6 @@ namespace UnityUtils.Animations.StateListener
 	{
 		IAnimationState this[AnimationClip clip] { get; }
 
-		void RegisterState(IAnimationState state);
-		void OnStateEnter(IAnimationState state);
-		void OnStateExit(IAnimationState state);
-
 		IAnimationState Play(AnimationClip clip, int layer = 0, float blendTime = 0.1f);
 		IAnimationState Play(string name, int layer = 0, float blendTime = 0.1f)
 		{

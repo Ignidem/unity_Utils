@@ -3,18 +3,18 @@ using UnityUtils.Animations.StateListener;
 
 namespace UnityUtils.Effects.Animations.PlayableAnimator
 {
-	public interface State
+	public interface IState
 	{
-		bool enabled { get; set; }
-		bool isValid { get; }
-		float time { get; set; }
-		float normalizedTime { get; set; }
-		float speed { get; set; }
-		string name { get; set; }
-		float weight { get; set; }
-		float length { get; }
-		AnimationClip clip { get; }
-		WrapMode wrapMode { get; set; }
+		bool Enabled { get; set; }
+		bool IsValid { get; }
+		float Time { get; set; }
+		float NormalizedTime { get; set; }
+		float Speed { get; set; }
+		string Name { get; set; }
+		float Weight { get; set; }
+		float Length { get; }
+		AnimationClip Clip { get; }
+		WrapMode WrapMode { get; set; }
 
 	}
 
