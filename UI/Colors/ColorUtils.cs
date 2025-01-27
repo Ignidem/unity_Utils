@@ -7,6 +7,12 @@ namespace UnityUtils.UI.Colors
 	{
 		private const float size = 255f;
 
+		public static Color Saturate(this Color color, float saturation)
+		{
+			float avg = (color.r + color.g + color.b) / 3;
+			float _Saturate(float value) => avg + (value - avg) * saturation;
+			return new Color(_Saturate(color.r), _Saturate(color.g), _Saturate(color.b));
+		}
 		public static Color Darken(this Color color, float darken)
 		{
 			return Color.Lerp(color, Color.black, darken);

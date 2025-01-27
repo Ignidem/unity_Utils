@@ -1,11 +1,9 @@
-﻿using System.Threading.Tasks;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityUtils.PropertyAttributes;
 using UnityUtils.UI.ImageComponents;
 using UnityUtils.UI.Selectable.Groups;
-using Utils.Logger;
 
 namespace UnityUtils.UI.Selectable
 {
@@ -128,21 +126,25 @@ namespace UnityUtils.UI.Selectable
 		private ButtonState GetButtonState(SelectionState state)
 		{
 			if (IsActiveGroupInput)
-				return ButtonState.GroupSelected;
+				return HighlightedOrState(ButtonState.GroupSelected);
 
 			if (actAsSelected)
-				return ButtonState.Selected;
+				return HighlightedOrState(ButtonState.Selected);
 
 			return state switch
 			{
 				SelectionState.Highlighted => ButtonState.Highlighted,
 				SelectionState.Pressed => ButtonState.Pressed,
 				//If the button is actually selected, one of the previous if cases would be true;
-				SelectionState.Selected =>!IsOn ? ButtonState.Normal : ButtonState.Selected,
+				SelectionState.Selected => HighlightedOrState(!IsOn ? ButtonState.Normal : ButtonState.Selected),
 				SelectionState.Disabled => ButtonState.Disabled,
 				SelectionState.Normal => HasGroup ? ButtonState.GroupDeselected : ButtonState.Normal,
 				_ => throw new System.ArgumentOutOfRangeException(),
 			};
+		}
+		private ButtonState HighlightedOrState(ButtonState state)
+		{
+			return IsToggle || !this.IsPointerInside() ? state : ButtonState.Highlighted;
 		}
 
 		public virtual void OnGroupSelected() 

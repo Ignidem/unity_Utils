@@ -14,6 +14,12 @@ namespace UnityUtils.UI.Selectable
 		}
 #endif
 
+		protected override void OnEnable()
+		{
+			UpdateImageRatio();
+			base.OnEnable();
+		}
+
 		public Sprite GetImageSprite()
 		{
 			if (gameObject.TryGetComponent(out Image image))
