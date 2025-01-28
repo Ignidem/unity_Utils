@@ -1,9 +1,11 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityUtils.PropertyAttributes;
 using UnityUtils.UI.ImageComponents;
 using UnityUtils.UI.Selectable.Groups;
+using Utils.Logger;
 
 namespace UnityUtils.UI.Selectable
 {
@@ -163,8 +165,16 @@ namespace UnityUtils.UI.Selectable
 
 			for (int i = 0; i < animations.Length; i++)
 			{
-				IButtonAnimations animation = animations[i];
-				animation?.DoStateTransition(state, animate);
+				try
+				{
+					IButtonAnimations animation = animations[i];
+					animation?.DoStateTransition(state, animate);
+				}
+				catch (Exception e)
+				{
+					Debug.LogError($"Exception caught in {name}", gameObject);
+					e.LogException();
+				}
 			}
 		}
 	}

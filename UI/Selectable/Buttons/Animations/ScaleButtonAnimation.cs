@@ -15,6 +15,17 @@ namespace UnityUtils.UI.Selectable
 		[SerializeField] private float tweenDuration;
 		[SerializeField] private EnumPair<ButtonState, Vector3> scales;
 
+		public ButtonScaleAnimation() { }
+		public ButtonScaleAnimation(IButtonAnimations clone) 
+		{
+			if (clone is ButtonScaleAnimation scaler)
+			{
+				target = scaler.target;
+				tweenDuration = scaler.tweenDuration;
+				scales = scaler.scales;
+			}
+		}
+
 		public void DoStateTransition(ButtonState state, bool animate)
 		{
 			Vector3 scale = scales[state];

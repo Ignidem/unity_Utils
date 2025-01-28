@@ -8,8 +8,9 @@ namespace UnityUtils.UI.Selectable
 	[System.Serializable]
 	public class ButtonColorAnimation : IButtonAnimations
 	{
-		[SerializeField]
-		private Graphic graphic;
+		[SerializeField] private Graphic graphic;
+		[SerializeField] private bool useTint;
+		[SerializeField] private float animationDuration = 0.3f;
 
 		[SerializeField]
 		private EnumPair<ButtonState, Color> colors;
@@ -20,9 +21,6 @@ namespace UnityUtils.UI.Selectable
 
 		public void DoStateTransition(ButtonState state, bool animate)
 		{
-			if (!graphic || !graphic.isActiveAndEnabled)
-				return;
-
 			if (isGroupSelected && state is ButtonState.Normal or ButtonState.Selected)
 				return;
 
@@ -32,26 +30,34 @@ namespace UnityUtils.UI.Selectable
 			if (state == ButtonState.GroupDeselected)
 				isGroupSelected = false;
 
-			if (animate)
+			Color targetColor = colors[state];
+
+			if (useTint)
+			{
+				graphic.CrossFadeColor(targetColor, animate ? animationDuration : 0, true, true);
+				return;
+			}
+
+			if (animate && graphic.isActiveAndEnabled)
 			{
 				if (colorLerp != null)
 					graphic.StopCoroutine(colorLerp);
 
-				colorLerp = graphic.StartCoroutine(LerpColor(colors[state]));
+				colorLerp = graphic.StartCoroutine(LerpColor(targetColor));
 			}
 			else
 			{
-				graphic.color = colors[state];
+				graphic.color = targetColor;
 			}
 		}
 
 		private IEnumerator LerpColor(Color color)
 		{
-			const float duration = 0.3f;
 			Color current = graphic.color;
-			for (float time = 0; time < duration; time += Time.deltaTime)
+			for (float time = 0; time < animationDuration; time += Time.deltaTime)
 			{
-				graphic.color = Color.Lerp(current, color, time / duration);
+				Color lerp = Color.Lerp(current, color, time / animationDuration);
+				graphic.color = lerp;
 				yield return null;
 			}
 
