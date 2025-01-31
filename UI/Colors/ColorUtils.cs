@@ -23,6 +23,8 @@ namespace UnityUtils.UI.Colors
 			return new Color(color.r, color.g, color.b, a);
 		}
 
+		public static string ToHex(this Color color) => ColorUtility.ToHtmlStringRGB(color);
+
 		public static Color ToUnityColor(this SystemColor color)
 		{
 			return new Color(color.R / size, color.G / size, color.B / size, color.A / size);
