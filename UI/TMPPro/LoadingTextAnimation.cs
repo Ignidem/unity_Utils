@@ -26,6 +26,7 @@ namespace UnityUtils.UI.TMPPro
 			this.content = content;
 			this.paddingCharacter = paddingChar;
 			charCount = new Range(1, 3);
+			label.text = content;
 			Start();
 		}
 
