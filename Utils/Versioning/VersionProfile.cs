@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityUtils.PropertyAttributes;
-using Utils.Versioning;
 
 namespace UnityUtils.Utils.Versioning
 {

@@ -41,5 +41,10 @@ namespace UnityUtils.Animations.AnimationEvents
 		{
 			IsValid = error;
 		}
+
+		public override string ToString()
+		{
+			return $"{Target.name} {evnt.stringParameter}";
+		}
 	}
 }
