@@ -23,7 +23,7 @@ namespace UnityUtils.Storages.EnumPairLists
 		public (TEnum key, TValue value) this[int index] => (EnumValues[index], values[index]);
 
 		[SerializeField]
-		private TValue[] values;
+		private TValue[] values = new TValue[EnumValues.Count];
 
 		public string GetNameAt(int index) => EnumValues[index].ToString();
 

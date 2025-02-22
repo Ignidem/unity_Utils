@@ -19,6 +19,8 @@ namespace UnityUtils.UI.Selectable.Groups
 			}
 		}
 
+		public int Count => buttons.Count;
+
 		[SerializeField]
 		private List<Button> buttons;
 

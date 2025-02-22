@@ -135,13 +135,14 @@ namespace UnityUtils.Editor.PropertyDrawers
 			int index = EditorGUI.Popup(popupPos, polyAttr.Index, polyAttr.Options);
 
 			if (index == polyAttr.Index) return position;
-			
-			//polyAttr.SetFieldInfo(property.GetParent(), fieldInfo, listIndex);
-			if (polyAttr.ChangeIndex(index, listIndex, true, out var value))
+
+			if (polyAttr.ChangeIndex(index, listIndex, true, out object value))
 			{
-				property.boxedValue = value;
-				property.serializedObject.ApplyModifiedProperties();
-				property.serializedObject.Update();
+				Undo.RecordObject(property.serializedObject.targetObject, "Change Reference");
+				property.managedReferenceValue = value;
+				if (!property.serializedObject.ApplyModifiedProperties())
+					Debug.Log("Failed to modify properties");
+				
 			}
 
 			return position;

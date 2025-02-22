@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
+using UnityUtils.Effects.VisualEffects;
 using UnityUtils.GameObjects.ObjectCaches.Caches;
 using UnityUtils.Sounds;
 
 namespace UnityUtils.Animations.AnimationEvents
 {
 	[System.Serializable]
-	public struct SoundAnimationEvent : IAnimationEvent
+	public class SoundAnimationEvent : IAnimationEvent
 	{
 		[SerializeField]
 		private AudioClipCollection clips;
 
-		public readonly void Invoke(Object target, IAnimationEventInfo info)
+		public void Invoke(Object target, IAnimationEventInfo info)
 		{
 			if (!clips)
 				return;

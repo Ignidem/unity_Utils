@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 using UnityUtils.GameObjects.ObjectCaches;
 using UnityUtils.GameObjects.ObjectCaches.Caches;
 using UnityUtils.Sounds;
@@ -24,6 +25,8 @@ namespace UnityUtils.UI.Selectable
 		[SerializeField]
 		private Transform button;
 
+		[SerializeField] private AudioMixerGroup mixerGroup;
+
 		[SerializeField]
 		private EnumPair<ButtonState, AudioClip> sources;
 
@@ -39,6 +42,7 @@ namespace UnityUtils.UI.Selectable
 			CachedAudio audio = Cache[clip];
 			audio.Volume = 0.25f;
 			audio.SpacialBlend = 0;
+			audio.MixerGroup = mixerGroup;
 			audio.Play(button.position, true);
 		}
 	}

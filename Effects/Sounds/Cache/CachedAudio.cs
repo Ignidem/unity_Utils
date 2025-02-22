@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityUtils.Sounds;
 
 namespace UnityUtils.GameObjects.ObjectCaches.Caches
@@ -19,6 +20,11 @@ namespace UnityUtils.GameObjects.ObjectCaches.Caches
 		{
 			get => audio.spatialBlend;
 			set => audio.spatialBlend = value;
+		}
+		public AudioMixerGroup MixerGroup
+		{
+			get => audio.outputAudioMixerGroup;
+			set => audio.outputAudioMixerGroup = value;
 		}
 		private readonly AudioSource audio;
 
