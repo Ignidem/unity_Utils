@@ -78,12 +78,12 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 			graph.Connect(m_Mixer, 0, self, 0);
 		}
 
-		public IEnumerable<IState> GetStates()
+		public IEnumerable<ISAPState> GetStates()
 		{
 			return new StateEnumerable(this);
 		}
 
-		public IState GetState(string name)
+		public ISAPState GetState(string name)
 		{
 			StateInfo state = m_States.FindState(name);
 			if (state == null)

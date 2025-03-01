@@ -14,12 +14,6 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 		float Weight { get; set; }
 		float Length { get; }
 		AnimationClip Clip { get; }
-		WrapMode WrapMode { get; set; }
-
-	}
-
-	public interface IPlayableAnimationState : IAnimationState//, State
-	{
-	
+		WrapMode WrapMode { get; }
 	}
 }

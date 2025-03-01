@@ -12,7 +12,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 		private int m_StatesVersion = 0;
 
 		private void InvalidateStates() { m_StatesVersion++; }
-		private class StateEnumerable : IEnumerable<IState>
+		private class StateEnumerable : IEnumerable<ISAPState>
 		{
 			private SimpleAnimationPlayable m_Owner;
 			public StateEnumerable(SimpleAnimationPlayable owner)
@@ -20,7 +20,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				m_Owner = owner;
 			}
 
-			public IEnumerator<IState> GetEnumerator()
+			public IEnumerator<ISAPState> GetEnumerator()
 			{
 				return new StateEnumerator(m_Owner);
 			}
@@ -30,7 +30,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				return new StateEnumerator(m_Owner);
 			}
 
-			class StateEnumerator : IEnumerator<IState>
+			class StateEnumerator : IEnumerator<ISAPState>
 			{
 				private int m_Index = -1;
 				private int m_Version;
@@ -44,7 +44,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 
 				private bool IsValid() { return m_Owner != null && m_Version == m_Owner.m_StatesVersion; }
 
-				IState GetCurrentHandle(int index)
+				ISAPState GetCurrentHandle(int index)
 				{
 					if (!IsValid())
 						throw new InvalidOperationException("The collection has been modified, this Enumerator is invalid");
@@ -61,7 +61,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 
 				object IEnumerator.Current { get { return GetCurrentHandle(m_Index); } }
 
-				IState IEnumerator<IState>.Current { get { return GetCurrentHandle(m_Index); } }
+				ISAPState IEnumerator<ISAPState>.Current { get { return GetCurrentHandle(m_Index); } }
 
 				public void Dispose() { }
 
@@ -85,30 +85,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 			}
 		}
 
-		public interface IState
-		{
-			bool IsValid();
-
-			bool enabled { get; set; }
-
-			float time { get; set; }
-
-			float normalizedTime { get; set; }
-
-			float speed { get; set; }
-
-			string name { get; set; }
-
-			float weight { get; set; }
-
-			float length { get; }
-
-			AnimationClip clip { get; }
-
-			WrapMode wrapMode { get; }
-		}
-
-		public class StateHandle : IState
+		public class StateHandle : ISAPState
 		{
 			public StateHandle(SimpleAnimationPlayable s, int index, Playable target)
 			{
@@ -117,23 +94,23 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				m_Target = target;
 			}
 
-			public bool IsValid()
+			public bool IsStateValid()
 			{
 				return m_Parent.ValidateInput(m_Index, m_Target);
 			}
 
-			public bool enabled
+			public bool Enabled
 			{
 				get
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					return m_Parent.m_States[m_Index].enabled;
 				}
 
 				set
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					if (value)
 						m_Parent.m_States.EnableState(m_Index);
@@ -143,27 +120,27 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				}
 			}
 
-			public float time
+			public float Time
 			{
 				get
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					return m_Parent.m_States.GetStateTime(m_Index);
 				}
 				set
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					m_Parent.m_States.SetStateTime(m_Index, value);
 				}
 			}
 
-			public float normalizedTime
+			public float NormalizedTime
 			{
 				get
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 
 					float length = m_Parent.m_States.GetClipLength(m_Index);
@@ -174,7 +151,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				}
 				set
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 
 					float length = m_Parent.m_States.GetClipLength(m_Index);
@@ -185,33 +162,33 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				}
 			}
 
-			public float speed
+			public float Speed
 			{
 				get
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					return m_Parent.m_States.GetStateSpeed(m_Index);
 				}
 				set
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					m_Parent.m_States.SetStateSpeed(m_Index, value);
 				}
 			}
 
-			public string name
+			public string Name
 			{
 				get
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					return m_Parent.m_States.GetStateName(m_Index);
 				}
 				set
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					if (value == null)
 						throw new System.ArgumentNullException("A null string is not a valid name");
@@ -219,17 +196,17 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				}
 			}
 
-			public float weight
+			public float Weight
 			{
 				get
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					return m_Parent.m_States[m_Index].weight;
 				}
 				set
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					if (value < 0)
 						throw new System.ArgumentException("Weights cannot be negative");
@@ -238,31 +215,31 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 				}
 			}
 
-			public float length
+			public float Length
 			{
 				get
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					return m_Parent.m_States.GetStateLength(m_Index);
 				}
 			}
 
-			public AnimationClip clip
+			public AnimationClip Clip
 			{
 				get
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					return m_Parent.m_States.GetStateClip(m_Index);
 				}
 			}
 
-			public WrapMode wrapMode
+			public WrapMode WrapMode
 			{
 				get
 				{
-					if (!IsValid())
+					if (!IsStateValid())
 						throw new System.InvalidOperationException("This StateHandle is not valid");
 					return m_Parent.m_States.GetStateWrapMode(m_Index);
 				}

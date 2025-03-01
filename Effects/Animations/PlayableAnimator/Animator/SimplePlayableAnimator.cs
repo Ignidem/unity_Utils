@@ -176,7 +176,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 
 		public IState GetState(string stateName)
 		{
-			SimpleAnimationPlayable.IState state = m_Playable.GetState(stateName);
+			ISAPState state = m_Playable.GetState(stateName);
 			if (state == null)
 				return null;
 
