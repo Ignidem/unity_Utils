@@ -1,6 +1,6 @@
 ﻿namespace Serialized
 {
-	public partial class Dictionary<TKey, TValue>
+	public partial class Dictionary<TKey, TValue, TSerializedPair>
 	{
 		public Dictionary(System.Collections.Generic.IDictionary<TKey, TValue> dictionary)
 		{

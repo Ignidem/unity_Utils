@@ -2,7 +2,7 @@
 
 namespace Serialized
 {
-	public partial class Dictionary<TKey, TValue> : 
+	public partial class Dictionary<TKey, TValue, TSerializedPair> : 
 		System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<TKey, TValue>>, IEnumerable
 	{
 		public System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<TKey, TValue>> GetEnumerator()

@@ -4,18 +4,20 @@ using UnityEngine;
 namespace UnityUtils.Effects.VisualEffects
 {
 	[Serializable]
-	public struct MaterialProperty
+	public class MaterialProperty : ComponentProperty<Material>, ISerializationCallbackReceiver
 	{
 		[SerializeField] private Material material;
-		[SerializeField] private string propertyName;
-		[SerializeField, HideInInspector] private int propertyHash;
 
-		public readonly int Hash => propertyHash;
-
-		public readonly void Set<T>(T value) => Set(material, value);
-		public readonly void Set<T>(Material material, T value)
+		public override void Set<T>(Material material, T value)
 		{
-			material.TrySetProperty(propertyHash, value, false);
+			material.TrySetProperty(Hash, value, false);
 		}
+
+		public void OnBeforeSerialize()
+		{
+			if (material)
+				component = material;
+		}
+		public void OnAfterDeserialize() { }
 	}
 }

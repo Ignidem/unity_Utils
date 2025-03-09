@@ -6,7 +6,7 @@ using UnityUtils.PropertyAttributes;
 namespace UnityUtils.Effects.VisualEffects
 {
 	public interface IParticlesParameterFunctions : IParameterFunctions<ParticlesComponent> { }
-
+	
 	[Serializable]
 	public class ParticlesComponent : IVisualEffectComponent
 	{

@@ -5,30 +5,21 @@ using UnityEngine;
 
 namespace Serialized
 {
-	public partial class Dictionary<TKey, TValue> : ISerializationCallbackReceiver
+	public partial class Dictionary<TKey, TValue, TSerializedPair> : ISerializationCallbackReceiver
+		where TSerializedPair : IKeyValuePair<TKey, TValue>, new()
 	{
-		[Serializable]
-		public struct PairKey : IDictionaryElement<TKey>
-		{
-			[field: SerializeField]
-			public TKey Key { get; set; }
-
-			[SerializeField]
-			public TValue Value;
-		}
-
 		[SerializeField]
-		private PairKey[] pairs;
+		private TSerializedPair[] pairs;
 
 		public void OnAfterDeserialize()
 		{
 			dict = new();
 
-			pairs ??= new PairKey[0];
+			pairs ??= Array.Empty<TSerializedPair>();
 
 			for (int i = 0; i < pairs.Length; i++)
 			{
-				PairKey p = pairs[i];
+				TSerializedPair p = pairs[i];
 
 				if (p.Key is null || (p.Key is string s && string.IsNullOrEmpty(s)) || dict.ContainsKey(p.Key))
 					continue;
@@ -50,7 +41,7 @@ namespace Serialized
 
 		public void ApplyChanges()
 		{
-			pairs = dict.Select(kp => new PairKey() { Key = kp.Key, Value = kp.Value }).ToArray();
+			pairs = dict.Select(kp => new TSerializedPair() { Key = kp.Key, Value = kp.Value }).ToArray();
 		}
 	}
 }
