@@ -8,12 +8,12 @@ namespace UnityUtils.GameObjects.ObjectCaches
 	{
 		public static ObjectCacheController GlobalCache
 		{
-			get => _globalCache ? _globalCache : CreateCache(nameof(GlobalCache));
+			get => _globalCache ? _globalCache : _globalCache = CreateCache(nameof(GlobalCache));
 		}
-		public static ObjectCacheController _globalCache;
+		private static ObjectCacheController _globalCache;
 		public static ObjectCacheController GetOrCreate(Transform parent)
 		{
-			if (parent == null)
+			if (!parent)
 				return GlobalCache;
 
 			if (!parent.gameObject.TryGetComponent(out ObjectCacheController cache))
