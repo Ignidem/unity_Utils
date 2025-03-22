@@ -176,11 +176,11 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 
 		public IState GetState(string stateName)
 		{
-			ISAPState state = m_Playable.GetState(stateName);
-			if (state == null)
+			IStateHandle stateHandle = m_Playable.GetState(stateName);
+			if (stateHandle == null)
 				return null;
 
-			return new StateImpl(state, this);
+			return new StateImpl(stateHandle, this);
 		}
 
 		public IEnumerable<IState> GetStates()

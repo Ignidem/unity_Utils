@@ -25,15 +25,16 @@ namespace UnityUtils.Animations.AnimationEvents
 
 		public Transform Target { get; }
 		public readonly float Time => evnt.time;
-		public readonly AnimationClip Clip => evnt.animatorClipInfo.clip;
+		public readonly AnimationClip Clip { get; }
 		public IAnimationState State { get; }
 		private readonly AnimationEvent evnt;
 
-		public AnimationEventInfo(Animator animator, AnimationEvent evnt, IAnimationState state)
+		public AnimationEventInfo(Animator animator, AnimationEvent evnt, IAnimationState state, AnimationClip clip = null)
 		{
 			this.evnt = evnt;
 			State = state;
 			Target = animator.transform;
+			Clip = clip ?? evnt.animatorClipInfo.clip;
 			IsValid = evnt != null ? true : ("Event Not Found!\n" + new System.Diagnostics.StackTrace().ToString()[..1000]);
 		}
 

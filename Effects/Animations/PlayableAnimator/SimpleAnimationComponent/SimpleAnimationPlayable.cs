@@ -57,7 +57,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 			m_States = new StateManagement();
 			this.m_StateQueue = new LinkedList<QueuedState>();
 		}
-
+		
 		public Playable GetInput(int index)
 		{
 			if (index >= m_Mixer.GetInputCount())
@@ -78,20 +78,15 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 			graph.Connect(m_Mixer, 0, self, 0);
 		}
 
-		public IEnumerable<ISAPState> GetStates()
+		public IEnumerable<IStateHandle> GetStates()
 		{
 			return new StateEnumerable(this);
 		}
 
-		public ISAPState GetState(string name)
+		public IStateHandle GetState(string name)
 		{
 			StateInfo state = m_States.FindState(name);
-			if (state == null)
-			{
-				return null;
-			}
-
-			return new StateHandle(this, state.index, state.playable);
+			return state == null ? null : StateInfoToHandle(state);
 		}
 
 		private StateInfo DoAddClip(string name, AnimationClip clip)
@@ -545,66 +540,14 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 					continue;
 				}
 
-				//Update crossfade weight
-				if (state.fading)
-				{
-					state.SetWeight(Mathf.MoveTowards(state.weight, state.targetWeight, state.fadeSpeed * deltaTime));
-					if (Mathf.Approximately(state.weight, state.targetWeight))
-					{
-						state.ForceWeight(state.targetWeight);
-						if (state.weight == 0f)
-						{
-							state.Stop();
-						}
-					}
-				}
-
-				if (state.enabledDirty)
-				{
-					if (state.enabled)
-						state.Play();
-					else
-						state.Pause();
-
-					if (!keepStoppedPlayablesConnected)
-					{
-						Playable input = m_Mixer.GetInput(i);
-						//if state is disabled but the corresponding input is connected, disconnect it
-						if (input.IsValid() && !state.enabled)
-						{
-							DisconnectInput(i);
-						}
-						else if (state.enabled && !input.IsValid())
-						{
-							ConnectInput(state.index);
-						}
-					}
-				}
-
-				if (state.enabled && state.wrapMode == WrapMode.Once)
-				{
-					bool stateIsDone = state.isDone;
-					float speed = state.speed;
-					float time = state.GetTime();
-					float duration = state.playableDuration;
-
-					stateIsDone |= speed < 0f && time < 0f;
-					stateIsDone |= speed >= 0f && time >= duration;
-					if (stateIsDone)
-					{
-						state.Stop();
-						state.Disable();
-						if (!keepStoppedPlayablesConnected)
-							DisconnectInput(state.index);
-
-					}
-				}
-
+				UpdateState(state, deltaTime);
+				
 				totalWeight += state.weight;
 				if (state.weightDirty)
 				{
 					mustUpdateWeights = true;
 				}
+
 				state.ResetDirtyFlags();
 			}
 
@@ -621,6 +564,60 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 					m_Mixer.SetInputWeight(state.index, weight);
 				}
 			}
+		}
+
+		private void UpdateState(StateInfo state, float deltaTime)
+		{
+			//Update crossfade weight
+			if (state.fading)
+			{
+				state.SetWeight(Mathf.MoveTowards(state.weight, state.targetWeight, state.fadeSpeed * deltaTime));
+				if (Mathf.Approximately(state.weight, state.targetWeight))
+				{
+					state.ForceWeight(state.targetWeight);
+					if (state.weight == 0f)
+					{
+						state.Stop();
+					}
+				}
+			}
+
+			if (state.enabledDirty)
+			{
+				if (state.enabled)
+					state.Play();
+				else
+					state.Pause();
+
+				if (!keepStoppedPlayablesConnected)
+				{
+					Playable input = m_Mixer.GetInput(state.index);
+					//if state is disabled but the corresponding input is connected, disconnect it
+					if (input.IsValid() && !state.enabled)
+					{
+						DisconnectInput(state.index);
+					}
+					else if (state.enabled && !input.IsValid())
+					{
+						ConnectInput(state.index);
+					}
+				}
+			}
+
+			if (!state.enabled || state.wrapMode != WrapMode.Once) 
+				return;
+			
+			bool stateIsDone = state.isDone;
+			float speed = state.speed;
+			float time = state.GetTime();
+			float duration = state.playableDuration;
+
+			stateIsDone |= speed < 0f && time < 0f;
+			stateIsDone |= speed >= 0f && time >= duration;
+			if (!stateIsDone) return;
+			state.Stop();
+			if (!keepStoppedPlayablesConnected)
+				DisconnectInput(state.index);
 		}
 
 		private float CalculateQueueTimes()

@@ -34,7 +34,7 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 			class StateEnumerator : IEnumerator<IState>
 			{
 				private SimplePlayableAnimator m_Owner;
-				private IEnumerator<ISAPState> m_Impl;
+				private IEnumerator<IStateHandle> m_Impl;
 				public StateEnumerator(SimplePlayableAnimator owner)
 				{
 					m_Owner = owner;
@@ -66,21 +66,21 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 		}
 		private class StateImpl : IState
 		{
-			public StateImpl(ISAPState handle, SimplePlayableAnimator component)
+			public StateImpl(IStateHandle handleHandle, SimplePlayableAnimator component)
 			{
-				m_StateHandle = handle;
+				_mStateHandleHandle = handleHandle;
 				m_Component = component;
 			}
 
-			private ISAPState m_StateHandle;
+			private IStateHandle _mStateHandleHandle;
 			private SimplePlayableAnimator m_Component;
 
 			bool IState.Enabled
 			{
-				get { return m_StateHandle.Enabled; }
+				get { return _mStateHandleHandle.Enabled; }
 				set
 				{
-					m_StateHandle.Enabled = value;
+					_mStateHandleHandle.Enabled = value;
 					if (value)
 					{
 						m_Component.Kick();
@@ -90,63 +90,63 @@ namespace UnityUtils.Effects.Animations.PlayableAnimator
 
 			bool IState.IsValid
 			{
-				get { return m_StateHandle.IsStateValid(); }
+				get { return _mStateHandleHandle.IsStateValid(); }
 			}
 			float IState.Time
 			{
-				get { return m_StateHandle.Time; }
+				get { return _mStateHandleHandle.Time; }
 				set
 				{
-					m_StateHandle.Time = value;
+					_mStateHandleHandle.Time = value;
 					m_Component.Kick();
 				}
 			}
 			float IState.NormalizedTime
 			{
-				get { return m_StateHandle.NormalizedTime; }
+				get { return _mStateHandleHandle.NormalizedTime; }
 				set
 				{
-					m_StateHandle.NormalizedTime = value;
+					_mStateHandleHandle.NormalizedTime = value;
 					m_Component.Kick();
 				}
 			}
 			float IState.Speed
 			{
-				get { return m_StateHandle.Speed; }
+				get { return _mStateHandleHandle.Speed; }
 				set
 				{
-					m_StateHandle.Speed = value;
+					_mStateHandleHandle.Speed = value;
 					m_Component.Kick();
 				}
 			}
 
 			string IState.Name
 			{
-				get { return m_StateHandle.Name; }
-				set { m_StateHandle.Name = value; }
+				get { return _mStateHandleHandle.Name; }
+				set { _mStateHandleHandle.Name = value; }
 			}
 			float IState.Weight
 			{
-				get { return m_StateHandle.Weight; }
+				get { return _mStateHandleHandle.Weight; }
 				set
 				{
-					m_StateHandle.Weight = value;
+					_mStateHandleHandle.Weight = value;
 					m_Component.Kick();
 				}
 			}
 			float IState.Length
 			{
-				get { return m_StateHandle.Length; }
+				get { return _mStateHandleHandle.Length; }
 			}
 
 			AnimationClip IState.Clip
 			{
-				get { return m_StateHandle.Clip; }
+				get { return _mStateHandleHandle.Clip; }
 			}
 
 			WrapMode IState.WrapMode
 			{
-				get { return m_StateHandle.WrapMode; }
+				get { return _mStateHandleHandle.WrapMode; }
 			}
 		}
 

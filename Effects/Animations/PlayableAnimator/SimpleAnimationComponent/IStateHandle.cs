@@ -1,6 +1,6 @@
 ﻿namespace UnityUtils.Effects.Animations.PlayableAnimator
 {
-	public interface ISAPState : IState
+	public interface IStateHandle : IState
 	{
 		bool IState.IsValid => IsStateValid();
 		bool IsStateValid();
