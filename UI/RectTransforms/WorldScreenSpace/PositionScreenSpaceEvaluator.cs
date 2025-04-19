@@ -11,11 +11,18 @@ namespace UnityUtils.UI.WorldScreenSpace
 		public Vector3 position;
 		public float size;
 
-		public void Update(Camera camera, RectTransform transform)
+		public bool Update(Camera camera, RectTransform transform)
 		{
 			Vector2 pos = camera.WorldToScreenPosition(position, out Vector2 _, out float distance);
+			if (distance <= 0)
+			{
+				transform.localScale = Vector3.zero;
+				return false;
+			}
+			
 			transform.position = pos;
-			transform.localScale = Vector3.one * size.SafeDivide(distance);
+			transform.localScale = Vector3.one * (size / distance);
+			return true;
 		}
 	}
 }

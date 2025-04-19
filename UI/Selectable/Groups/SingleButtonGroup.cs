@@ -6,41 +6,46 @@ using Utilities.Collections;
 namespace UnityUtils.UI.Selectable.Groups
 {
 	[Serializable]
-	public class SingleButtonGroup : ISingleSelectableGroup
+	public class SingleButtonGroup : SingleButtonGroup<Button> { }
+	
+	[Serializable]
+	public class SingleButtonGroup<T> : ISingleSelectableGroup
+		where T : IGroupedInput
 	{
 		public delegate void SelectionChangedDelegate();
 
-		public Button this[int id]
+		public T this[int id]
 		{
 			get
 			{
 				int index = buttons.IndexOf(b => b.Id == id);
-				return index == -1 ? null : buttons[index];
+				return index == -1 ? default : buttons[index];
 			}
 		}
 
 		public int Count => buttons.Count;
 
 		[SerializeField]
-		private List<Button> buttons;
+		private List<T> buttons;
 
 		[SerializeField]
 		private bool canDeselect = true;
 
 		public event SelectionChangedDelegate OnSelectionChanged;
 
-		public ISelectableInput ActiveInput { get; private set; }
+		public T ActiveInput { get; private set; }
+		ISelectableInput ISingleSelectableGroup.ActiveInput => ActiveInput;
 
 		public void Init()
 		{
 			for (int i = 0; i < buttons.Count; i++)
 			{
-				Button button = buttons[i];
+				T button = buttons[i];
 				button.Group = this;
 			}
 		}
 
-		public void Add(Button input)
+		public void Add(T input)
 		{
 			if (buttons.Contains(input))
 				return;
@@ -51,7 +56,18 @@ namespace UnityUtils.UI.Selectable.Groups
 
 		public void Select(ISelectableInput input)
 		{
-			if (input == ActiveInput) return;
+			if (input is T _input)
+			{
+				Select(_input);
+			}
+			else if (input.Id >= 0 && input.Id < buttons.Count)
+			{
+				Select(this[input.Id]);
+			}
+		}
+		public void Select(T input)
+		{
+			if (ReferenceEquals(input, ActiveInput)) return;
 
 			if (ActiveInput != null)
 				ActiveInput?.OnGroupDeselected();
@@ -65,9 +81,9 @@ namespace UnityUtils.UI.Selectable.Groups
 
 		public void Deselect(ISelectableInput input)
 		{
-			if (!canDeselect || input != ActiveInput) return;
+			if (!canDeselect || !ReferenceEquals(input, ActiveInput)) return;
 			ActiveInput?.OnGroupDeselected();
-			ActiveInput = null;
+			ActiveInput = default;
 			OnSelectionChanged?.Invoke();
 		}
 	}

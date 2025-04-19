@@ -11,7 +11,7 @@ namespace UnityUtils.UI.Selectable
 {
 	public delegate void OnPointerDelegate(PointerEventData data);
 
-	public class Button : UnityEngine.UI.Button, ISelectableInput
+	public class Button : UnityEngine.UI.Button, IGroupedInput
 	{
 		public event OnPointerDelegate PointerDownEvent;
 		public event OnPointerDelegate PointerUpEvent;

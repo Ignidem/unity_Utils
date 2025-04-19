@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityUtils.GameObjects.Transforms;
 
 namespace UnityUtils.UI.WorldScreenSpace
@@ -10,21 +11,16 @@ namespace UnityUtils.UI.WorldScreenSpace
 		public bool IsTargetValid => target != null && target && target.gameObject.activeSelf;
 		public Transform target;
 		public Vector3 offset;
+		public Bounds normalizedBounds = new Bounds(Vector3.zero, Vector3.one);
 
-		public void Update(Camera camera, RectTransform transform)
+		public bool Update(Camera camera, RectTransform transform)
 		{
 			Vector3 worldPos = target.transform.position + offset;
-			Vector2 pos = camera.WorldToScreenPosition(worldPos, out Vector2 _, out float distance);
-			bool inView = distance > 0;
-			if (inView)
-			{
-				transform.position = pos;
-				transform.localScale = Vector3.one;
-			}
-			else
-			{
-				transform.localScale = Vector3.zero;
-			}
+			Vector2 pos = camera.WorldToScreenPosition(worldPos, out Vector2 norm, out float distance);
+			if (distance <= 0 || !normalizedBounds.Contains(norm)) return false;
+			
+			transform.position = pos;
+			return true;
 		}
 	}
 }

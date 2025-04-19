@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Serialized
 {
+	[Serializable]
 	public class Dictionary<TKey, TValue> : Dictionary<TKey, TValue, Dictionary<TKey, TValue>.PairKey>
 	{
 		[Serializable]
