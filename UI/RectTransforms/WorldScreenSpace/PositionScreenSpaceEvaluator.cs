@@ -11,8 +11,9 @@ namespace UnityUtils.UI.WorldScreenSpace
 		public Vector3 position;
 		public float size;
 
-		public bool Update(Camera camera, RectTransform transform)
+		public bool Update(Canvas canvas, RectTransform transform)
 		{
+			Camera camera = canvas.worldCamera;
 			Vector2 pos = camera.WorldToScreenPosition(position, out Vector2 _, out float distance);
 			if (distance <= 0)
 			{
