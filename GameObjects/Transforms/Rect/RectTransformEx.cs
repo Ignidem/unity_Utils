@@ -45,8 +45,10 @@ namespace UnityUtils.RectUtils
 		public static Vector2 GetDeltaWithAnchors(this RectTransform transform, Rect rect, bool getWidth = true, bool getHeight = true)
 		{
 			Vector2 delta = transform.sizeDelta;
-			float width = getWidth ? transform.GetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rect.width) : delta.x;
-			float height = getHeight ? transform.GetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rect.height) : delta.y;
+			float width = getWidth ? transform.GetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rect.width) 
+				: transform.IsStretched(RectTransform.Axis.Horizontal) ? 0 : delta.x;
+			float height = getHeight ? transform.GetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rect.height) 
+				: transform.IsStretched(RectTransform.Axis.Vertical) ? 0 : delta.y;
 			return new Vector2(width, height);
 		}
 		public static void SetSize(this RectTransform transform, Vector2 size)
@@ -65,6 +67,25 @@ namespace UnityUtils.RectUtils
 			{
 				transform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rect.height);
 			}
+		}
+		
+		public static Vector2 GetAnchors(this RectTransform transform, int n)
+		{
+			return new Vector2(
+				transform.anchorMin[n],
+				transform.anchorMax[n]
+			);
+		}
+		public static bool IsStretched(this RectTransform transform, RectTransform.Axis axis)
+		{
+			int n = (int)axis;
+			return transform.anchorMax[n] != transform.anchorMin[n];
+		}
+		public static float GetAnchorLength(this RectTransform transform, RectTransform.Axis axis)
+		{
+			int n = (int)axis;
+			Vector2 anchors = GetAnchors(transform, n);
+			return anchors.x == anchors.y ? 1 : anchors.y - anchors.x;
 		}
 	}
 }

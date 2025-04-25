@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityUtils.Common.Layout;
 using UnityUtils.RectUtils;
@@ -11,6 +10,7 @@ namespace UnityUtils.Layouts.RectLayout
 	public class RectLayoutComponent : ILayoutComponent, IAnimatedRectLayoutElement
 	{
 		public bool IsEnabled => Transform.gameObject.activeSelf;
+		public Vector2Int OffsetDirection => new Vector2Int(doWrapWidth ? 1 : 0, doWrapHeight ? 1 : 0);
 
 		[field: SerializeField] public RectTransform Transform { get; private set; }
 		[field: SerializeField] public RectTransform.Axis Axis { get; private set; }

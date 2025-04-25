@@ -4,7 +4,6 @@ namespace UnityUtils.Layouts.RectLayout
 {
 	public interface IAnimatedRectLayoutElement : IRectLayoutElement
 	{
-		RectTransform Transform { get; }
 		RectTransform.Axis Axis { get; }
 		float AnimationTime { get; }
 		float AnimationDuration { get; }

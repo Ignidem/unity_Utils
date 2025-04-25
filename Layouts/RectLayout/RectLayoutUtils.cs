@@ -36,5 +36,33 @@ namespace UnityUtils.Layouts.RectLayout
 
 			element.SetRect(element.TargetRect);
 		}
+		
+		public static Vector2 GetLocalPosition(this IRectLayoutElement element, Vector2 target)
+		{
+			return new Vector2(
+				GetLocalPosition(element, target, RectTransform.Axis.Horizontal), 
+				GetLocalPosition(element, target, RectTransform.Axis.Vertical)
+				);
+		}
+		public static float GetLocalPosition(this IRectLayoutElement element, Vector2 target, RectTransform.Axis axis)
+		{
+			RectTransform transform = element.Transform;
+			int n = (int)axis;
+			float offset = element.OffsetDirection[n];
+			return offset == 0 ? transform.localPosition[n] : target[n] * offset;
+		}
+
+		public static Vector2 GetDeltaSize(this IRectLayoutElement element, Vector2 target)
+		{
+			RectTransform transform = element.Transform;
+			return new Vector2(
+				GetDeltaSize(transform, target, RectTransform.Axis.Horizontal), 
+				GetDeltaSize(transform, target, RectTransform.Axis.Vertical)
+				);
+		}
+		public static float GetDeltaSize(this RectTransform element, Vector2 target, RectTransform.Axis axis)
+		{
+			return element.IsStretched(axis) ? 0 : target[(int)axis];
+		}
 	}
 }

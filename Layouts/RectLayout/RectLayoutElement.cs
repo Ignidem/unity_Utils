@@ -10,11 +10,11 @@ namespace UnityUtils.Layouts.RectLayout
 	public abstract class RectLayoutElement : MonoBehaviour, IAnimatedRectLayoutElement
 	{
 		public bool IsEnabled => enabled;
-		public RectTransform Transform => transform as RectTransform;
+		public RectTransform Transform => (RectTransform)transform;
 		[field: SerializeField] public RectTransform.Axis Axis { get; private set; }
 		[field: SerializeField] public Vector2Int OffsetDirection { get; private set; }
 
-		[Header("Animation")]
+		[field: Header("Animation")]
 		[field: SerializeField] public float AnimationDuration { get; private set; }
 		public float AnimationTime { get; private set; }
 		public Rect TargetRect { get; private set; }
@@ -32,7 +32,7 @@ namespace UnityUtils.Layouts.RectLayout
 		[ContextMenu(nameof(ParentLayout))]
 		public void ParentLayout()
 		{
-			Rect source = (transform.parent as RectTransform).rect;
+			Rect source = ((RectTransform)transform.parent).rect;
 			GetRectLayout(default, source, false);
 		}
 
@@ -72,13 +72,13 @@ namespace UnityUtils.Layouts.RectLayout
 
 			return hasNext;
 		}
-
+		
 		public void SetRect(Rect rect)
 		{
 			RectTransform transform = Transform;
-			Vector3 localPos = rect.position * OffsetDirection;
+			Vector2 localPos = this.GetLocalPosition(rect.position);
 			transform.localPosition = localPos;
-			transform.SetRect(rect);
+			transform.sizeDelta = this.GetDeltaSize(rect.size);
 		}
 	}
 }

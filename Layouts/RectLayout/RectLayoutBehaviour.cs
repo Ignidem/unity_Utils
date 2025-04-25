@@ -6,6 +6,8 @@ namespace UnityUtils.Layouts.RectLayout
 	public class RectLayoutBehaviour : LayoutController, IRectLayoutElement
 	{
 		public bool IsEnabled => enabled;
+		public RectTransform Transform => settings.Transform;
+		public Vector2Int OffsetDirection => settings.OffsetDirection;
 
 		[SerializeField] private Transform sizeSource;
 		[SerializeField] private RectLayoutComponent settings;
@@ -18,10 +20,7 @@ namespace UnityUtils.Layouts.RectLayout
 
 		public Rect GetRectLayout(Rect offset, Rect source, bool animate)
 		{
-			if (!isActiveAndEnabled)
-				return offset;
-
-			return settings.GetRectLayout(offset, source, animate);
+			return isActiveAndEnabled ? settings.GetRectLayout(offset, source, animate) : offset;
 		}
 	}
 }
