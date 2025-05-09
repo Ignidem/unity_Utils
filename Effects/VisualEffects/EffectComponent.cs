@@ -10,7 +10,7 @@ namespace UnityUtils.Effects.VisualEffects
 		public abstract void Stop();
 
 		public abstract T GetValue<T>(int id);
-		public abstract void SetValue<T>(int id, T value, bool isOptinal = false);
+		public abstract void SetValue<T>(int id, T value, bool isOptional = false);
 
 		public virtual void Dispose() { }
 	}

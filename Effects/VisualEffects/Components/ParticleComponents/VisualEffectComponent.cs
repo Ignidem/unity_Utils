@@ -7,8 +7,9 @@ namespace UnityUtils.Effects.VisualEffects
 	[Serializable]
 	public class VisualEffectComponent : IVisualEffectComponent
 	{
-		[SerializeField]
-		private VisualEffect vfx;
+		[SerializeField] private VisualEffect vfx;
+		[SerializeField] private bool disableOnStop;
+		
 		public string Name => vfx.gameObject.name;
 
 		public void Play()
@@ -21,7 +22,8 @@ namespace UnityUtils.Effects.VisualEffects
 		public void Stop()
 		{
 			vfx.Stop();
-			vfx.enabled = false;
+			if (disableOnStop)
+				vfx.enabled = false;
 		}
 
 		public T GetValue<T>(int id)
