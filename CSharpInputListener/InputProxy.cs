@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine.InputSystem;
 using Utils.Delegates;
+using UnityEngine.InputSystem;
 
-namespace Assets.External.unity_utils.CSharpInputListener
+namespace UnityUtils.CSharpInputListener
 {
 	public interface IInputReceiver { }
 
@@ -36,10 +36,7 @@ namespace Assets.External.unity_utils.CSharpInputListener
 		public bool IsActive
 		{
 			get => inputs.isActiveAndEnabled && inputs.inputIsActive;
-			set
-			{
-				inputs.enabled = value;
-			}
+			set => inputs.enabled = value;
 		}
 
 		private readonly PlayerInput inputs;

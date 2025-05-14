@@ -2,7 +2,7 @@
 using System.Reflection;
 using UnityEngine.InputSystem;
 
-namespace Assets.External.unity_utils.CSharpInputListener
+namespace UnityUtils.CSharpInputListener
 {
 	public interface IInputReceiverMethod
 	{
@@ -21,6 +21,7 @@ namespace Assets.External.unity_utils.CSharpInputListener
 
 		public void Invoke(IInputReceiver receiver, InputAction input)
 		{
+			//TODO! Use Compiled Delegate
 			method.Invoke(receiver, new object[] { input.ReadValue<T>() });
 		}
 	}
