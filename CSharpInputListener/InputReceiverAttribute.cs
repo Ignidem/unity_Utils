@@ -4,11 +4,13 @@ namespace UnityUtils.CSharpInputListener
 {
 	public class InputReceiverAttribute : Attribute
 	{
-		public readonly string name;
+		public readonly string map;
+		public readonly string action;
 
-		public InputReceiverAttribute(string name)
+		public InputReceiverAttribute(string map, string action)
 		{
-			this.name = name;
+			this.map = map;
+			this.action = action;
 		}
 	}
 }
