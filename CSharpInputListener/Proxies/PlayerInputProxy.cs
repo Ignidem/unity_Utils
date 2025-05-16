@@ -1,38 +1,30 @@
 #if ENABLE_INPUT_SYSTEM
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace UnityUtils.CSharpInputListener
 {
-	public class PlayerInputProxy : InputProxy
+	public class PlayerInputProxy<T> : InputProxy<T>
+		where T : IInputReceiver
 	{
-		public override bool IsActive
-		{
-			get => active && receiver.IsActive && inputs.isActiveAndEnabled && inputs.inputIsActive;
-			set => active = value;
-		}
-		
-		private readonly PlayerInput inputs;
-		private bool active = true;
+		protected override bool IsActive => base.IsActive && inputs.isActiveAndEnabled && inputs.inputIsActive;
 
-		public PlayerInputProxy(PlayerInput inputs, IInputReceiver receiver) 
-			: base(receiver, inputs.actions)
+		private readonly PlayerInput inputs;
+
+		public PlayerInputProxy(PlayerInput inputs, T receiver, ActionDelegateMap<T> map) 
+			: base(receiver, map)
 		{
 			this.inputs = inputs;
+		}
+
+		public override void Enable()
+		{
 			inputs.onActionTriggered += OnAction;
 		}
-		
-		public override void Dispose()
+
+		public override void Disable()
 		{
 			inputs.onActionTriggered -= OnAction;
-		}
-		
-		private void OnAction(InputAction.CallbackContext context)
-		{
-			if (!IsActive)
-				return;
-			
-			if (TryGetAction(context.action, out IActionInputInjector method))
-				method.Invoke(context);
 		}
 	}
 }

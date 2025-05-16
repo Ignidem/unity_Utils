@@ -7,7 +7,6 @@ namespace UnityUtils.CSharpInputListener
 {
 	public class CallbackInfo
 	{
-		public readonly IInputReceiver receiver;
 		public readonly InputAction action;
 		public readonly MethodInfo method;
 
@@ -15,9 +14,8 @@ namespace UnityUtils.CSharpInputListener
 		public readonly int inputIndex;
 		public Type InputType => parameters[inputIndex].ParameterType;
 
-		public CallbackInfo(IInputReceiver receiver, InputAction action, MethodInfo method)
+		public CallbackInfo(InputAction action, MethodInfo method)
 		{
-			this.receiver = receiver;
 			this.action = action;
 			this.method = method;
 			

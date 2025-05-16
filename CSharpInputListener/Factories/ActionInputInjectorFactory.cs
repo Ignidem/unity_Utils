@@ -1,5 +1,6 @@
 #if ENABLE_INPUT_SYSTEM
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Serialized;
@@ -9,21 +10,15 @@ namespace UnityUtils.CSharpInputListener
 {
 	public class ActionInputInjectorFactory
 	{
-		private static readonly ParameterExpression[] constructorParameters = new ParameterExpression[]
-		{
-			Expression.Parameter(typeof(IInputReceiver), "receiver"),
-			Expression.Parameter(typeof(InputAction), "action"),
-			Expression.Parameter(typeof(MethodInfo), "method")
-		};
+		private static readonly ParameterExpression[] constructorParameters = typeof(Constructor).GetMethod("Invoke")!
+			.GetParameters().Select(p => Expression.Parameter(p.ParameterType)).ToArray();
 		
 		private readonly Type genericType;
-		private readonly MethodInfo callbackInvoke;
 		private readonly Dictionary<Type, Constructor> factories;
 
-		public ActionInputInjectorFactory(Type genericType, Type callbackDelegateType)
+		public ActionInputInjectorFactory(Type genericType)
 		{
 			this.genericType = genericType;
-			callbackInvoke = callbackDelegateType?.GetMethod("Invoke");
 			factories = new Dictionary<Type, Constructor>();
 			ValidateConstructor(genericType);
 		}
@@ -47,46 +42,16 @@ namespace UnityUtils.CSharpInputListener
 			}
 		}
 
-		public bool TryCreate(CallbackInfo info, out IActionInputInjector injector)
+		public Constructor GetConstructor(InputAction action)
 		{
-			if (!ValidateInfo(info))
+			Type inputType = action.GetExpectedValueType();
+			if (!factories.TryGetValue(inputType, out Constructor constructor))
 			{
-				injector = null;
-				return false;
-			}
-			
-			if (!factories.TryGetValue(info.InputType, out Constructor constructor))
-			{
-				constructor = CreateConstructor(info.InputType);
-				factories[info.InputType] = constructor;
+				constructor = CreateConstructor(inputType);
+				factories[inputType] = constructor;
 			}
 
-			injector = constructor(info.receiver, info.action, info.method);
-			return true;
-		}
-
-		protected virtual bool ValidateInfo(CallbackInfo info)
-		{
-			if (callbackInvoke == null)
-				return true;
-
-			ParameterInfo[] delegateParams = callbackInvoke.GetParameters();
-			if (delegateParams.Length != info.parameters.Length)
-				return false;
-
-			for (int i = 0; i < delegateParams.Length; i++)
-			{
-				Type delegateParameter = delegateParams[i].ParameterType;
-				if (delegateParameter.IsGenericParameter)
-				{
-					delegateParameter = info.action.GetExpectedValueType();
-				}
-
-				if (info.parameters[i].ParameterType != delegateParameter)
-					return false; 
-			}
-
-			return callbackInvoke.ReturnType == info.method.ReturnType;
+			return constructor;
 		}
 		
 		private Constructor CreateConstructor(Type argType)
@@ -96,7 +61,8 @@ namespace UnityUtils.CSharpInputListener
 			ConstructorInfo ctor = type.GetConstructors()[0];
 			
 			// Parameters of the delegate
-			NewExpression newExpr = Expression.New(ctor, constructorParameters[0], constructorParameters[1], constructorParameters[2]);
+			
+			NewExpression newExpr = Expression.New(ctor, constructorParameters.Select(e => (Expression)e).ToArray());
 			UnaryExpression convert = Expression.Convert(newExpr, typeof(IActionInputInjector));
 
 			// Compile into a delegate

@@ -5,8 +5,8 @@ namespace UnityUtils.CSharpInputListener
 {
 	public interface IActionInputInjector
 	{
-		InputAction Action { get; }
-		public void Invoke(InputAction.CallbackContext input);
+		public InputReceiverAttribute Attribute { get; }
+		public void Invoke(IInputReceiver instance, InputAction.CallbackContext input);
 	}
 }
 #endif

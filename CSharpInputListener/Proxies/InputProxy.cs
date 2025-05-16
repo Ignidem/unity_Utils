@@ -1,53 +1,93 @@
 ﻿#if ENABLE_INPUT_SYSTEM
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using Utils.Delegates;
 using UnityEngine.InputSystem;
 
 namespace UnityUtils.CSharpInputListener
 {
-	public abstract class InputProxy : IDisposable
+	public abstract class InputProxy<T> : IDisposable
+		where T : IInputReceiver
 	{
-		private const BindingFlags methodReceiversFlags = BindingFlags.Public | BindingFlags.Instance | 
-			BindingFlags.NonPublic | BindingFlags.InvokeMethod | BindingFlags.DeclaredOnly;
+		protected virtual bool IsActive => receiver.IsActive && map.Asset.enabled;
 
-		public abstract bool IsActive { get; set; }
+		protected readonly T receiver;
+		protected readonly ActionDelegateMap<T> map;
+		private Dictionary<Guid, InputAction.CallbackContext> continuous;
 
-		protected readonly IInputReceiver receiver;
-		protected readonly InputActionAsset asset;
-		private readonly Dictionary<Guid, IActionInputInjector> injectors;
-
-		protected InputProxy(IInputReceiver receiver, InputActionAsset asset)
+		protected InputProxy(T receiver, ActionDelegateMap<T> map)
 		{
-			injectors = new();
 			this.receiver = receiver;
-			this.asset = asset;
-			receiver.ForeachMethodWithAttribute<InputReceiverAttribute>(ParseMethod, methodReceiversFlags);
+			this.map = map;
+			continuous = new();
 		}
 
-		private void ParseMethod(MethodInfo method, InputReceiverAttribute attribute)
+		public void Update()
 		{
-			InputActionMap map = asset.FindActionMap(attribute.map, true);
-			InputAction action = map.FindAction(attribute.action);
-			IActionInputInjector receiverInputInjector = CreateInjector(action, method);
-			if (receiverInputInjector == null) return;
-
-			injectors.Add(action.id, receiverInputInjector);
+			if (!IsActive) return;
+			
+			foreach (KeyValuePair<Guid, InputAction.CallbackContext> action in continuous)
+			{
+				InvokeAction(action.Value);
+			}
 		}
-		
-		private IActionInputInjector CreateInjector(InputAction action, MethodInfo method)
+
+		protected void OnAction(InputAction.CallbackContext context)
 		{
-			return receiver.CreateInjector(action, method);
+			if (!map.TryGetAction(context.action, out IActionInputInjector injector))
+				return;
+			
+			Phases phase = context.phase switch
+			{
+				InputActionPhase.Disabled => Phases.Disabled,
+				InputActionPhase.Waiting => Phases.Waiting,
+				InputActionPhase.Started => Phases.Started,
+				InputActionPhase.Performed => Phases.Performed,
+				InputActionPhase.Canceled => Phases.Canceled,
+				_ => throw new ArgumentOutOfRangeException()
+			};
+			
+			if (injector.Attribute.CallbackPhases.HasFlag(phase))
+				InvokeAction(context);
+			
+			switch (phase)
+			{
+				case Phases.Started:
+					StartContinuousAction(context);
+					break;
+				case Phases.Canceled or Phases.Disabled:
+					StopContinuousAction(context);
+					break;
+			}
 		}
 
-		protected IEnumerable<IActionInputInjector> GetActions() => injectors.Values;
-		protected bool TryGetAction(InputAction action, out IActionInputInjector actionInputInjector)
+		private void StartContinuousAction(InputAction.CallbackContext context)
 		{
-			return injectors.TryGetValue(action.id, out actionInputInjector);
+			if (map.TryGetAction(context.action, out IActionInputInjector injector) && 
+			    injector.Attribute.CallbackPhases.HasFlag(Phases.Continuous))
+				continuous[context.action.id] = context;
+		}
+		private void InvokeAction(InputAction.CallbackContext context)
+		{
+			if (map.TryGetAction(context.action, out IActionInputInjector injector))
+				injector.Invoke(receiver, context);
+		}		
+		private void StopContinuousAction(InputAction.CallbackContext context)
+		{
+			continuous.Remove(context.action.id);
 		}
 
-		public abstract void Dispose();
+		public void SetEnable(bool enabled)
+		{
+			if (enabled) Enable();
+			else Disable();
+		}
+		public abstract void Enable();
+		public abstract void Disable();
+
+		public virtual void Dispose()
+		{
+			Disable();
+		}
 	}
 }
 #endif
