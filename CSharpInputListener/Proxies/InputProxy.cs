@@ -1,79 +1,67 @@
 ﻿#if ENABLE_INPUT_SYSTEM
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
 namespace UnityUtils.CSharpInputListener
 {
 	public abstract class InputProxy<T> : IDisposable
 		where T : IInputReceiver
 	{
+		private class CoroutineInfo
+		{
+			public InputAction.CallbackContext lastContext;
+			
+			private Coroutine coroutine;
+			
+		}
+		
 		protected virtual bool IsActive => receiver.IsActive && map.Asset.enabled;
 
 		protected readonly T receiver;
 		protected readonly ActionDelegateMap<T> map;
-		private Dictionary<Guid, InputAction.CallbackContext> continuous;
+		
+		//per binding and not per action;
+		private readonly Dictionary<Guid, InputAction.CallbackContext> continuousContext = new();
 
 		protected InputProxy(T receiver, ActionDelegateMap<T> map)
 		{
 			this.receiver = receiver;
 			this.map = map;
-			continuous = new();
 		}
 
-		public void Update()
+		public void UpdateContinuous()
 		{
-			if (!IsActive) return;
-			
-			foreach (KeyValuePair<Guid, InputAction.CallbackContext> action in continuous)
+			foreach (InputAction.CallbackContext context in continuousContext.Values)
 			{
-				InvokeAction(action.Value);
+				InvokeAction(context);
 			}
 		}
-
+		
 		protected void OnAction(InputAction.CallbackContext context)
 		{
-			if (!map.TryGetAction(context.action, out IActionInputInjector injector))
+			if (!map.TryGetAction(context.action, out _))
 				return;
+
+			InputBinding binding = context.GetBinding();
+			if (binding.IsModifier()) return;
 			
-			Phases phase = context.phase switch
+			//Is handled through continuous
+			if (context.IsContinuous())
 			{
-				InputActionPhase.Disabled => Phases.Disabled,
-				InputActionPhase.Waiting => Phases.Waiting,
-				InputActionPhase.Started => Phases.Started,
-				InputActionPhase.Performed => Phases.Performed,
-				InputActionPhase.Canceled => Phases.Canceled,
-				_ => throw new ArgumentOutOfRangeException()
-			};
-			
-			if (injector.Attribute.CallbackPhases.HasFlag(phase))
-				InvokeAction(context);
-			
-			switch (phase)
-			{
-				case Phases.Started:
-					StartContinuousAction(context);
-					break;
-				case Phases.Canceled or Phases.Disabled:
-					StopContinuousAction(context);
-					break;
+				continuousContext[binding.id] = context;
+				return;
 			}
+			
+			InvokeAction(context);
 		}
 
-		private void StartContinuousAction(InputAction.CallbackContext context)
-		{
-			if (map.TryGetAction(context.action, out IActionInputInjector injector) && 
-			    injector.Attribute.CallbackPhases.HasFlag(Phases.Continuous))
-				continuous[context.action.id] = context;
-		}
 		private void InvokeAction(InputAction.CallbackContext context)
 		{
 			if (map.TryGetAction(context.action, out IActionInputInjector injector))
 				injector.Invoke(receiver, context);
-		}		
-		private void StopContinuousAction(InputAction.CallbackContext context)
-		{
-			continuous.Remove(context.action.id);
 		}
 
 		public void SetEnable(bool enabled)
@@ -81,7 +69,11 @@ namespace UnityUtils.CSharpInputListener
 			if (enabled) Enable();
 			else Disable();
 		}
-		public abstract void Enable();
+
+		public virtual void Enable()
+		{
+			
+		}
 		public abstract void Disable();
 
 		public virtual void Dispose()
