@@ -19,7 +19,7 @@ namespace UnityUtils.CSharpInputListener
 		private const BindingFlags methodReceiversFlags = BindingFlags.Public | BindingFlags.Instance | 
 		                                                  BindingFlags.NonPublic | BindingFlags.InvokeMethod | BindingFlags.DeclaredOnly;
 		public InputActionAsset Asset { get; }
-		private readonly Dictionary<InputAction, IActionInputInjector> injectors;
+		private readonly Dictionary<Guid, IActionInputInjector> injectors;
 
 		public ActionDelegateMap(InputActionAsset asset)
 		{
@@ -34,16 +34,21 @@ namespace UnityUtils.CSharpInputListener
 			InputActionMap map = Asset.FindActionMap(attribute.map, true);
 			InputAction action = map.FindAction(attribute.action, true);
 			Constructor constructor = action.GetInjectorConstructor();
-			IActionInputInjector receiverInputInjector = constructor?.Invoke(attribute, method);
+			IActionInputInjector receiverInputInjector = constructor?.Invoke(action, method);
 			if (receiverInputInjector == null) return;
 
-			injectors.Add(action, receiverInputInjector);
+			injectors.Add(action.id, receiverInputInjector);
 		}
 		
 		public IEnumerable<IActionInputInjector> GetActions() => injectors.Values;
+
 		public bool TryGetAction(InputAction action, out IActionInputInjector actionInputInjector)
 		{
-			return injectors.TryGetValue(action, out actionInputInjector);
+			return TryGetAction(action.id, out actionInputInjector);
+		}
+		public bool TryGetAction(Guid actionId, out IActionInputInjector actionInputInjector)
+		{
+			return injectors.TryGetValue(actionId, out actionInputInjector);
 		}
 	}
 }

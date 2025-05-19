@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Utilities;
 
 namespace UnityUtils.CSharpInputListener
 {
@@ -24,7 +23,7 @@ namespace UnityUtils.CSharpInputListener
 		protected readonly ActionDelegateMap<T> map;
 		
 		//per binding and not per action;
-		private readonly Dictionary<Guid, InputAction.CallbackContext> continuousContext = new();
+		private readonly Dictionary<Guid, InputAction.CallbackContext> polls = new();
 
 		protected InputProxy(T receiver, ActionDelegateMap<T> map)
 		{
@@ -34,35 +33,37 @@ namespace UnityUtils.CSharpInputListener
 
 		public void UpdateContinuous()
 		{
-			foreach (InputAction.CallbackContext context in continuousContext.Values)
+			foreach (InputAction.CallbackContext context in polls.Values)
 			{
-				InvokeAction(context);
+				if (map.TryGetAction(context.action, out IActionInputInjector injector))
+					injector.Invoke(receiver, context);
 			}
 		}
 		
 		protected void OnAction(InputAction.CallbackContext context)
 		{
-			if (!map.TryGetAction(context.action, out _))
+			if (!map.TryGetAction(context.action, out IActionInputInjector injector))
 				return;
 
 			InputBinding binding = context.GetBinding();
 			if (binding.IsModifier()) return;
-			
-			//Is handled through continuous
-			if (context.IsContinuous())
+
+			switch (context.phase)
 			{
-				continuousContext[binding.id] = context;
-				return;
+				case InputActionPhase.Started:
+					if (!context.IsContinuous())
+						polls[binding.id] = context;
+					break;
+				case InputActionPhase.Performed:
+					injector.Invoke(receiver, context);
+					break;
+				case InputActionPhase.Canceled or InputActionPhase.Disabled:
+					if (!context.IsContinuous())
+						polls.Remove(binding.id);
+					break;
 			}
-			
-			InvokeAction(context);
 		}
 
-		private void InvokeAction(InputAction.CallbackContext context)
-		{
-			if (map.TryGetAction(context.action, out IActionInputInjector injector))
-				injector.Invoke(receiver, context);
-		}
 
 		public void SetEnable(bool enabled)
 		{

@@ -15,17 +15,11 @@ namespace UnityUtils.CSharpInputListener
 			int index = context.GetBindingIndex();
 			return context.action.bindings[index];
 		}
-		
+
 		public static bool IsContinuous(this InputAction.CallbackContext context)
 		{
-			return context.action.type == InputActionType.PassThrough;
+			return context.control.name is "delta" or "position" or "scroll";
 		}
-		
-		public static bool IsModifier(this InputAction.CallbackContext context)
-		{
-			return context.GetBinding().IsModifier();
-		}
-
 		public static bool IsModifier(this InputBinding binding)
 		{
 			return binding is { isPartOfComposite: true, name: "modifier" };
