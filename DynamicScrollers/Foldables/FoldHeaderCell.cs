@@ -8,8 +8,8 @@ namespace UnityUtils.DynamicScrollers.Foldables
 	public class FoldHeaderCell : FoldableCell
 	{
 		[SerializeField] private TMP_Text headerText;
-		[SerializeField] private Button button;
-		[SerializeField] private Image toggleIcon;
+		[SerializeField] protected Button button;
+		[SerializeField] protected Image toggleIcon;
 
 		public Button.ButtonClickedEvent OnClick => button.onClick;
 		
@@ -33,7 +33,7 @@ namespace UnityUtils.DynamicScrollers.Foldables
 		{
 			base.SetFolded(isFolded);
 			if (toggleIcon)
-				toggleIcon.transform.localScale = new Vector3(1, IsFolded ? 1 : -1, 1);
+				toggleIcon.transform.localScale = new Vector3(1, IsFolded ? -1 : 1, 1);
 		}
 	}
 }
