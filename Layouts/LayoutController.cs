@@ -10,10 +10,9 @@ namespace UnityUtils.Common.Layout
 		[SerializeField] private bool reloadOnValidate = true;
 		[SerializeField] private bool reloadOnEnable = true;
 		[SerializeField] private bool reloadOnChildrenChange = true;
-		[SerializeField] private bool reloadOnResize = true;
 		[SerializeField] private bool animateOnAutoReload;
 
-		protected virtual void OnValidate() 
+		protected virtual void OnValidate()
 		{
 			if (reloadOnValidate)
 				isReloadRequested = true;
@@ -26,12 +25,6 @@ namespace UnityUtils.Common.Layout
 		protected virtual void OnTransformChildrenChanged()
 		{
 			if (reloadOnChildrenChange)
-				isReloadRequested = true;
-		}
-
-		protected virtual void OnRectTransformDimensionsChange()
-		{
-			if (reloadOnResize)
 				isReloadRequested = true;
 		}
 

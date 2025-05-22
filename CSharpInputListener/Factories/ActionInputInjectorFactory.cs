@@ -63,7 +63,7 @@ namespace UnityUtils.CSharpInputListener
 			// Parameters of the delegate
 			
 			NewExpression newExpr = Expression.New(ctor, constructorParameters.Select(e => (Expression)e).ToArray());
-			UnaryExpression convert = Expression.Convert(newExpr, typeof(IActionInputInjector));
+			UnaryExpression convert = Expression.Convert(newExpr, typeof(IActionInputHandler));
 
 			// Compile into a delegate
 			var lambda = Expression.Lambda<Constructor>(convert, constructorParameters);

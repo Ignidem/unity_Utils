@@ -17,5 +17,14 @@ namespace UnityUtils.Transforms
 				}
 			}
 		}
+
+		public static void ClearChildren(this Transform transform)
+		{
+			foreach (Transform child in transform)
+			{
+				if (child)
+					Object.Destroy(child.gameObject);
+			}
+		}
 	}
 }

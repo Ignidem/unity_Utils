@@ -1,19 +1,27 @@
 #if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
 
 namespace UnityUtils.CSharpInputListener
 {
-	public class ActionInputProxy<T> : InputProxy<T>
+	public class MapInputProxy<T> : InputProxy<T>
 		where T : IInputReceiver
 	{
-		public ActionInputProxy(T receiver, ActionDelegateMap<T> map) 
-			: base(receiver, map) { }
+		private readonly InputActionMap map;
+
+		public MapInputProxy(InputActionMap map, T receiver, ActionDelegateMap<T> delegateMap)
+			: base(receiver, delegateMap)
+		{
+			this.map = map;
+		}
 		
 		public override void Enable()
 		{
+			map.actionTriggered += OnAction;
 		}
 
 		public override void Disable()
 		{
+			map.actionTriggered -= OnAction;
 		}
 	}
 }

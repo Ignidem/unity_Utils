@@ -10,7 +10,7 @@ namespace UnityUtils.CSharpInputListener
 {
 	public static class InputProxyDelegateUtils
 	{
-		private static readonly ActionInputInjectorFactory factory = new(typeof(InputActionContextInjector<>));
+		private static readonly ActionInputInjectorFactory factory = new(typeof(InputActionContextHandler<>));
 		
 		public static Constructor GetInjectorConstructor(this InputAction action)
 		{

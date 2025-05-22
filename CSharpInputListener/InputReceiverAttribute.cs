@@ -5,6 +5,8 @@ namespace UnityUtils.CSharpInputListener
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 	public class InputReceiverAttribute : Attribute
 	{
+		public bool PollValue { get; set; }
+		
 		public readonly string map;
 		public readonly string action;
 

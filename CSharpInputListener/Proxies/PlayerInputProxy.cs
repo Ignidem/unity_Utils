@@ -7,8 +7,6 @@ namespace UnityUtils.CSharpInputListener
 	public class PlayerInputProxy<T> : InputProxy<T>
 		where T : IInputReceiver
 	{
-		protected override bool IsActive => base.IsActive && inputs.isActiveAndEnabled && inputs.inputIsActive;
-
 		private readonly PlayerInput inputs;
 
 		public PlayerInputProxy(PlayerInput inputs, T receiver, ActionDelegateMap<T> map) 

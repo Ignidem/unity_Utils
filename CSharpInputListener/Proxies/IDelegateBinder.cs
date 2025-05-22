@@ -10,8 +10,8 @@ namespace UnityUtils.CSharpInputListener
 	public interface IDelegateBinder
 	{
 		InputActionAsset Asset { get; }
-		IEnumerable<IActionInputInjector> GetActions();
-		bool TryGetAction(InputAction action, out IActionInputInjector actionInputInjector);
+		IEnumerable<IActionInputHandler> GetHandlers();
+		bool TryGetAction(InputAction action, out IActionInputHandler actionInputHandler);
 	}
 	
 	public class ActionDelegateMap<T> : IDelegateBinder
@@ -19,7 +19,7 @@ namespace UnityUtils.CSharpInputListener
 		private const BindingFlags methodReceiversFlags = BindingFlags.Public | BindingFlags.Instance | 
 		                                                  BindingFlags.NonPublic | BindingFlags.InvokeMethod | BindingFlags.DeclaredOnly;
 		public InputActionAsset Asset { get; }
-		private readonly Dictionary<Guid, IActionInputInjector> injectors;
+		private readonly Dictionary<Guid, IActionInputHandler> injectors;
 
 		public ActionDelegateMap(InputActionAsset asset)
 		{
@@ -34,21 +34,21 @@ namespace UnityUtils.CSharpInputListener
 			InputActionMap map = Asset.FindActionMap(attribute.map, true);
 			InputAction action = map.FindAction(attribute.action, true);
 			Constructor constructor = action.GetInjectorConstructor();
-			IActionInputInjector receiverInputInjector = constructor?.Invoke(action, method);
-			if (receiverInputInjector == null) return;
+			IActionInputHandler receiverInputHandler = constructor?.Invoke(action, method, attribute);
+			if (receiverInputHandler == null) return;
 
-			injectors.Add(action.id, receiverInputInjector);
+			injectors.Add(action.id, receiverInputHandler);
 		}
 		
-		public IEnumerable<IActionInputInjector> GetActions() => injectors.Values;
+		public IEnumerable<IActionInputHandler> GetHandlers() => injectors.Values;
 
-		public bool TryGetAction(InputAction action, out IActionInputInjector actionInputInjector)
+		public bool TryGetAction(InputAction action, out IActionInputHandler actionInputHandler)
 		{
-			return TryGetAction(action.id, out actionInputInjector);
+			return TryGetAction(action.id, out actionInputHandler);
 		}
-		public bool TryGetAction(Guid actionId, out IActionInputInjector actionInputInjector)
+		public bool TryGetAction(Guid actionId, out IActionInputHandler actionInputHandler)
 		{
-			return injectors.TryGetValue(actionId, out actionInputInjector);
+			return injectors.TryGetValue(actionId, out actionInputHandler);
 		}
 	}
 }

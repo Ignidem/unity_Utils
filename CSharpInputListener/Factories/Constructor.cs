@@ -4,6 +4,6 @@ using UnityEngine.InputSystem;
 
 namespace UnityUtils.CSharpInputListener
 {
-	public delegate IActionInputInjector Constructor(InputAction action, MethodInfo method);
+	public delegate IActionInputHandler Constructor(InputAction action, MethodInfo method, InputReceiverAttribute attribute);
 }
 #endif

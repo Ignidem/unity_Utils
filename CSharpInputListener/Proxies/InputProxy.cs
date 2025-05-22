@@ -1,69 +1,69 @@
 ﻿#if ENABLE_INPUT_SYSTEM
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace UnityUtils.CSharpInputListener
 {
-	public abstract class InputProxy<T> : IDisposable
+	public class InputProxy<T> : IDisposable
 		where T : IInputReceiver
 	{
-		private class CoroutineInfo
-		{
-			public InputAction.CallbackContext lastContext;
-			
-			private Coroutine coroutine;
-			
-		}
-		
-		protected virtual bool IsActive => receiver.IsActive && map.Asset.enabled;
-
 		protected readonly T receiver;
-		protected readonly ActionDelegateMap<T> map;
-		
-		//per binding and not per action;
-		private readonly Dictionary<Guid, InputAction.CallbackContext> polls = new();
+		protected ActionDelegateMap<T> delegateMap;
 
+		private MonoBehaviour pollBehaviour;
+		private Coroutine pollCoroutine;
+		
 		protected InputProxy(T receiver, ActionDelegateMap<T> map)
 		{
 			this.receiver = receiver;
-			this.map = map;
+			this.delegateMap = map;
 		}
 
-		public void UpdateContinuous()
+		public void UpdatePolling()
 		{
-			foreach (InputAction.CallbackContext context in polls.Values)
+			foreach (IActionInputHandler handler in delegateMap.GetHandlers())
 			{
-				if (map.TryGetAction(context.action, out IActionInputInjector injector))
-					injector.Invoke(receiver, context);
+				if (handler.UsesPolling)
+					handler.Invoke(receiver);
+			}
+		}
+
+		public void SetPollingBehaviour(MonoBehaviour behaviour)
+		{
+			StopPollCoroutine();
+			this.pollBehaviour = behaviour;
+			StartPollCoroutine();
+		}		
+		private void StartPollCoroutine()
+		{
+			pollCoroutine = pollBehaviour.StartCoroutine(PollCoroutine());
+		}
+		private void StopPollCoroutine()
+		{
+			if (pollCoroutine == null) return;
+			if (pollBehaviour)
+				pollBehaviour.StopCoroutine(pollCoroutine);
+				
+			pollCoroutine = null;
+
+		}
+		private IEnumerator PollCoroutine()
+		{
+			WaitForEndOfFrame delay = new WaitForEndOfFrame();
+			while (pollBehaviour)
+			{
+				UpdatePolling();
+				yield return delay;
 			}
 		}
 		
-		protected void OnAction(InputAction.CallbackContext context)
+		public void OnAction(InputAction.CallbackContext context)
 		{
-			if (!map.TryGetAction(context.action, out IActionInputInjector injector))
-				return;
-
-			InputBinding binding = context.GetBinding();
-			if (binding.IsModifier()) return;
-
-			switch (context.phase)
-			{
-				case InputActionPhase.Started:
-					if (!context.IsContinuous())
-						polls[binding.id] = context;
-					break;
-				case InputActionPhase.Performed:
-					injector.Invoke(receiver, context);
-					break;
-				case InputActionPhase.Canceled or InputActionPhase.Disabled:
-					if (!context.IsContinuous())
-						polls.Remove(binding.id);
-					break;
-			}
+			if (delegateMap.TryGetAction(context.action, out IActionInputHandler injector) && !injector.UsesPolling)
+				injector.Invoke(receiver, context);
 		}
-
 
 		public void SetEnable(bool enabled)
 		{
@@ -73,9 +73,13 @@ namespace UnityUtils.CSharpInputListener
 
 		public virtual void Enable()
 		{
-			
+			StopPollCoroutine();
+			StartPollCoroutine();
 		}
-		public abstract void Disable();
+		public virtual void Disable()
+		{
+			StopPollCoroutine();
+		}
 
 		public virtual void Dispose()
 		{
