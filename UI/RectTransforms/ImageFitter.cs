@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UnityUtils.UI.Selectable
+namespace UnityUtils.UI
 {
 	public class ImageFitter : AspectRatioFitter
 	{

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace UnityUtils.Common.Layout
 {
@@ -7,9 +8,12 @@ namespace UnityUtils.Common.Layout
 	{
 		[SerializeField] private bool isReloadRequested;
 
+		[Header("Reload On Events")]
 		[SerializeField] private bool reloadOnValidate = true;
 		[SerializeField] private bool reloadOnEnable = true;
 		[SerializeField] private bool reloadOnChildrenChange = true;
+		[SerializeField] private bool reloadOnRectChange = false;
+		[Header("Animation Parameters")]
 		[SerializeField] private bool animateOnAutoReload;
 
 		protected virtual void OnValidate()
@@ -25,6 +29,12 @@ namespace UnityUtils.Common.Layout
 		protected virtual void OnTransformChildrenChanged()
 		{
 			if (reloadOnChildrenChange)
+				isReloadRequested = true;
+		}
+
+		private void OnRectTransformDimensionsChange()
+		{
+			if (reloadOnRectChange)
 				isReloadRequested = true;
 		}
 

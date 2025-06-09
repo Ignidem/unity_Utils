@@ -9,13 +9,12 @@ namespace UnityUtils.Inputs
 		{
 			if (!camera)
 			{
-				if (!Camera.main)
+				camera = Camera.main;
+				if (!camera)
 				{
 					hit = default;
 					return false;
 				}
-
-				camera = Camera.main;
 			}
 
 			Ray ray = camera.ScreenPointToRay(options.screenPosition);

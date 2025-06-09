@@ -6,6 +6,7 @@ namespace UnityUtils.CSharpInputListener
 	public class InputReceiverAttribute : Attribute
 	{
 		public bool PollValue { get; set; }
+		public Type MiddlewareType { get; set; }
 		
 		public readonly string map;
 		public readonly string action;
