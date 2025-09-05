@@ -32,7 +32,7 @@ namespace UnityUtils.Layouts.RectLayout
 
 			ReloadSize(default, parent.rect, animate);
 		}
-		private Rect ReloadSize(Rect rect, in Rect source, bool animate)
+		public Rect ReloadSize(Rect rect, in Rect source, bool animate)
 		{
 			int count = Transform.childCount;
 			for (int i = 0; i < count; i++)
