@@ -14,6 +14,7 @@ namespace UnityUtils.UI.ImageComponents
 		public IImageComponent Main => HasSubComponents ? images[0] : null;
 		public bool IsAlive => HasSubComponents && Main.IsAlive;
 		public RectTransform Transform => Main?.Transform;
+		public Material Material => Main?.Material;
 
 		public bool Enabled 
 		{

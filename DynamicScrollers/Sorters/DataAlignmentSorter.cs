@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace UnityUtils.DynamicScrollers
@@ -13,8 +14,9 @@ namespace UnityUtils.DynamicScrollers
 
 		[SerializeField] private DataOrder order;
 
-		public IEnumerable<int> Sort(IList<IScrollerCellData> data)
+		public IEnumerable<int> Sort(IReadOnlyList<IScrollerCellData> data)
 		{
+			if (data == null) return Enumerable.Empty<int>();
 			int count = data.Count;
 			return order switch
 			{

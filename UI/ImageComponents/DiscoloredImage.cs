@@ -13,7 +13,9 @@ namespace UnityUtils.UI.ImageComponents
 		[SerializeField] private Optional<float> darkness;
 		
 		public bool IsAlive => image.IsAlive;
-		public RectTransform Transform => image.Transform;		
+		public RectTransform Transform => image.Transform;
+		public Material Material => image.Material;
+
 		public bool Enabled
 		{
 			get => image.Enabled;

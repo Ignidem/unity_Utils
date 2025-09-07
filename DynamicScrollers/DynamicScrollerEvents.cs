@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace UnityUtils.DynamicScrollers
 {
@@ -18,7 +19,7 @@ namespace UnityUtils.DynamicScrollers
 		{
 			cell.DataIndex = dataIndex;
 			cell.CellIndex = cellIndex;
-			cell.SetData(_data[dataIndex]);
+			cell.SetData(DataAtOrDefault(dataIndex));
 			cells[cellIndex] = cell;
 			cell.Transform.SetSiblingIndex(cellIndex);
 

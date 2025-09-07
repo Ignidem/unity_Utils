@@ -22,6 +22,7 @@ namespace UnityUtils.UI.ImageComponents
 		}
 
 		public RectTransform Transform => transform as RectTransform;
+		public Material Material => component.Material;
 
 		public Sprite OverrideSprite 
 		{ 

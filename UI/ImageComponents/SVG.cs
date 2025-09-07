@@ -10,6 +10,7 @@ namespace UnityUtils.UI.ImageComponents
 
 		public bool IsAlive => image;
 		public RectTransform Transform => image.transform as RectTransform;
+		public Material Material => image.material;
 
 		public bool Enabled
 		{

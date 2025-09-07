@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utils.Collections;
 
 namespace UnityUtils.DynamicScrollers
@@ -33,14 +34,20 @@ namespace UnityUtils.DynamicScrollers
 
 			public event CellDelegate OnCellCreated;
 
+			[SerializeField, Tooltip("The index of cell type to use for cells with null data (padding cells)")]
+			private int defaultPrefabIndex;
+
 			[SerializeField]
 			private GameObject[] cellPrefabs;
-
+			
 			[SerializeField]
 			private RectTransform cellParent;
 
 			[SerializeField]
 			private RectTransform cellCache;
+			
+			[field: SerializeField, Tooltip("The minimum amount of cell to have. Default cells will be added to fill up to that count.")] 
+			public int MinimumCount { get; private set; }
 
 			internal int PrefabCount => cellPrefabs.Length;
 			private readonly Dictionary<Type, GameObject> mappedPrefabs = new();
@@ -50,12 +57,20 @@ namespace UnityUtils.DynamicScrollers
 
 			public int Count => activeCells.Count;
 
+			public Type GetDefaultCellType()
+			{
+				if (defaultPrefabIndex < 0 || defaultPrefabIndex >= PrefabCount)
+					throw new IndexOutOfRangeException($"The cells default prefab index '{defaultPrefabIndex}' is out of range of prefab list.");
+				
+				return GetPrefabComponentOrThrow(cellPrefabs[defaultPrefabIndex]).CellType;
+			}
+
 			public bool TryGetPrefab(IScrollerCellData data, out GameObject prefab)
 			{
-				Type type = data.CellType;
+				Type type = data?.CellType ?? GetDefaultCellType();
 				if (!mappedPrefabs.TryGetValue(type, out prefab))
 				{
-					prefab = cellPrefabs.FirstOrDefault(p => p.GetComponent<IScrollerCell>().CellType == type);
+					prefab = cellPrefabs.FirstOrDefault(p => GetPrefabComponentOrThrow(p).CellType == type);
 					if (!prefab) return false;
 					mappedPrefabs[type] = prefab;
 				}
@@ -92,9 +107,18 @@ namespace UnityUtils.DynamicScrollers
 				cell.Transform.gameObject.SetActive(false);
 			}
 
+			private IScrollerCell GetPrefabComponentOrThrow(GameObject prefab)
+			{
+				if (prefab.TryGetComponent(out IScrollerCell cell))
+					return cell;
+				
+				throw new Exception($"Prefab GameObject {prefab.name} does not have a component implementing IScrollerCell");
+			}
+
 			private bool TryRecycle(IScrollerCellData data, out IScrollerCell cell)
 			{
-				if (!cachedCells.TryGetValue(data.CellType, out List<IScrollerCell> cache) || cache.Count == 0)
+				Type cellType = data?.CellType ?? GetDefaultCellType();
+				if (!cachedCells.TryGetValue(cellType, out List<IScrollerCell> cache) || cache.Count == 0)
 				{
 					cell = null;
 					return false;

@@ -4,6 +4,6 @@ namespace UnityUtils.DynamicScrollers
 {
 	public interface IScrollerSorter
 	{
-		IEnumerable<int> Sort(IList<IScrollerCellData> data);
+		IEnumerable<int> Sort(IReadOnlyList<IScrollerCellData> data);
 	}
 }

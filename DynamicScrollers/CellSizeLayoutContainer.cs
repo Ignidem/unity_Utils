@@ -28,7 +28,7 @@ namespace UnityUtils.DynamicScrollers
 				_ => Vector2.zero
 			};
 
-			IList<IScrollerCellData> data = scroller.Data;
+			IReadOnlyList<IScrollerCellData> data = scroller.Data;
 			for (int i = 0; i < data.Count; i++)
 			{
 				IScrollerCell cell = scroller.GetCellAt(i);

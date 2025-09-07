@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityUtils.PropertyAttributes;
@@ -19,15 +20,16 @@ namespace UnityUtils.DynamicScrollers
 		};
 
 		[SerializeField] private Cells cells;
+		
 		[SerializeField] private ContentComponents contentComponents;
 
-		private IList<IScrollerCellData> _data;
-		public IList<IScrollerCellData> Data
+		private IReadOnlyList<IScrollerCellData> _data;
+		public IReadOnlyList<IScrollerCellData> Data
 		{
 			get => _data;
 			set
 			{
-				if (_data == value) return;
+				if (ReferenceEquals(_data, value)) return;
 
 				_data = value;
 				ReloadCells();
@@ -76,10 +78,12 @@ namespace UnityUtils.DynamicScrollers
 		}
 		public void ReloadCells()
 		{
+			if (!Application.isPlaying) return;
+			
 			ResetContentSize();
 
 			int cellIndex = 0;
-			int count = _data?.Count ?? 0;
+			int count = Math.Max(_data?.Count ?? 0, cells.MinimumCount);
 			if (count > 0)
 			{
 				foreach (int dataIndex in (sorter ?? DefaultSorter).Sort(_data))
@@ -89,6 +93,13 @@ namespace UnityUtils.DynamicScrollers
 				}
 			}
 
+			//Padding Cells
+			for (; cellIndex < count; cellIndex++)
+			{
+				if (!ReloadAt(cellIndex, -1))
+					throw new Exception("Failed to reload empty cell");
+			}
+			
 			for (int i = cells.Count - 1; i >= cellIndex; i--)
 			{
 				if (!cells.CacheCellAt(i, out IScrollerCell cell)) 
@@ -104,6 +115,7 @@ namespace UnityUtils.DynamicScrollers
 			}
 		}
 
+		/*
 		public bool ReloadDataAt(int dataIndex, IScrollerCellData data)
 		{
 			IScrollerCell cell = FindCellForDataAt(dataIndex);
@@ -113,17 +125,19 @@ namespace UnityUtils.DynamicScrollers
 			Data[dataIndex] = data;
 			cell.SetData(data);
 			return true;
-		}
+		}//*/
 		private bool ReloadAt(int cellIndex, int dataIndex)
 		{
-			IScrollerCellData data = _data[dataIndex];
+			IScrollerCellData data = DataAtOrDefault(dataIndex);
 
 			if (!FilterData(dataIndex, data))
 				return false;
 
 			IScrollerCell cell = cells[cellIndex];
 
-			if (cell?.CellType == data.CellType)
+			Type cellType = data?.CellType ?? cells.GetDefaultCellType();
+			
+			if (cell != null && cell?.CellType == cellType)
 			{
 				ClearCell(cell);
 				cell.SetData(data);
@@ -162,6 +176,14 @@ namespace UnityUtils.DynamicScrollers
 					content.sizeDelta += new Vector2(0, cellSize.y + padding.x);
 					break;
 			}
+		}
+
+		public IScrollerCellData DataAtOrDefault(int dataIndex)
+		{
+			if (dataIndex < 0 || dataIndex >= _data.Count)
+				return null;
+			
+			return _data[dataIndex];
 		}
 	}
 }
