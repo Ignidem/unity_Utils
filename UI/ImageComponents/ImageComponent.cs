@@ -39,7 +39,7 @@ namespace UnityUtils.UI.ImageComponents
 			get => component.Color; 
 			set => component.Color = value; 
 		}
-
+		
 		public Task Load(Task<Sprite> spriteTask)
 		{
 			return component.Load(spriteTask);

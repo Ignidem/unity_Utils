@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using Utilities.Numbers;
 
 namespace UnityUtils.Layouts.RectLayout
@@ -6,10 +7,10 @@ namespace UnityUtils.Layouts.RectLayout
 	[ExecuteInEditMode]
 	public class RatioLayoutElement : RectLayoutElement
 	{
-		[SerializeField] private float ratio;
+		[SerializeField] public float ratio;
 		[SerializeField] private bool useCurrentSize;
 
-		private Rect Rect => (transform as RectTransform).rect;
+		private Rect Rect => ((RectTransform)transform).rect;
 
 		protected override void OnSetEnabled(bool enabled)
 		{

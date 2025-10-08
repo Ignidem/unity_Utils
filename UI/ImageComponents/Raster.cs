@@ -15,7 +15,7 @@ namespace UnityUtils.UI.ImageComponents
 		public bool Enabled
 		{
 			get => image.enabled;
-			set => image.enabled = false;
+			set => image.enabled = value;
 		}
 		public Sprite OverrideSprite
 		{
@@ -35,6 +35,13 @@ namespace UnityUtils.UI.ImageComponents
 
 		private Task<Sprite> loadingSprite;
 
+		public Raster(){}
+
+		public Raster(Image img)
+		{
+			image = img;
+		}
+		
 		public async Task Load(Task<Sprite> spriteTask)
 		{
 			loadingSprite = spriteTask;

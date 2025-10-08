@@ -65,6 +65,13 @@ namespace UnityUtils.UI.ImageComponents
 
 		private Task<Sprite> loadingSprite;
 
+		public SVG() {}
+
+		public SVG(SVGImage img)
+		{
+			image = img;
+		}
+		
 		public async Task Load(Task<Sprite> spriteTask)
 		{
 			loadingSprite = spriteTask;
