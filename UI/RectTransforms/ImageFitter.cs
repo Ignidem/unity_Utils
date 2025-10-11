@@ -23,7 +23,7 @@ namespace UnityUtils.UI
 		public Sprite GetImageSprite()
 		{
 			if (gameObject.TryGetComponent(out Image image))
-				return image.sprite;
+				return image.overrideSprite;
 
 			if (gameObject.TryGetComponent(out SVGImage svg))
 				return svg.sprite;

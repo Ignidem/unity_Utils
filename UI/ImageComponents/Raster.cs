@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace UnityUtils.UI.ImageComponents
@@ -7,7 +8,10 @@ namespace UnityUtils.UI.ImageComponents
 	public class Raster : IImageComponent
 	{
 		[SerializeField] private Image image;
-
+		
+		[SerializeField] private UnityEvent onStartLoading;
+		[SerializeField] private UnityEvent onEndLoading;
+		
 		public bool IsAlive => image;
 		public RectTransform Transform => image.transform as RectTransform;
 		public Material Material => image.material;
@@ -45,6 +49,10 @@ namespace UnityUtils.UI.ImageComponents
 		public async Task Load(Task<Sprite> spriteTask)
 		{
 			loadingSprite = spriteTask;
+			
+			if (!loadingSprite.IsCompleted)
+				onStartLoading?.Invoke();
+			
 			Sprite sprite = await spriteTask;
 
 			//Component is destroyed or task was overriden
@@ -53,6 +61,7 @@ namespace UnityUtils.UI.ImageComponents
 
 			loadingSprite = null;
 			OverrideSprite = sprite;
+			onEndLoading?.Invoke();
 		}
 	}
 }
