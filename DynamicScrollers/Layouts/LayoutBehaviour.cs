@@ -15,7 +15,7 @@ namespace UnityUtils.DynamicScrollers
 		public Vector2 GetContentSize(RectTransform.Axis scrollAxis, RectTransform rect)
 		{
 			controller.ReloadLayout(false);
-			return (controller.transform as RectTransform).rect.size;
+			return ((RectTransform)controller.transform).rect.size;
 		}
 	}
 }
