@@ -83,18 +83,19 @@ namespace UnityUtils.DynamicScrollers
 			ResetContentSize();
 
 			int cellIndex = 0;
-			int count = Math.Max(_data?.Count ?? 0, cells.MinimumCount);
+			int count = _data?.Count ?? 0;
 			if (count > 0)
 			{
 				foreach (int dataIndex in (sorter ?? DefaultSorter).Sort(_data))
 				{
-					if (ReloadAt(cellIndex, dataIndex))
-						cellIndex++;
+					if (!ReloadAt(cellIndex, dataIndex)) continue;
+					cellIndex++;
 				}
 			}
 
-			//Padding Cells
-			for (; cellIndex < count; cellIndex++)
+			//Padding Cells - ensure minimum count from how many where added.
+			int paddingCount = Math.Max(cells.MinimumCount - cellIndex, 0);
+			for (; cellIndex < paddingCount; cellIndex++)
 			{
 				if (!ReloadAt(cellIndex, -1))
 					throw new Exception("Failed to reload empty cell");
@@ -108,7 +109,7 @@ namespace UnityUtils.DynamicScrollers
 				ClearCell(cell);
 			}
 
-			if (count > 0 && contentComponents.Sizing == ContentComponents.SizingType.OnReload && contentComponents.Layout != null)
+			if (cellIndex > 0 && contentComponents.Sizing == ContentComponents.SizingType.OnReload && contentComponents.Layout != null)
 			{
 				Vector2 size = contentComponents.Layout.GetContentSize(ScrollAxis, viewport);
 				SetContentSize(size);
