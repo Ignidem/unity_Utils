@@ -8,10 +8,11 @@ using Utilities.Reflection;
 
 namespace UnityUtils.PropertyAttributes
 {
+	[Flags]
 	public enum PolymorphicSettings
 	{
-		Nullable,
-		IgnoreChildren
+		Nullable = 1,
+		IgnoreChildren = 2,
 	}
 
 	public class PolymorphicAttribute : PropertyAttribute
@@ -72,13 +73,12 @@ namespace UnityUtils.PropertyAttributes
 
 			int k = 0;
 			Options = new string[types.Length + (Nullable ? 1 : 0)];
-			if (Nullable)
-				Options[k++] = "Null Reference";
+			if (Nullable) Options[k++] = "Null Reference";
 			for (int i = 0; i < types.Length; i++, k++)
 				Options[k] = types[i].Name;
 
 			constructors = types.Select(t =>
-				t.GetConstructor(new Type[] { baseType }) ?? t.GetConstructor(new Type[0])
+				t.GetConstructor(new Type[] { baseType }) ?? t.GetConstructor(Type.EmptyTypes)
 			).ToArray();
 		}
 
@@ -96,7 +96,8 @@ namespace UnityUtils.PropertyAttributes
 					baseType = baseType.GetElementType();
 				}
 				else if (baseType.IsGenericType && typeof(ICollection).IsAssignableFrom(baseType)) 
-				{//Generic collections such as List<T>
+				{
+					//Generic collections such as List<T>
 					Type[] generics = baseType.GetGenericArguments();
 					baseType = generics[0];
 				}
