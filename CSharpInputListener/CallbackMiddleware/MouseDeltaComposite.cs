@@ -29,7 +29,7 @@ namespace UnityUtils.CSharpInputListener.CallbackMiddleware
 			{
 				InputBinding binding = ButtonBinding;
 				if (_buttonControl == null || InputControlPath.Matches(binding.effectivePath, _buttonControl))
-					_buttonControl = action.controls.First(c => InputControlPath.Matches(binding.effectivePath, c));
+					_buttonControl = action.controls.FirstOrDefault(c => InputControlPath.Matches(binding.effectivePath, c));
 
 				return _buttonControl;
 			}
