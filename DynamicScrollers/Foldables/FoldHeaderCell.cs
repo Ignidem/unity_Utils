@@ -33,7 +33,7 @@ namespace UnityUtils.DynamicScrollers.Foldables
 		{
 			base.SetFolded(isFolded);
 			if (toggleIcon)
-				toggleIcon.transform.localScale = new Vector3(1, IsFolded ? -1 : 1, 1);
+				toggleIcon.transform.localScale = new Vector3(1, IsFolded ? 1 : -1, 1);
 		}
 	}
 }

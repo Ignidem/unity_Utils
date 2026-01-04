@@ -112,11 +112,14 @@ namespace UnityUtils.CSharpInputListener.CallbackMiddleware
 		/// <returns>Was the state changed.</returns>
 		private bool UpdateButtonState()
 		{
+			InputControl button = ButtonControl;
+			if (button == null) return false;
+			
 			//Avoiding checking if UI has active interaction every frame
 			//by only checking when the button was first pressed.
 			if (wasButtonPressed)
 			{
-				if (ButtonControl.IsPressed())
+				if (button.IsPressed())
 					return false;
 				
 				wasButtonPressed = false;
@@ -124,7 +127,7 @@ namespace UnityUtils.CSharpInputListener.CallbackMiddleware
 				return true;
 			}
 
-			if (!ButtonControl.IsPressed()) return false;
+			if (!button.IsPressed()) return false;
 			
 			wasButtonPressed = true;
 			isModiferOngoing = !ActiveInterfaceInteraction();
