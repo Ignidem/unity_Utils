@@ -8,7 +8,9 @@ namespace UnityUtils.UI.WorldScreenSpace
 	[Serializable]
 	public class BindedScreenSpaceEvaluator : IScreenSpaceEvaluator
 	{
-		public bool IsTargetValid => target != null && target && target.gameObject.activeSelf;
+		public static bool ValidateTarget(Transform target)
+			=> target && target.gameObject.activeSelf;
+		public bool IsTargetValid => ValidateTarget(target);
 		public Transform target;
 		[FormerlySerializedAs("offset")] public Vector3 worldOffset;
 		public Vector2 screenOffset;
