@@ -6,6 +6,7 @@ using Utils.Logger;
 using UnityUtils.PropertyAttributes;
 using Utils.StateMachines;
 using System.Runtime.CompilerServices;
+using Utils.Results;
 
 namespace UnityUtils.Systems.States
 {
@@ -97,9 +98,9 @@ namespace UnityUtils.Systems.States
 			return new StateMachine<Type>(states.Cast<IState<Type>>());
 		}
 
-		public Task SwitchState(IState<Type> state) => stateMachine.SwitchState(state);
-		public Task SwitchState(IStateData<Type> data) => stateMachine.SwitchState(data);
-		public Task SwitchState(Type key) => stateMachine.SwitchState(key);
+		public Task<Result> SwitchState(IState<Type> state) => stateMachine.SwitchState(state);
+		public Task<Result> SwitchState(IStateData<Type> data) => stateMachine.SwitchState(data);
+		public Task<Result> SwitchState(Type key) => stateMachine.SwitchState(key);
 		public Task ExitActiveState() => stateMachine.ExitActiveState();
 		public TaskAwaiter GetAwaiter() => stateMachine.GetAwaiter();
 		public bool ContainsState(Type key) => stateMachine.ContainsState(key);
