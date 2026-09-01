@@ -4,10 +4,12 @@ namespace UnityUtils.PropertyAttributes
 {
 	public class ReadOnlyAttribute : PropertyAttribute 
 	{
-		public readonly bool hasToggle;
+		public bool HasToggle { get; set; }
+		public bool AsLabel { get; set; }
+		
 		public ReadOnlyAttribute(bool hasToggle = false) 
 		{
-			this.hasToggle = hasToggle;
+			this.HasToggle = hasToggle;
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityUtils.Editor.SerializedProperties;
 using UnityUtils.RectUtils;
 
@@ -51,6 +52,11 @@ namespace UnityUtils.Editor
 		private readonly List<bool> folded = new();
 
 		private readonly Dictionary<string, float> heights = new();
+
+		public override VisualElement CreatePropertyGUI(SerializedProperty property)
+		{
+			return null;
+		}
 
 		protected abstract float DrawProperty(ref Rect position, SerializedProperty property, GUIContent label);
 
