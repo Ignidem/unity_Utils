@@ -45,6 +45,11 @@ namespace UnityUtils.UI.Selectable.Groups
 			}
 		}
 
+		public T At(int index)
+		{
+			return buttons[index];
+		}
+		
 		public void Add(T input)
 		{
 			if (buttons.Contains(input))
